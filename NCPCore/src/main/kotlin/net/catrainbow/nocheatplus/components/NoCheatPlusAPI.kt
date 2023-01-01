@@ -13,27 +13,28 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.catrainbow.nocheatplus
+package net.catrainbow.nocheatplus.components
 
-import cn.nukkit.plugin.PluginBase
+import net.catrainbow.nocheatplus.NoCheatPlus
 
 /**
- * NoCheatPlus 主类
+ * NoCheatPlus 开放API类
  *
  * @author Catrainbow
  */
-class NoCheatPlus : PluginBase() {
+class NoCheatPlusAPI {
 
     companion object {
-        lateinit var instance: NoCheatPlus
-        const val PLUGIN_VERSION: String = "1.0.0"
-    }
 
-    override fun onLoad() {
-        instance = this
-    }
-
-    override fun onEnable() {
+        /**
+         * 获取主类对象
+         *
+         * @return NoCheatPlus
+         */
+        @JvmStatic
+        fun getNCPProvider(): NoCheatPlus {
+            return NoCheatPlus.instance;
+        }
 
     }
 
