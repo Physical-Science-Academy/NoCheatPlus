@@ -15,6 +15,7 @@ package net.catrainbow.nocheatplus.feature.moving
 
 import cn.nukkit.event.Event
 import net.catrainbow.nocheatplus.feature.ITickListener
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 
 /**
  * 移动监听器
@@ -24,6 +25,10 @@ import net.catrainbow.nocheatplus.feature.ITickListener
 class MovingListener : ITickListener {
 
     override fun onTick(event: Event) {
+        if (event is WrapperPacketEvent) this.verifyInputPacket(event)
+    }
+
+    private fun verifyInputPacket(event: WrapperPacketEvent) {
 
     }
 
