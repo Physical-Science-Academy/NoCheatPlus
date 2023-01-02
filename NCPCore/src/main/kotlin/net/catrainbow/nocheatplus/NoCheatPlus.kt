@@ -46,6 +46,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
         this.ncpComManager.onEnabled()
         this.server.pluginManager.registerEvents(NCPListener(), this)
         this.logger.info("${TextFormat.YELLOW}NoCheatPlus loads successfully!")
+        this.logger.info("${TextFormat.BLUE}本插件为开源插件，源码地址: https://github.com/Physical-Science-Academy/NoCheatPlus/")
     }
 
     override fun getNCPProvider(): NoCheatPlus {
