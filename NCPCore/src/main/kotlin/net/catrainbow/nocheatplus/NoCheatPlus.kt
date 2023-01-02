@@ -16,9 +16,12 @@
 package net.catrainbow.nocheatplus
 
 import cn.nukkit.plugin.PluginBase
+import cn.nukkit.utils.TextFormat
 import net.catrainbow.nocheatplus.components.NoCheatPlusAPI
 import net.catrainbow.nocheatplus.components.registry.NCPComManager
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
+import net.catrainbow.nocheatplus.feature.NCPListener
+import net.catrainbow.nocheatplus.players.PlayerData
 
 /**
  * NoCheatPlus 主类
@@ -41,7 +44,8 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
         this.logger.info("Loading NoCheatPlus $PLUGIN_VERSION...")
         this.ncpComManager = NCPComManager()
         this.ncpComManager.onEnabled()
-        this.logger.info("")
+        this.server.pluginManager.registerEvents(NCPListener(), this)
+        this.logger.info("${TextFormat.YELLOW}NoCheatPlus loads successfully!")
     }
 
     override fun getNCPProvider(): NoCheatPlus {
@@ -54,6 +58,10 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun getAllComponents(): HashMap<String, NCPComponent> {
         return this.getComManager().getComponents()
+    }
+
+    override fun getAllPlayerData(): HashMap<String, PlayerData> {
+        return PlayerData.allPlayersData
     }
 
 }

@@ -12,26 +12,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.catrainbow.nocheatplus.components
+package net.catrainbow.nocheatplus.feature
 
-import net.catrainbow.nocheatplus.NoCheatPlus
-import net.catrainbow.nocheatplus.components.registry.NCPComManager
-import net.catrainbow.nocheatplus.components.registry.NCPComponent
-import net.catrainbow.nocheatplus.players.PlayerData
+import cn.nukkit.event.Event
+import net.catrainbow.nocheatplus.components.registry.INCPComponent
 
 /**
- * NoCheatPlus 开放API类
+ * 下游监听器接口
  *
  * @author Catrainbow
  */
-interface NoCheatPlusAPI {
-
-    fun getNCPProvider(): NoCheatPlus
-
-    fun getComManager(): NCPComManager
-
-    fun getAllComponents(): HashMap<String, NCPComponent>
-
-    fun getAllPlayerData(): HashMap<String, PlayerData>
+interface ITickListener : INCPComponent {
+    fun onTick(event: Event)
 
 }

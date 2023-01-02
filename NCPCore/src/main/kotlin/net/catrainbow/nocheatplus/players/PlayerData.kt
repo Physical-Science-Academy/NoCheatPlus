@@ -12,26 +12,29 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.catrainbow.nocheatplus.components
+package net.catrainbow.nocheatplus.players
 
+import cn.nukkit.Player
 import net.catrainbow.nocheatplus.NoCheatPlus
-import net.catrainbow.nocheatplus.components.registry.NCPComManager
-import net.catrainbow.nocheatplus.components.registry.NCPComponent
-import net.catrainbow.nocheatplus.players.PlayerData
 
 /**
- * NoCheatPlus 开放API类
+ * 玩家数据
  *
  * @author Catrainbow
  */
-interface NoCheatPlusAPI {
+open class PlayerData(player: Player) : IPlayerData {
 
-    fun getNCPProvider(): NoCheatPlus
+    companion object {
+        val allPlayersData: HashMap<String, PlayerData> = HashMap()
+    }
 
-    fun getComManager(): NCPComManager
+    private val name = player.name
 
-    fun getAllComponents(): HashMap<String, NCPComponent>
+    override fun getPlayerName(): String {
+        return this.name
+    }
 
-    fun getAllPlayerData(): HashMap<String, PlayerData>
-
+    override fun getPlayer(): Player {
+        return NoCheatPlus.instance.server.getPlayer(this.getPlayerName())
+    }
 }

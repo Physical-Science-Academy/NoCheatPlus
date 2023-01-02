@@ -11,27 +11,29 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package net.catrainbow.nocheatplus.players
 
-package net.catrainbow.nocheatplus.components
-
-import net.catrainbow.nocheatplus.NoCheatPlus
-import net.catrainbow.nocheatplus.components.registry.NCPComManager
-import net.catrainbow.nocheatplus.components.registry.NCPComponent
-import net.catrainbow.nocheatplus.players.PlayerData
+import cn.nukkit.Player
 
 /**
- * NoCheatPlus 开放API类
+ * 玩家信息储存接口
  *
  * @author Catrainbow
  */
-interface NoCheatPlusAPI {
+interface IPlayerData {
 
-    fun getNCPProvider(): NoCheatPlus
+    /**
+     * 获取玩家名字
+     *
+     * @return 玩家名字
+     */
+    fun getPlayerName(): String
 
-    fun getComManager(): NCPComManager
-
-    fun getAllComponents(): HashMap<String, NCPComponent>
-
-    fun getAllPlayerData(): HashMap<String, PlayerData>
+    /**
+     * 返回玩家对象
+     *
+     * @return 玩家对象
+     */
+    fun getPlayer(): Player
 
 }
