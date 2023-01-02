@@ -19,7 +19,7 @@ package net.catrainbow.nocheatplus.components.registry
  *
  * @author Catrainbow
  */
-abstract class NCPRegisterCom {
+open class NCPRegisterCom {
 
     /**
      * 模块名字
@@ -64,6 +64,18 @@ abstract class NCPRegisterCom {
     @JvmName("serComponentVersion")
     fun setVersion(version: String) {
         this.version = version
+    }
+
+    fun getName(): String {
+        return this.name
+    }
+
+    fun getVersion(): String {
+        return this.version
+    }
+
+    fun getAuthor(): String {
+        return this.author
     }
 
 }

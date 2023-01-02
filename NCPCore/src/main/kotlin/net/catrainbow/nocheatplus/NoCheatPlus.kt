@@ -16,25 +16,44 @@
 package net.catrainbow.nocheatplus
 
 import cn.nukkit.plugin.PluginBase
+import net.catrainbow.nocheatplus.components.NoCheatPlusAPI
+import net.catrainbow.nocheatplus.components.registry.NCPComManager
+import net.catrainbow.nocheatplus.components.registry.NCPComponent
 
 /**
  * NoCheatPlus 主类
  *
  * @author Catrainbow
  */
-class NoCheatPlus : PluginBase() {
+class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     companion object {
         lateinit var instance: NoCheatPlus
         const val PLUGIN_VERSION: String = "1.0.0"
     }
 
+    private lateinit var ncpComManager: NCPComManager
     override fun onLoad() {
         instance = this
     }
 
     override fun onEnable() {
+        this.logger.info("Loading NoCheatPlus $PLUGIN_VERSION...")
+        this.ncpComManager = NCPComManager()
+        this.ncpComManager.onEnabled()
+        this.logger.info("")
+    }
 
+    override fun getNCPProvider(): NoCheatPlus {
+        return instance
+    }
+
+    override fun getComManager(): NCPComManager {
+        return this.ncpComManager
+    }
+
+    override fun getAllComponents(): HashMap<String, NCPComponent> {
+        return this.getComManager().getComponents()
     }
 
 }

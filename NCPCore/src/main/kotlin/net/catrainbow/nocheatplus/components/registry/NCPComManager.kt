@@ -13,6 +13,8 @@
  */
 package net.catrainbow.nocheatplus.components.registry
 
+import net.catrainbow.nocheatplus.NoCheatPlus
+
 /**
  * NCP模块管理器
  *
@@ -28,7 +30,24 @@ class NCPComManager {
      * @param component 模块
      */
     fun registerCom(component: NCPComponent) {
+        component.onEnabled()
+        NoCheatPlus.instance.logger.info(
+            "Loading Module: ${
+                component.getRegisterCom().getName()
+            } ${component.getRegisterCom().getVersion()}"
+        )
+        this.components[component.getRegisterCom().getName()] = component
+    }
 
+    /**
+     * 启用时注册默认模块
+     */
+    fun onEnabled() {
+
+    }
+
+    fun getComponents(): HashMap<String, NCPComponent> {
+        return this.components
     }
 
 }

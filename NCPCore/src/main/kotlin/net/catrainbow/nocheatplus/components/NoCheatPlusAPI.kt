@@ -13,6 +13,9 @@
  */
 
 package net.catrainbow.nocheatplus.components
+
+import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.components.registry.NCPComManager
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
 
 /**
@@ -20,7 +23,12 @@ import net.catrainbow.nocheatplus.components.registry.NCPComponent
  *
  * @author Catrainbow
  */
-class NoCheatPlusAPI : NCPComponent() {
+interface NoCheatPlusAPI {
 
+    fun getNCPProvider(): NoCheatPlus
+
+    fun getComManager(): NCPComManager
+
+    fun getAllComponents(): HashMap<String, NCPComponent>
 
 }

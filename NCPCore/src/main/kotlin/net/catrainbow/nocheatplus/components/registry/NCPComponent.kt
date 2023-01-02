@@ -21,12 +21,20 @@ package net.catrainbow.nocheatplus.components.registry
  */
 open class NCPComponent : INCPComponent {
 
-
-
+    private val ncpRegisterCom: NCPRegisterCom = NCPRegisterCom()
     override fun onEnabled() {
     }
 
     override fun onDisabled() {
+    }
+
+    /**
+     * 返回模块信息
+     *
+     * @return 模块信息
+     */
+    fun getRegisterCom(): NCPRegisterCom {
+        return this.ncpRegisterCom
     }
 
 
