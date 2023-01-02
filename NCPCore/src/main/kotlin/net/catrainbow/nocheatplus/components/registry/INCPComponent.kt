@@ -11,16 +11,23 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package net.catrainbow.nocheatplus.components
-import net.catrainbow.nocheatplus.components.registry.NCPComponent
+package net.catrainbow.nocheatplus.components.registry
 
 /**
- * NoCheatPlus 开放API类
+ * NCP 模块接口
  *
  * @author Catrainbow
  */
-class NoCheatPlusAPI : NCPComponent() {
+interface INCPComponent {
 
+    /**
+     * 启用该组件
+     */
+    fun onEnabled()
+
+    /**
+     * 关闭该组件
+     */
+    fun onDisabled()
 
 }

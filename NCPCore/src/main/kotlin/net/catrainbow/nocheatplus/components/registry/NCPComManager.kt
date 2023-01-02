@@ -11,16 +11,24 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package net.catrainbow.nocheatplus.components
-import net.catrainbow.nocheatplus.components.registry.NCPComponent
+package net.catrainbow.nocheatplus.components.registry
 
 /**
- * NoCheatPlus 开放API类
+ * NCP模块管理器
  *
  * @author Catrainbow
  */
-class NoCheatPlusAPI : NCPComponent() {
+class NCPComManager {
 
+    private val components: HashMap<String, NCPComponent> = HashMap()
+
+    /**
+     * 注册模块
+     *
+     * @param component 模块
+     */
+    fun registerCom(component: NCPComponent) {
+
+    }
 
 }

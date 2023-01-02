@@ -12,15 +12,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.catrainbow.nocheatplus.components
-import net.catrainbow.nocheatplus.components.registry.NCPComponent
+package net.catrainbow.nocheatplus.components.registry
 
 /**
- * NoCheatPlus 开放API类
+ * NCP 模块
  *
  * @author Catrainbow
  */
-class NoCheatPlusAPI : NCPComponent() {
+open class NCPComponent : INCPComponent {
+
+
+
+    override fun onEnabled() {
+    }
+
+    override fun onDisabled() {
+    }
 
 
 }
