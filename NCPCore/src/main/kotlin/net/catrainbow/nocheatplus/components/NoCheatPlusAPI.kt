@@ -14,6 +14,7 @@
 
 package net.catrainbow.nocheatplus.components
 
+import cn.nukkit.Player
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.components.registry.NCPComManager
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
@@ -33,7 +34,14 @@ interface NoCheatPlusAPI {
     fun getAllComponents(): HashMap<String, NCPComponent>
 
     fun getAllPlayerData(): HashMap<String, PlayerData>
-
     fun addComponents(components: NCPComponent)
+
+    fun hasPlayer(player: Player): Boolean
+
+    fun hasPlayer(player: String): Boolean
+
+    fun getPlayerProvider(player: Player): PlayerData
+
+    fun getPlayerProvider(player: String): PlayerData
 
 }

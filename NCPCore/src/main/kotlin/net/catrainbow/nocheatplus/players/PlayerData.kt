@@ -15,7 +15,9 @@
 package net.catrainbow.nocheatplus.players
 
 import cn.nukkit.Player
+import cn.nukkit.level.Location
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 
 /**
  * 玩家数据
@@ -29,6 +31,11 @@ open class PlayerData(player: Player) : IPlayerData {
     }
 
     private val name = player.name
+    var from: Location = player.location
+
+    fun update(packet: WrapperInputPacket) {
+        this.from = packet.to
+    }
 
     override fun getPlayerName(): String {
         return this.name

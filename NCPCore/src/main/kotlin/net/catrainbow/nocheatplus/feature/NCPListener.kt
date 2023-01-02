@@ -21,6 +21,7 @@ import cn.nukkit.event.player.PlayerJoinEvent
 import cn.nukkit.event.player.PlayerQuitEvent
 import cn.nukkit.plugin.Plugin
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.feature.moving.MovingListener
 import net.catrainbow.nocheatplus.players.PlayerData
 
 /**
@@ -63,6 +64,15 @@ class NCPListener : Listener {
             this, NoCheatPlus.instance, PlayerQuitEvent::class.java, { playerLeave(it) }, true,
             EventPriority.HIGHEST
         )
+        registerTickListener()
+    }
+
+    private fun registerTickListener() {
+        listeners.add(MovingListener())
+    }
+
+    private fun checkEvent(listener: ITickListener, event: Event) {
+        listener.onTick(event)
     }
 
     @EventHandler
@@ -70,6 +80,9 @@ class NCPListener : Listener {
         val data = PlayerData(event.player)
         PlayerData.allPlayersData[data.getPlayerName()] = data
     }
+
+    @EventHandler
+    private fun onPlayer
 
     @EventHandler
     private fun playerLeave(event: PlayerQuitEvent) {

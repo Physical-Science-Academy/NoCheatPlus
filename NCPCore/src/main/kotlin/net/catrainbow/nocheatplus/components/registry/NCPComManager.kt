@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.components.registry
 
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.components.task.NCPTaskCom
 
 /**
  * NCP模块管理器
@@ -43,7 +44,7 @@ class NCPComManager {
      * 启用时注册默认模块
      */
     fun onEnabled() {
-
+        this.registerCom(NCPTaskCom())
     }
 
     fun getComponents(): HashMap<String, NCPComponent> {

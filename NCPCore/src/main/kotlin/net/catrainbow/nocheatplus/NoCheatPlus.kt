@@ -15,6 +15,7 @@
 
 package net.catrainbow.nocheatplus
 
+import cn.nukkit.Player
 import cn.nukkit.plugin.PluginBase
 import cn.nukkit.utils.TextFormat
 import net.catrainbow.nocheatplus.components.NoCheatPlusAPI
@@ -29,7 +30,6 @@ import net.catrainbow.nocheatplus.players.PlayerData
  * @author Catrainbow
  */
 class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
-
     companion object {
         lateinit var instance: NoCheatPlus
         const val PLUGIN_VERSION: String = "1.0.0"
@@ -66,6 +66,22 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun addComponents(components: NCPComponent) {
         this.getComManager().registerCom(components)
+    }
+
+    override fun hasPlayer(player: Player): Boolean {
+        return this.hasPlayer(player.name)
+    }
+
+    override fun hasPlayer(player: String): Boolean {
+        return PlayerData.allPlayersData.containsKey(player)
+    }
+
+    override fun getPlayerProvider(player: Player): PlayerData {
+        return this.getPlayerProvider(player.name)
+    }
+
+    override fun getPlayerProvider(player: String): PlayerData {
+        return PlayerData.allPlayersData[player]!!
     }
 
 }
