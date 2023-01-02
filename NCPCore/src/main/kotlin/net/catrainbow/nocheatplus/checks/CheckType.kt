@@ -11,29 +11,33 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package net.catrainbow.nocheatplus.components
-
-import net.catrainbow.nocheatplus.NoCheatPlus
-import net.catrainbow.nocheatplus.components.registry.NCPComManager
-import net.catrainbow.nocheatplus.components.registry.NCPComponent
-import net.catrainbow.nocheatplus.players.PlayerData
+package net.catrainbow.nocheatplus.checks
 
 /**
- * NoCheatPlus 开放API类
+ * 作弊类型
  *
  * @author Catrainbow
  */
-interface NoCheatPlusAPI {
+enum class CheckType(parent: CheckType?) {
 
-    fun getNCPProvider(): NoCheatPlus
+    ALL(null);
 
-    fun getComManager(): NCPComManager
+    companion object {
 
-    fun getAllComponents(): HashMap<String, NCPComponent>
-
-    fun getAllPlayerData(): HashMap<String, PlayerData>
-
-    fun addComponents(components: NCPComponent)
+        /**
+         * 获得CheckType
+         *
+         * @return CheckType
+         */
+        @JvmStatic
+        fun getTypeByName(name: String): CheckType {
+            for (type in CheckType.values()) {
+                if (type.toString() == name) {
+                    return type
+                }
+            }
+            return ALL
+        }
+    }
 
 }

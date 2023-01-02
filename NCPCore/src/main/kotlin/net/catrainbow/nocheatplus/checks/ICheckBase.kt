@@ -12,28 +12,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.catrainbow.nocheatplus.components
+package net.catrainbow.nocheatplus.checks
 
-import net.catrainbow.nocheatplus.NoCheatPlus
-import net.catrainbow.nocheatplus.components.registry.NCPComManager
-import net.catrainbow.nocheatplus.components.registry.NCPComponent
-import net.catrainbow.nocheatplus.players.PlayerData
+import net.catrainbow.nocheatplus.components.registry.INCPComponent
 
 /**
- * NoCheatPlus 开放API类
+ * 检测项目接口
  *
  * @author Catrainbow
  */
-interface NoCheatPlusAPI {
+interface ICheckBase : INCPComponent {
 
-    fun getNCPProvider(): NoCheatPlus
-
-    fun getComManager(): NCPComManager
-
-    fun getAllComponents(): HashMap<String, NCPComponent>
-
-    fun getAllPlayerData(): HashMap<String, PlayerData>
-
-    fun addComponents(components: NCPComponent)
+    val baseName: String
+    val typeName: CheckType
 
 }

@@ -64,4 +64,8 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
         return PlayerData.allPlayersData
     }
 
+    override fun addComponents(components: NCPComponent) {
+        this.getComManager().registerCom(components)
+    }
+
 }
