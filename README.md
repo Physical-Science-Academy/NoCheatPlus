@@ -1,3 +1,9 @@
+<div align="right">
+  语言:
+  中文 | 
+  <a title="English" href="/README_EN.md">English</a>
+</div>
+
 [![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com)
 # NoCheatPlus
 一款基于基岩版内核Nukkit以及其衍生核心开发的先进反作弊,作者为Catrainbow233。
@@ -5,8 +11,6 @@
 其目标为满足服务器的安全需求。
 
 欢迎贡献代码，star本项目以关注我们。
-## 项目状态
-重构中
 ## 🎉特性
 - [x] 飞行检测
 - [x] 鞘翅飞行检测
