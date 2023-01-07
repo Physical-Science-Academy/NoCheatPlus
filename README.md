@@ -31,11 +31,12 @@
 
 在仓库[Releases](https://github.com/Physical-Science-Academy/NoCheatPlus/releases)里下载最新版本 `NoCheatPlus.jar` ，将其放入服务器的 `plugins/` 文件夹内。
 在使用插件之前，您必须安装以下依赖
-暂无
+ 
+- 暂无
 
 ## 配置
 
-之后，你会看到`plugins/`下生成了一个名为`NoCheatPlus`的目录。让我们首先打开其中的配置文件 `config.yml` 。
+接下来启动服务器。之后，你会看到`plugins/`下生成了一个名为`NoCheatPlus`的目录。让我们首先打开其中的配置文件 `config.yml` 。
 ~~~yaml
 待补充
 ~~~
