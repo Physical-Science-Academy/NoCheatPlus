@@ -85,4 +85,8 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
         return PlayerData.allPlayersData[player]!!
     }
 
+    override fun getNCPComponent(comName: String): NCPComponent {
+        return this.getAllComponents()[comName]!!
+    }
+
 }

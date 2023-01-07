@@ -44,4 +44,6 @@ interface NoCheatPlusAPI {
 
     fun getPlayerProvider(player: String): PlayerData
 
+    fun getNCPComponent(comName: String): NCPComponent
+
 }

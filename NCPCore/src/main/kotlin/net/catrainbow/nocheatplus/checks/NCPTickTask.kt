@@ -31,6 +31,7 @@ class NCPTickTask : Task() {
     override fun onRun(p0: Int) {
         for (player in NoCheatPlus.instance.server.onlinePlayers.values) {
             this.handleWrapperInputPacket(player)
+            this.tickActions(player)
         }
     }
 
@@ -57,6 +58,20 @@ class NCPTickTask : Task() {
         event.player = player
         event.packet = wrapperInputPacket
         NoCheatPlus.instance.server.pluginManager.callEvent(event)
+    }
+
+    /**
+     * Tick actions
+     *
+     * @link ViolationData
+     */
+    private fun tickActions(player: Player) {
+        val playerData = NoCheatPlus.instance.getPlayerProvider(player)
+        for (checkType in CheckType.values()) {
+            if (playerData.containCheckType(checkType)) {
+                playerData.getViolationData(checkType).update()
+            }
+        }
     }
 
 }

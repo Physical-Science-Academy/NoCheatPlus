@@ -15,6 +15,7 @@
       <list>
         <option value="Class" />
         <option value="Kotlin Interface" />
+        <option value="Kotlin Enum" />
         <option value="Kotlin Class" />
       </list>
     </option>

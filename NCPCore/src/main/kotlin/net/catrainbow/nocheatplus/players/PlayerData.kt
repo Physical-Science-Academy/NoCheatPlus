@@ -17,6 +17,8 @@ package net.catrainbow.nocheatplus.players
 import cn.nukkit.Player
 import cn.nukkit.level.Location
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.checks.ViolationData
 import net.catrainbow.nocheatplus.checks.moving.MovingData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 
@@ -35,8 +37,27 @@ open class PlayerData(player: Player) : IPlayerData {
     var from: Location = player.location
     val movingData: MovingData = MovingData()
 
+    //Violation LevelData
+    val violations: HashMap<String, ViolationData> = HashMap()
+
     fun update(packet: WrapperInputPacket) {
         this.from = packet.to
+    }
+
+    fun getViolationData(checkType: CheckType): ViolationData {
+        return this.getViolationData(checkType.name)
+    }
+
+    private fun getViolationData(checkType: String): ViolationData {
+        return this.violations[checkType]!!
+    }
+
+    fun containCheckType(checkType: CheckType): Boolean {
+        return this.containCheckType(checkType.name)
+    }
+
+    private fun containCheckType(checkType: String): Boolean {
+        return this.violations.containsKey(checkType)
     }
 
     override fun getPlayerName(): String {
