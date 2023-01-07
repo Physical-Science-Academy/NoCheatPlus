@@ -1,0 +1,33 @@
+#NoCheatPlus AntiCheat Config
+config-version:
+  notify: false
+  version: 1000
+logging:
+  active: true
+  auto-delete-days: 1
+  extended:
+    command: true
+    violation: true
+actions:
+  waring_delay: 10
+protection:
+  command:
+    hide:
+      active: true
+      message: "§c§lNCP §7>> §rYou do not have permission to run this command."
+      commands:
+        - "?"
+        - "plugins"
+        - "version"
+        - "about"
+checks:
+  moving:
+    survivalfly:
+      active: true
+      setback_policy:
+        fall_damage: true
+        void_to_void: true
+      actions: "cancel vl>30&&log vl>10 break=10&&warn vl>10 message=fly_short&&kick vl>50&&ban repeat=3"
+
+string:
+  fly_short: "@player could be flying hack @vl"

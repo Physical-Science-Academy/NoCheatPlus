@@ -66,6 +66,7 @@ class NCPTickTask : Task() {
      * @link ViolationData
      */
     private fun tickActions(player: Player) {
+        if (!NoCheatPlus.instance.hasPlayer(player)) return
         val playerData = NoCheatPlus.instance.getPlayerProvider(player)
         for (checkType in CheckType.values()) {
             if (playerData.containCheckType(checkType)) {

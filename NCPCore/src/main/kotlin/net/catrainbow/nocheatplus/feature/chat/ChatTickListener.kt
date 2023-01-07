@@ -31,7 +31,7 @@ class ChatTickListener : ITickListener {
     override fun onTick(event: Event) {
         if (event is PlayerCommandPreprocessEvent) {
             val player = event.player
-            var message = event.message
+            var message = event.message.removePrefix("/")
             if (message.contains(" ")) message = message.split(" ")[0]
             if (ConfigData.protection_command_hide_active)
                 if (ConfigData.protection_command_commands.contains(message)) {
@@ -44,6 +44,7 @@ class ChatTickListener : ITickListener {
 
     private fun handleCommandPacket(event: PlayerCommandPreprocessEvent) {
         val callEvent = WrapperPacketEvent()
+        callEvent.player = event.player
         val wrapperCommandPacket = WrapperCommandPacket(event.player)
         wrapperCommandPacket.message = event.message
         callEvent.packet = wrapperCommandPacket

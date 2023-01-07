@@ -42,19 +42,19 @@ class NCPComManager {
             } ${component.getRegisterCom().getVersion()}"
         )
         this.components[component.getRegisterCom().getName()] = component
-        NoCheatPlus.instance.getNCPLogger().info("加载模块 " + component.getRegisterCom().getName() + " 成功")
+        //NoCheatPlus.instance.getNCPLogger().info("加载模块 " + component.getRegisterCom().getName() + " 成功")
     }
 
     /**
      * 启用时注册默认模块
      */
     fun onEnabled() {
-        NoCheatPlus.instance.getNCPLogger().info("NoCheatPlus 已启用!")
         this.registerCom(NCPConfigCom())
         this.registerCom(NCPLoggerCom())
         this.registerCom(NCPTaskCom())
         this.registerCom(NCPCommandCom())
         this.registerCom(ActionCom())
+        NoCheatPlus.instance.getNCPLogger().info("NoCheatPlus 已启用!")
     }
 
     fun onDisabled() {
