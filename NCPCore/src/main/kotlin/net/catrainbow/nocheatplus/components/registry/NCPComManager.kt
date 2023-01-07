@@ -16,6 +16,7 @@ package net.catrainbow.nocheatplus.components.registry
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.ActionCom
 import net.catrainbow.nocheatplus.command.NCPCommandCom
+import net.catrainbow.nocheatplus.components.config.NCPBanConfig
 import net.catrainbow.nocheatplus.components.config.NCPConfigCom
 import net.catrainbow.nocheatplus.components.task.NCPTaskCom
 import net.catrainbow.nocheatplus.logging.NCPLoggerCom
@@ -50,6 +51,7 @@ class NCPComManager {
      */
     fun onEnabled() {
         this.registerCom(NCPConfigCom())
+        this.registerCom(NCPBanConfig())
         this.registerCom(NCPLoggerCom())
         this.registerCom(NCPTaskCom())
         this.registerCom(NCPCommandCom())

@@ -14,12 +14,17 @@
 package net.catrainbow.nocheatplus.actions
 
 import cn.nukkit.Player
+import cn.nukkit.network.protocol.DisconnectPacket
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.actions.types.BanAction
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.ViolationData
+import net.catrainbow.nocheatplus.checks.access.ACheckData
 import net.catrainbow.nocheatplus.components.data.ConfigData
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperActionPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperSetBackPacket
+import net.catrainbow.nocheatplus.utilities.NCPTimeTool
 
 /**
  * 处罚进程
@@ -50,6 +55,12 @@ class ActionProcess(
     }
 
     fun doAction(data: CheckActionData) {
+        val actionPacket = WrapperActionPacket(player)
+        actionPacket.actionType = this.getActionType()
+        val actionEvent = WrapperPacketEvent()
+        actionEvent.player = player
+        NoCheatPlus.instance.server.pluginManager.callEvent(actionEvent)
+        if (actionEvent.isCancelled) return
         val history = NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getViolationData(checkType).getHistory()
         when (this.actionType) {
             ActionType.SETBACK -> {
@@ -92,11 +103,45 @@ class ActionProcess(
 
             ActionType.KICK -> {
                 if (this.violationData.getVL() < data.kick || !data.enableKick) return
+                ACheckData.plus(this.getPlayer())
+                val disconnectPacket = DisconnectPacket()
+                disconnectPacket.hideDisconnectionScreen = false
+                disconnectPacket.message = this.formatMessage(ConfigData.string_kick_message)
+                if (ACheckData.getBufferCount(player) >= data.banRepeat) {
+                    if (data.enableBan) {
+                        ACheckData.clear(player)
+                        this.doBan(data.banAction)
+                    }
+                }
+                player.dataPacket(disconnectPacket)
+            }
 
+            ActionType.BAN -> {
+                if (ACheckData.getBufferCount(player) >= data.banRepeat) {
+                    if (data.enableBan) {
+                        ACheckData.clear(player)
+                        this.doBan(data.banAction)
+                    } else return
+                }
             }
 
             else -> {}
         }
+    }
+
+    private fun doBan(action: BanAction) {
+        var localDateTime = NCPTimeTool.nowTime
+        localDateTime = NCPTimeTool.plusTimeByDays(localDateTime, action.days)
+        localDateTime = NCPTimeTool.plusTimeByHours(localDateTime, action.hours)
+        localDateTime = NCPTimeTool.plusTimeByMinute(localDateTime, action.minutes)
+        val list: ArrayList<String> = ArrayList()
+        list.add(this.checkType.name)
+        list.add(NCPTimeTool.formatTime(localDateTime))
+        NoCheatPlus.instance.getNCPLogger()
+            .info("${player.name} was banned for $checkType.(to: ${NCPTimeTool.formatTime(localDateTime)})")
+        val config = NoCheatPlus.instance.getNCPBanRecord()
+        config.set(player.name, list)
+        config.save(true)
     }
 
     private fun getPlayer(): Player {
@@ -104,8 +149,7 @@ class ActionProcess(
     }
 
     private fun formatMessage(string: String): String {
-        return string.replace("@player", player.name)
-            .replace("@vl", this.violationData.getVL().toString())
+        return string.replace("@player", player.name).replace("@vl", this.violationData.getVL().toString())
             .replace("@hack", this.checkType.name)
     }
 

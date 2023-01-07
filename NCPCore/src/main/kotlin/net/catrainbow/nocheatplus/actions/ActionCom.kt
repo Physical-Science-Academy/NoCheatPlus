@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.actions
 
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.actions.types.BanAction
 import net.catrainbow.nocheatplus.actions.types.LogAction
 import net.catrainbow.nocheatplus.actions.types.WarnAction
 import net.catrainbow.nocheatplus.checks.CheckType
@@ -66,6 +67,8 @@ class ActionCom : NCPComponent(), INCPComponent {
                 "ban" -> {
                     actionData.enableBan = true
                     actionData.banRepeat = subCommand[1].split("=")[1].toInt()
+                    val timeArray = subCommand[2].split("=")[1].split(",")
+                    actionData.banAction = BanAction(timeArray[0].toInt(), timeArray[1].toInt(), timeArray[2].toInt())
                 }
             }
         }

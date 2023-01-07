@@ -52,4 +52,6 @@ interface NoCheatPlusAPI {
 
     fun getNCPConfig(): Config
 
+    fun getNCPBanRecord(): Config
+
 }

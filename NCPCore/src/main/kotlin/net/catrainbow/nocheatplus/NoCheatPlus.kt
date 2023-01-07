@@ -20,6 +20,7 @@ import cn.nukkit.plugin.PluginBase
 import cn.nukkit.utils.Config
 import cn.nukkit.utils.TextFormat
 import net.catrainbow.nocheatplus.components.NoCheatPlusAPI
+import net.catrainbow.nocheatplus.components.config.NCPBanConfig
 import net.catrainbow.nocheatplus.components.config.NCPConfigCom
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.components.registry.NCPComManager
@@ -108,6 +109,10 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun getNCPConfig(): Config {
         return (this.getNCPComponent("NCP Config") as NCPConfigCom).getNCPConfig()
+    }
+
+    override fun getNCPBanRecord(): Config {
+        return (this.getNCPComponent("NCP AutoBan") as NCPBanConfig).getRecord()
     }
 
 }
