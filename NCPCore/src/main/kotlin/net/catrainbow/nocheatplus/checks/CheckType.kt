@@ -21,6 +21,7 @@ package net.catrainbow.nocheatplus.checks
 enum class CheckType(parent: CheckType?) {
 
     ALL(null),
+    STAFF(ALL),
     MOVING(ALL),
     MOVING_SURVIVAL_FLY(MOVING);
 

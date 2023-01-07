@@ -19,6 +19,9 @@ import cn.nukkit.Player
 import cn.nukkit.plugin.PluginBase
 import cn.nukkit.utils.Config
 import cn.nukkit.utils.TextFormat
+import net.catrainbow.nocheatplus.actions.ActionFactory
+import net.catrainbow.nocheatplus.actions.ActionType
+import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.components.NoCheatPlusAPI
 import net.catrainbow.nocheatplus.components.config.NCPBanConfig
 import net.catrainbow.nocheatplus.components.config.NCPConfigCom
@@ -29,6 +32,7 @@ import net.catrainbow.nocheatplus.feature.NCPListener
 import net.catrainbow.nocheatplus.logging.NCPLogger
 import net.catrainbow.nocheatplus.logging.NCPLoggerCom
 import net.catrainbow.nocheatplus.players.PlayerData
+import net.catrainbow.nocheatplus.utilities.NCPTimeTool
 
 /**
  * NoCheatPlus 主类
@@ -113,6 +117,39 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun getNCPBanRecord(): Config {
         return (this.getNCPComponent("NCP AutoBan") as NCPBanConfig).getRecord()
+    }
+
+    override fun isPlayerBan(player: Player): Boolean {
+        if (!this.getNCPBanRecord().exists(player.name)) return false
+        else {
+            val now = NCPTimeTool.nowTime
+            val end = NCPTimeTool.stringToTime(this.getNCPBanRecord().getStringList(player.name)[1])
+            if (NCPTimeTool.canUnBan(now, end)) {
+                val config = this.getNCPBanRecord()
+                config.remove(player.name)
+                config.save(true)
+                return false
+            } else return true
+        }
+    }
+
+    override fun kickPlayer(player: Player, type: CheckType) {
+        val data = this.getPlayerProvider(player)
+        ActionFactory(player, data.getViolationData(CheckType.STAFF), ActionType.KICK).build().forceDoAction(0, 0, 0)
+    }
+
+    override fun banPlayer(player: Player, days: Int, hours: Int, minutes: Int) {
+        val data = this.getPlayerProvider(player)
+        ActionFactory(player, data.getViolationData(CheckType.STAFF), ActionType.BAN).build()
+            .forceDoAction(days, hours, minutes)
+    }
+
+    override fun banPlayer(player: Player, days: Int, hours: Int) {
+        this.banPlayer(player, days, hours, 0)
+    }
+
+    override fun banPlayer(player: Player, days: Int) {
+        this.banPlayer(player, days, 0, 0)
     }
 
 }

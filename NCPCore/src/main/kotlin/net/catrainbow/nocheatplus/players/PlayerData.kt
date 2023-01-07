@@ -44,6 +44,12 @@ open class PlayerData(player: Player) : IPlayerData {
     //Setback
     private val setbackStorage = SetbackStorage()
 
+    init {
+        for (type in CheckType.values()) {
+            violations[type.name] = ViolationData(type, this.getPlayer())
+        }
+    }
+
     fun update(packet: WrapperInputPacket) {
         this.from = packet.to
     }

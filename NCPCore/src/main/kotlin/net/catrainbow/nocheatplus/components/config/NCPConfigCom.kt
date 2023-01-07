@@ -46,6 +46,7 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.protection_command_hide_message = config.getString("protection.command.hide.message")
         ConfigData.protection_command_commands = config.getStringList("protection.command.hide.commands") as ArrayList
         ConfigData.string_kick_message = config.getString("string.kick")
+        ConfigData.string_ban_message = config.getString("string.ban")
     }
 
 }

@@ -13,10 +13,13 @@
  */
 package net.catrainbow.nocheatplus.components.config
 
+import cn.nukkit.Player
 import cn.nukkit.utils.Config
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.components.registry.INCPComponent
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
+import net.catrainbow.nocheatplus.utilities.NCPTimeTool
 
 /**
  * 封禁数据储存
@@ -34,6 +37,18 @@ class NCPBanConfig : NCPComponent(), INCPComponent {
 
     fun getRecord(): Config {
         return Config("${NoCheatPlus.instance.dataFolder}/banRecord.yml", 2)
+    }
+
+    fun formatMessage(player: Player): String {
+        val list = this.getRecord().getStringList(player.name)
+        val reason = list[0]
+        val endTime = list[1]
+        val endTimeLoc = NCPTimeTool.stringToTime(endTime)
+        val array = NCPTimeTool.getTimeBetween2(NCPTimeTool.nowTime, endTimeLoc)
+        return ConfigData.string_ban_message.replace("@player", player.name).replace("@days", array[0].toString())
+            .replace("@hours", array[1].toString()).replace("@minutes", array[2].toString())
+            .replace("@seconds", array[3].toString()).replace("@hack", reason).replace("@next", "\n")
+            .replace("@end", endTime)
     }
 
 }

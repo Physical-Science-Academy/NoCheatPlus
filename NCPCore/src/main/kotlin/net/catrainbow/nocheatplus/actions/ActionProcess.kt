@@ -38,7 +38,7 @@ class ActionProcess(
     private val actionType: ActionType,
 ) {
 
-    fun getActionType(): ActionType {
+    private fun getActionType(): ActionType {
         return this.actionType
     }
 
@@ -50,8 +50,58 @@ class ActionProcess(
         return this.violationData
     }
 
-    fun forceDoAction(data: CheckActionData) {
+    fun forceDoAction(days: Int, hours: Int, minutes: Int) {
+        val actionPacket = WrapperActionPacket(player)
+        actionPacket.actionType = this.getActionType()
+        val actionEvent = WrapperPacketEvent()
+        actionEvent.player = player
+        NoCheatPlus.instance.server.pluginManager.callEvent(actionEvent)
+        if (actionEvent.isCancelled) return
+        val history = NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getViolationData(checkType).getHistory()
+        when (this.actionType) {
+            ActionType.SETBACK -> {
+                val setBack = NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getSetbackStorage()
+                if (!setBack.isEmpty()) {
+                    val setBackEntry = setBack.getFreeSetback()
+                    NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getSetbackStorage().pop()
+                    NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getViolationData(this.checkType)
+                        .getHistory().setLastSetBack(setBackEntry)
+                    if (setBackEntry.canLagBack()) {
+                        val packet = WrapperSetBackPacket(this.getPlayer())
+                        packet.target = setBackEntry.toLocation()
+                        packet.checkType = this.checkType
+                        val setBackEvent = WrapperPacketEvent()
+                        setBackEvent.packet = packet
+                        setBackEvent.player = player
+                        NoCheatPlus.instance.server.pluginManager.callEvent(setBackEvent)
+                        if (!setBackEvent.isCancelled) player.teleport((setBackEvent.packet as WrapperSetBackPacket).target)
+                    }
+                }
+            }
+            ActionType.LOG -> {
+                if (System.currentTimeMillis() - history.getLastLog() > ConfigData.action_waring_delay * 1000) {
+                    NoCheatPlus.instance.getPlayerProvider(player).getViolationData(checkType).getHistory()
+                        .setLastLog(System.currentTimeMillis())
+                    NoCheatPlus.instance.getNCPLogger().info("${player.name} failed $checkType Check")
+                }
+            }
 
+            ActionType.KICK -> {
+                ACheckData.plus(this.getPlayer())
+                val disconnectPacket = DisconnectPacket()
+                disconnectPacket.hideDisconnectionScreen = false
+                disconnectPacket.message = this.formatMessage(ConfigData.string_kick_message)
+                player.dataPacket(disconnectPacket)
+            }
+
+            ActionType.BAN -> {
+                ACheckData.clear(player)
+                val banAction = BanAction(days, hours, minutes)
+                this.doBan(banAction)
+            }
+
+            else -> {}
+        }
     }
 
     fun doAction(data: CheckActionData) {
@@ -150,7 +200,7 @@ class ActionProcess(
 
     private fun formatMessage(string: String): String {
         return string.replace("@player", player.name).replace("@vl", this.violationData.getVL().toString())
-            .replace("@hack", this.checkType.name)
+            .replace("@hack", this.checkType.name).replace("@next", "\n")
     }
 
 }

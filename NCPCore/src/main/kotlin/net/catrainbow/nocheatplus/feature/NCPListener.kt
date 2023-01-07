@@ -98,6 +98,9 @@ class NCPListener : Listener {
     private fun playerJoins(event: PlayerJoinEvent) {
         val data = PlayerData(event.player)
         PlayerData.allPlayersData[data.getPlayerName()] = data
+        if (NoCheatPlus.instance.isPlayerBan(event.player)){
+
+        }
     }
 
     @EventHandler
