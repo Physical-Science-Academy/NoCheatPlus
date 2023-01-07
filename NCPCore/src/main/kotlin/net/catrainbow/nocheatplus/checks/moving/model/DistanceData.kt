@@ -11,26 +11,21 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package net.catrainbow.nocheatplus.checks.moving.model
 
-package net.catrainbow.nocheatplus.checks.moving
-
-import cn.nukkit.Player
-import cn.nukkit.level.Location
-import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
+import cn.nukkit.level.Position
 import net.catrainbow.nocheatplus.components.data.ICheckData
+import kotlin.math.abs
 
 /**
- * 移动数据储存
- *
- * @author Catrainbow
+ * 处理移动距离
  */
-class MovingData : ICheckData {
+class DistanceData(val from: Position, val to: Position) : ICheckData {
 
-    /**
-     * 处理数据
-     */
-    fun handleMovingData(player: Player, from: Location, to: Location, data: DistanceData) {
-
-    }
+    val toY = to.getY()
+    val fromY = from.getY()
+    val xDiff = abs(to.x - from.x)
+    val yDiff = abs(to.x - from.x)
+    val zDiff = abs(to.z - from.z)
 
 }

@@ -14,26 +14,29 @@
 package net.catrainbow.nocheatplus.feature.moving
 
 import cn.nukkit.event.Event
+import cn.nukkit.event.player.PlayerMoveEvent
+import cn.nukkit.level.Position
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
 import net.catrainbow.nocheatplus.feature.ITickListener
-import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
-import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 
 /**
- * 移动监听器
+ * 移动数据处理、
  *
  * @author Catrainbow
  */
-class MovingListener : ITickListener {
+class MovingDataListener : ITickListener {
 
     override fun onTick(event: Event) {
-        if (event is WrapperPacketEvent) this.verifyInputPacket(event)
-    }
 
-    private fun verifyInputPacket(event: WrapperPacketEvent) {
-        val player = event.player
-        val data = NoCheatPlus.instance.getPlayerProvider(player)
-        if (event.packet is WrapperInputPacket) data.update(event.packet as WrapperInputPacket)
+        //更新数据
+        if (event is PlayerMoveEvent) {
+            val player = event.player
+            val distanceData = DistanceData(Position.fromObject(event.from), Position.fromObject(event.to))
+            NoCheatPlus.instance.getPlayerProvider(player).movingData.handleMovingData(
+                player, event.from, event.to, distanceData
+            )
+        }
     }
 
     override fun onEnabled() {

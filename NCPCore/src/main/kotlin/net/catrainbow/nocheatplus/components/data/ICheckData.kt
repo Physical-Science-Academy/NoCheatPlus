@@ -11,26 +11,10 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package net.catrainbow.nocheatplus.checks.moving
-
-import cn.nukkit.Player
-import cn.nukkit.level.Location
-import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
-import net.catrainbow.nocheatplus.components.data.ICheckData
+package net.catrainbow.nocheatplus.components.data
 
 /**
- * 移动数据储存
- *
  * @author Catrainbow
  */
-class MovingData : ICheckData {
-
-    /**
-     * 处理数据
-     */
-    fun handleMovingData(player: Player, from: Location, to: Location, data: DistanceData) {
-
-    }
-
+interface ICheckData : IData {
 }

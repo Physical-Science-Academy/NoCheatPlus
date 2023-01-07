@@ -17,6 +17,7 @@ package net.catrainbow.nocheatplus.players
 import cn.nukkit.Player
 import cn.nukkit.level.Location
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.checks.moving.MovingData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 
 /**
@@ -32,6 +33,7 @@ open class PlayerData(player: Player) : IPlayerData {
 
     private val name = player.name
     var from: Location = player.location
+    val movingData: MovingData = MovingData()
 
     fun update(packet: WrapperInputPacket) {
         this.from = packet.to

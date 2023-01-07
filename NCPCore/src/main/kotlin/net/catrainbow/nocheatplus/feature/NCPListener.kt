@@ -18,6 +18,7 @@ import cn.nukkit.event.EventHandler
 import cn.nukkit.event.EventPriority
 import cn.nukkit.event.Listener
 import cn.nukkit.event.player.PlayerJoinEvent
+import cn.nukkit.event.player.PlayerMoveEvent
 import cn.nukkit.event.player.PlayerQuitEvent
 import cn.nukkit.plugin.Plugin
 import net.catrainbow.nocheatplus.NoCheatPlus
@@ -69,6 +70,10 @@ class NCPListener : Listener {
             this, NoCheatPlus.instance, WrapperPacketEvent::class.java, { playerInputs(it) }, true,
             EventPriority.HIGHEST
         )
+        registerEvent(
+            this, NoCheatPlus.instance, PlayerMoveEvent::class.java, { playerMoves(it) }, true,
+            EventPriority.HIGHEST
+        )
         registerTickListener()
     }
 
@@ -88,6 +93,12 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerInputs(event: WrapperPacketEvent) {
+        for (listener in listeners)
+            checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerMoves(event: PlayerMoveEvent) {
         for (listener in listeners)
             checkEvent(listener, event)
     }
