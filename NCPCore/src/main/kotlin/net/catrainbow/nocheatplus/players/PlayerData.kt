@@ -20,6 +20,7 @@ import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.ViolationData
 import net.catrainbow.nocheatplus.checks.moving.MovingData
+import net.catrainbow.nocheatplus.checks.moving.location.setback.SetbackStorage
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 
 /**
@@ -38,7 +39,10 @@ open class PlayerData(player: Player) : IPlayerData {
     val movingData: MovingData = MovingData()
 
     //Violation LevelData
-    val violations: HashMap<String, ViolationData> = HashMap()
+    private val violations: HashMap<String, ViolationData> = HashMap()
+
+    //Setback
+    private val setbackStorage = SetbackStorage()
 
     fun update(packet: WrapperInputPacket) {
         this.from = packet.to
@@ -54,6 +58,10 @@ open class PlayerData(player: Player) : IPlayerData {
 
     fun containCheckType(checkType: CheckType): Boolean {
         return this.containCheckType(checkType.name)
+    }
+
+    fun getSetbackStorage(): SetbackStorage {
+        return this.setbackStorage
     }
 
     private fun containCheckType(checkType: String): Boolean {

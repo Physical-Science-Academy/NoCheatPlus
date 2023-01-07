@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.checks
 
 import cn.nukkit.Player
+import cn.nukkit.level.Position
 import cn.nukkit.math.Vector3
 import cn.nukkit.scheduler.Task
 import net.catrainbow.nocheatplus.NoCheatPlus
@@ -46,6 +47,7 @@ class NCPTickTask : Task() {
         val data = NoCheatPlus.instance.getPlayerProvider(player)
         wrapperInputPacket.from = data.from
         wrapperInputPacket.to = player.location
+        wrapperInputPacket.position = Position.fromObject(wrapperInputPacket.to)
         wrapperInputPacket.motion =
             Vector3(data.movingData.getMotionX(), data.movingData.getMotionY(), data.movingData.getMotionZ())
         wrapperInputPacket.speed = data.movingData.getSpeed()
