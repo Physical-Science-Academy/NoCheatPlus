@@ -20,7 +20,9 @@ package net.catrainbow.nocheatplus.checks
  */
 enum class CheckType(parent: CheckType?) {
 
-    ALL(null);
+    ALL(null),
+    MOVING(ALL),
+    MOVING_SURVIVAL_FLY(MOVING);
 
     companion object {
 

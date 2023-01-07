@@ -17,11 +17,13 @@ import cn.nukkit.event.Event
 import cn.nukkit.event.EventHandler
 import cn.nukkit.event.EventPriority
 import cn.nukkit.event.Listener
+import cn.nukkit.event.player.PlayerCommandPreprocessEvent
 import cn.nukkit.event.player.PlayerJoinEvent
 import cn.nukkit.event.player.PlayerMoveEvent
 import cn.nukkit.event.player.PlayerQuitEvent
 import cn.nukkit.plugin.Plugin
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.feature.chat.ChatTickListener
 import net.catrainbow.nocheatplus.feature.moving.MovingDataListener
 import net.catrainbow.nocheatplus.feature.moving.MovingListener
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
@@ -75,12 +77,17 @@ class NCPListener : Listener {
             this, NoCheatPlus.instance, PlayerMoveEvent::class.java, { playerMoves(it) }, true,
             EventPriority.HIGHEST
         )
+        registerEvent(
+            this, NoCheatPlus.instance, PlayerCommandPreprocessEvent::class.java, { playerOnCommands(it) }, true,
+            EventPriority.HIGHEST
+        )
         registerTickListener()
     }
 
     private fun registerTickListener() {
         listeners.add(MovingListener())
         listeners.add(MovingDataListener())
+        listeners.add(ChatTickListener())
     }
 
     private fun checkEvent(listener: ITickListener, event: Event) {
@@ -109,6 +116,12 @@ class NCPListener : Listener {
     private fun playerLeave(event: PlayerQuitEvent) {
         val name = event.player.name
         PlayerData.allPlayersData.remove(name)
+    }
+
+    @EventHandler
+    private fun playerOnCommands(event: PlayerCommandPreprocessEvent) {
+        for (listener in listeners)
+            checkEvent(listener, event)
     }
 
 }

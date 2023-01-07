@@ -15,6 +15,7 @@
 package net.catrainbow.nocheatplus.components
 
 import cn.nukkit.Player
+import cn.nukkit.utils.Config
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.components.registry.NCPComManager
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
@@ -48,5 +49,7 @@ interface NoCheatPlusAPI {
     fun getNCPComponent(comName: String): NCPComponent
 
     fun getNCPLogger(): NCPLogger
+
+    fun getNCPConfig(): Config
 
 }

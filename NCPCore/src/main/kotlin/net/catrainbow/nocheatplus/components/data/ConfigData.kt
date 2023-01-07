@@ -26,6 +26,10 @@ class ConfigData : IConfigData {
         var logging_auto_delete_days = 1
         var logging_command = false
         var logging_violation = false
+        var action_waring_delay = 10
+        var protection_command_hide_active = true
+        var protection_command_hide_message = "§c§lNCP §7>> §rYou do not have permission to run this command."
+        var protection_command_commands: ArrayList<String> = ArrayList()
 
     }
 

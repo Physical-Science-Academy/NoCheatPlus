@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.checks
 
 import cn.nukkit.Player
+import net.catrainbow.nocheatplus.actions.ActionHistory
 import net.catrainbow.nocheatplus.actions.ActionProcess
 import net.catrainbow.nocheatplus.actions.ActionType
 
@@ -35,6 +36,8 @@ class ViolationData(type: CheckType, private val player: Player) {
     private var multiply = 1.0
 
     private var actions: ArrayList<ActionProcess> = ArrayList()
+
+    private var history: ActionHistory = ActionHistory()
 
     fun addVL(vl: Double) {
         this.addedVL += vl
@@ -61,8 +64,12 @@ class ViolationData(type: CheckType, private val player: Player) {
     private fun executeAction() {
         if (actions.isEmpty()) return
         val action = actions[0]
+        val violations = action.getViolationData()
+        val checkType = action.getCheckType()
+        val player = action.getPlayer()
         when (action.getActionType()) {
             ActionType.WARING -> {
+                val lastWaring = this.history.getLastWaring()
 
             }
 

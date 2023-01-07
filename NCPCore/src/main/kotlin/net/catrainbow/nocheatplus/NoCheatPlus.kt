@@ -17,8 +17,10 @@ package net.catrainbow.nocheatplus
 
 import cn.nukkit.Player
 import cn.nukkit.plugin.PluginBase
+import cn.nukkit.utils.Config
 import cn.nukkit.utils.TextFormat
 import net.catrainbow.nocheatplus.components.NoCheatPlusAPI
+import net.catrainbow.nocheatplus.components.config.NCPConfigCom
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.components.registry.NCPComManager
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
@@ -102,6 +104,10 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun getNCPLogger(): NCPLogger {
         return (this.getNCPComponent("NCP Logger") as NCPLoggerCom).getLogger()
+    }
+
+    override fun getNCPConfig(): Config {
+        return (this.getNCPComponent("NCP Config") as NCPConfigCom).getNCPConfig()
     }
 
 }

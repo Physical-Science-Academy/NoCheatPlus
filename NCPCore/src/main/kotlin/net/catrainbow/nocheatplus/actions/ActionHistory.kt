@@ -11,22 +11,25 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package net.catrainbow.nocheatplus.checks
-
-import net.catrainbow.nocheatplus.components.registry.INCPComponent
-import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
+package net.catrainbow.nocheatplus.actions
 
 /**
- * 检测项目接口
+ * 保存处罚记录
  *
  * @author Catrainbow
  */
-interface ICheckBase : INCPComponent {
+class ActionHistory {
 
-    val baseName: String
-    val typeName: CheckType
+    private var lastWaring: Long = System.currentTimeMillis()
+    private var lastCancel: Long = System.currentTimeMillis()
+    private var lastLog: Long = System.currentTimeMillis();
 
-    fun onCheck(event: WrapperPacketEvent)
+    fun getLastWaring(): Long {
+        return this.lastWaring
+    }
+
+    fun setLastWaring(access: Long) {
+        this.lastWaring = access
+    }
 
 }

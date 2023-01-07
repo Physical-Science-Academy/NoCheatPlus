@@ -27,6 +27,10 @@ class ActionFactory(
     private val actionType: ActionType,
 ) {
 
+    companion object {
+        val actionDataMap: HashMap<String, CheckActionData> = HashMap()
+    }
+
     fun build(): ActionProcess {
         return ActionProcess(player, violationData, violationData.getCheckType(), actionType)
     }

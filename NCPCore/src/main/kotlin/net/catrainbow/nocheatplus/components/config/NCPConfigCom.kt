@@ -26,8 +26,12 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         this.getRegisterCom().setVersion("1.0.0")
         this.getRegisterCom().setAuthor("Catrainbow")
         NoCheatPlus.instance.saveResource("ncpconfig.yml")
-        val config = Config("${NoCheatPlus.instance.dataFolder}/ncpconfig.yml", 2)
+        val config = this.getNCPConfig()
         this.inputConfig(config)
+    }
+
+    fun getNCPConfig(): Config {
+        return Config("${NoCheatPlus.instance.dataFolder}/ncpconfig.yml", 2)
     }
 
     private fun inputConfig(config: Config) {
@@ -37,6 +41,10 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.logging_auto_delete_days = config.getInt("auto-delete-days")
         ConfigData.logging_command = config.getBoolean("logging.extended.command")
         ConfigData.logging_violation = config.getBoolean("logging.extended.violation")
+        ConfigData.action_waring_delay = config.getInt("actions.waring_delay")
+        ConfigData.protection_command_hide_active = config.getBoolean("protection.command.hide.active")
+        ConfigData.protection_command_hide_message = config.getString("protection.command.hide.message")
+        ConfigData.protection_command_commands = config.getStringList("protection.command.hide.commands") as ArrayList
     }
 
 }

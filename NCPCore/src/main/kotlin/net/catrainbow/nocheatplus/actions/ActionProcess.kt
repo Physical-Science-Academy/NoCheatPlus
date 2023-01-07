@@ -33,4 +33,16 @@ class ActionProcess(
         return this.actionType
     }
 
+    fun getCheckType(): CheckType {
+        return this.checkType;
+    }
+
+    fun getViolationData(): ViolationData {
+        return this.violationData;
+    }
+
+    fun getPlayer(): Player {
+        return this.player;
+    }
+
 }

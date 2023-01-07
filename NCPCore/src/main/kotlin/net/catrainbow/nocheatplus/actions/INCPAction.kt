@@ -11,22 +11,12 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package net.catrainbow.nocheatplus.checks
-
-import net.catrainbow.nocheatplus.components.registry.INCPComponent
-import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
+package net.catrainbow.nocheatplus.actions
 
 /**
- * 检测项目接口
+ * NCP处罚类型
  *
  * @author Catrainbow
  */
-interface ICheckBase : INCPComponent {
-
-    val baseName: String
-    val typeName: CheckType
-
-    fun onCheck(event: WrapperPacketEvent)
-
+interface INCPAction {
 }

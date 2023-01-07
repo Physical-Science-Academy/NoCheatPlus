@@ -23,6 +23,7 @@ enum class ActionType(private val type: String) {
     SETBACK("SETBACK"),
     KICK("KICK"),
     BAN("BAN"),
+    LOG("LOG"),
     DEFAULT("DEFAULT");
 
     companion object {
