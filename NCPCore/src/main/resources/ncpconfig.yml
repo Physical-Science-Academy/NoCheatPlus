@@ -1,0 +1,10 @@
+#NoCheatPlus AntiCheat Config
+config-version:
+  notify: false
+  version: 1000
+logging:
+  active: true
+  auto-delete-days: 1
+  extended:
+    command: true
+    violation: true

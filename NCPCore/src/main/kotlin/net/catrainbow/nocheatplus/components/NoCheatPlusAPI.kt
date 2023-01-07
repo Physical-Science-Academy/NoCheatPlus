@@ -18,6 +18,7 @@ import cn.nukkit.Player
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.components.registry.NCPComManager
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
+import net.catrainbow.nocheatplus.logging.NCPLogger
 import net.catrainbow.nocheatplus.players.PlayerData
 
 /**
@@ -45,5 +46,7 @@ interface NoCheatPlusAPI {
     fun getPlayerProvider(player: String): PlayerData
 
     fun getNCPComponent(comName: String): NCPComponent
+
+    fun getNCPLogger(): NCPLogger
 
 }

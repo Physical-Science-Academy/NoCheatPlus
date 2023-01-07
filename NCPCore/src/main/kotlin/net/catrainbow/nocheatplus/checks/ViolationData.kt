@@ -62,9 +62,15 @@ class ViolationData(type: CheckType, private val player: Player) {
         if (actions.isEmpty()) return
         val action = actions[0]
         when (action.getActionType()) {
-           
+            ActionType.WARING -> {
+
+            }
 
         }
+    }
+
+    fun getCheckType(): CheckType {
+        return this.checkType
     }
 
 }

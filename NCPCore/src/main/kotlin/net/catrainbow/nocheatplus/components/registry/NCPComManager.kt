@@ -15,7 +15,9 @@ package net.catrainbow.nocheatplus.components.registry
 
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.command.NCPCommandCom
+import net.catrainbow.nocheatplus.components.config.NCPConfigCom
 import net.catrainbow.nocheatplus.components.task.NCPTaskCom
+import net.catrainbow.nocheatplus.logging.NCPLoggerCom
 
 /**
  * NCP模块管理器
@@ -39,14 +41,24 @@ class NCPComManager {
             } ${component.getRegisterCom().getVersion()}"
         )
         this.components[component.getRegisterCom().getName()] = component
+        NoCheatPlus.instance.getNCPLogger().info("加载模块 " + component.getRegisterCom().getName() + " 成功")
     }
 
     /**
      * 启用时注册默认模块
      */
     fun onEnabled() {
+        NoCheatPlus.instance.getNCPLogger().info("NoCheatPlus 已启用!")
+        this.registerCom(NCPConfigCom())
         this.registerCom(NCPTaskCom())
         this.registerCom(NCPCommandCom())
+        this.registerCom(NCPLoggerCom())
+    }
+
+    fun onDisabled() {
+        for (com in this.components.values) {
+            com.onDisabled()
+        }
     }
 
     fun getComponents(): HashMap<String, NCPComponent> {

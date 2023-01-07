@@ -19,9 +19,12 @@ import cn.nukkit.Player
 import cn.nukkit.plugin.PluginBase
 import cn.nukkit.utils.TextFormat
 import net.catrainbow.nocheatplus.components.NoCheatPlusAPI
+import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.components.registry.NCPComManager
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
 import net.catrainbow.nocheatplus.feature.NCPListener
+import net.catrainbow.nocheatplus.logging.NCPLogger
+import net.catrainbow.nocheatplus.logging.NCPLoggerCom
 import net.catrainbow.nocheatplus.players.PlayerData
 
 /**
@@ -45,8 +48,16 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
         this.ncpComManager = NCPComManager()
         this.ncpComManager.onEnabled()
         this.server.pluginManager.registerEvents(NCPListener(), this)
+        if (ConfigData.config_version_notify) {
+            this.logger.info("你正在使用的配置文件版本为: ${ConfigData.config_version_version}")
+        }
+        this.logger.info("NoCheatPlus已自动删除${this.getNCPLogger().getDeleteCount()}个过期日志文件")
         this.logger.info("${TextFormat.YELLOW}NoCheatPlus loads successfully!")
-        this.logger.info("${TextFormat.BLUE}本插件为开源插件，源码地址: https://github.com/Physical-Science-Academy/NoCheatPlus/")
+        this.logger.info("${TextFormat.BLUE}开源地址: https://github.com/Physical-Science-Academy/NoCheatPlus/")
+    }
+
+    override fun onDisable() {
+        this.ncpComManager.onDisabled()
     }
 
     override fun getNCPProvider(): NoCheatPlus {
@@ -87,6 +98,10 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun getNCPComponent(comName: String): NCPComponent {
         return this.getAllComponents()[comName]!!
+    }
+
+    override fun getNCPLogger(): NCPLogger {
+        return (this.getNCPComponent("NCP Logger") as NCPLoggerCom).getLogger()
     }
 
 }
