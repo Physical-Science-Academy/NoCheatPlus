@@ -16,6 +16,8 @@ package net.catrainbow.nocheatplus.command
 import cn.nukkit.command.Command
 import cn.nukkit.command.CommandSender
 import cn.nukkit.command.data.CommandParameter
+import cn.nukkit.utils.TextFormat
+import net.catrainbow.nocheatplus.NoCheatPlus
 
 /**
  * NCP命令
@@ -56,6 +58,14 @@ class NCPCommand : Command("ncp") {
                 return execute(sender, label, args)
             }
         }
+        val default = StringBuilder("${TextFormat.YELLOW}NoCheatPlus Build-${NoCheatPlus.PLUGIN_VERSION}")
+        for (subCommand in subCommands) {
+            val str2 = StringBuilder()
+            for (aliases in subCommand.getAliases())
+                str2.append("$aliases/")
+            default.append("\n").append(str2.toString())
+        }
+        sender!!.sendMessage(default.toString())
         return true
     }
 
