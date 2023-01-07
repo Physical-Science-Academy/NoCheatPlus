@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.components.registry
 
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.command.NCPCommandCom
 import net.catrainbow.nocheatplus.components.task.NCPTaskCom
 
 /**
@@ -45,6 +46,7 @@ class NCPComManager {
      */
     fun onEnabled() {
         this.registerCom(NCPTaskCom())
+        this.registerCom(NCPCommandCom())
     }
 
     fun getComponents(): HashMap<String, NCPComponent> {
