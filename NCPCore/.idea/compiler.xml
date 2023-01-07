@@ -6,11 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="consoleApp" />
+        <module name="NoCheatPlus" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="consoleApp" target="1.8" />
+      <module name="NoCheatPlus" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
