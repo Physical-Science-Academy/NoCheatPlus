@@ -1,7 +1,9 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com)
 # NoCheatPlus
 一款基于基岩版内核Nukkit以及其衍生核心开发的先进反作弊,作者为Catrainbow233。
+
 其目标为满足服务器的安全需求。
+
 欢迎贡献代码，star本项目以关注我们。
 ## 项目状态
 重构中
@@ -36,7 +38,8 @@
 
 ## 配置
 
-接下来启动服务器。之后，你会看到`plugins/`下生成了一个名为`NoCheatPlus`的目录。让我们首先打开其中的配置文件 `config.yml` 。
+接下来启动服务器。之后，你会看到`plugins/`下生成了一个名为`NoCheatPlus`的目录。
+让我们首先打开其中的配置文件 `config.yml` 。
 ~~~yaml
 待补充
 ~~~
