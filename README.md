@@ -1,10 +1,11 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com)
 # NoCheatPlus
 一款基于基岩版内核Nukkit以及其衍生核心开发的先进反作弊,作者为Catrainbow233。
+
 其目标为满足服务器的安全需求。
+
 欢迎贡献代码，star本项目以关注我们。
-## 项目状态
-重构中
+
 ## 🎉特性
 - [x] 飞行检测
 - [x] 鞘翅飞行检测
@@ -31,7 +32,8 @@
 
 在仓库[Releases](https://github.com/Physical-Science-Academy/NoCheatPlus/releases)里下载最新版本 `NoCheatPlus.jar` ，将其放入服务器的 `plugins/` 文件夹内。
 在使用插件之前，您必须安装以下依赖
-暂无
+
+- 暂无
 
 ## 配置
 
@@ -42,4 +44,12 @@
 
 # 视频教程
 暂无
+
+## 开发
+
+待插件稳定后补充
+
+## 注意
+
+项目目前正处于重构状态，不保证可用性和兼容性
 
