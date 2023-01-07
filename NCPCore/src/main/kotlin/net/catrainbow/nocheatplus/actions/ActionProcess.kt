@@ -45,6 +45,10 @@ class ActionProcess(
         return this.violationData
     }
 
+    fun forceDoAction(data: CheckActionData) {
+
+    }
+
     fun doAction(data: CheckActionData) {
         val history = NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getViolationData(checkType).getHistory()
         when (this.actionType) {
@@ -87,6 +91,7 @@ class ActionProcess(
             }
 
             ActionType.KICK -> {
+                if (this.violationData.getVL() < data.kick || !data.enableKick) return
 
             }
 

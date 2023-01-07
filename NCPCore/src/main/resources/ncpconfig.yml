@@ -30,4 +30,5 @@ checks:
       actions: "cancel vl>30&&log vl>10 break=10&&warn vl>10 message=fly_short&&kick vl>50&&ban repeat=3"
 
 string:
+  kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server"
   fly_short: "@player could be flying hack @vl"

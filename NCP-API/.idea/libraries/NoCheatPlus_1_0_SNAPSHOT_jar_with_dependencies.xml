@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../NCPCore/target/NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

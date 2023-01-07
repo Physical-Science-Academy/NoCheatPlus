@@ -30,6 +30,7 @@ class ConfigData : IConfigData {
         var protection_command_hide_active = true
         var protection_command_hide_message = "§c§lNCP §7>> §rYou do not have permission to run this command."
         var protection_command_commands: ArrayList<String> = ArrayList()
+        var string_kick_message = "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server"
 
     }
 
