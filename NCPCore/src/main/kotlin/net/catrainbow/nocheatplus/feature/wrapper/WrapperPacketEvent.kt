@@ -11,25 +11,31 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.catrainbow.nocheatplus.feature.wrapper;
+package net.catrainbow.nocheatplus.feature.wrapper
 
-import cn.nukkit.Player;
-import cn.nukkit.event.Event;
-import cn.nukkit.event.HandlerList;
+import cn.nukkit.Player
+import cn.nukkit.event.Cancellable
+import cn.nukkit.event.Event
+import cn.nukkit.event.HandlerList
 
 /**
- * 验证数据包事件
+ * 处理数据包事件
  *
  * @author Catrainbow
  */
-public class WrapperPacketEvent extends Event {
+class WrapperPacketEvent : Event(), Cancellable {
 
-    public Player player;
-    public WrapperPacket packet;
-    private static final HandlerList handlers = new HandlerList();
+    lateinit var player: Player
+    lateinit var packet: WrapperPacket
 
-    public static HandlerList getHandlers() {
-        return handlers;
+    companion object {
+        private val handlers = HandlerList()
+
+        @JvmStatic
+        fun getHandlers(): HandlerList {
+            return handlers
+        }
+
     }
 
 }
