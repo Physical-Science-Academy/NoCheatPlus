@@ -14,10 +14,13 @@
 package net.catrainbow.nocheatplus.checks
 
 import cn.nukkit.Player
+import cn.nukkit.math.Vector3
 import cn.nukkit.scheduler.Task
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
+import kotlin.math.abs
 
 /**
  * 循坏任务
@@ -42,6 +45,18 @@ class NCPTickTask : Task() {
         val data = NoCheatPlus.instance.getPlayerProvider(player)
         wrapperInputPacket.from = data.from
         wrapperInputPacket.to = player.location
+        wrapperInputPacket.motion =
+            Vector3(data.movingData.getMotionX(), data.movingData.getMotionY(), data.movingData.getMotionZ())
+        wrapperInputPacket.speed = data.movingData.getSpeed()
+        val yaw = abs(wrapperInputPacket.to.yaw - wrapperInputPacket.from.yaw)
+        val pitch = abs(wrapperInputPacket.to.pitch - wrapperInputPacket.from.pitch)
+        wrapperInputPacket.rotation = Vector3(pitch, yaw, pitch)
+        wrapperInputPacket.inputMode = player.loginChainData.deviceOS
+        wrapperInputPacket.clientPlayMode = player.gamemode
+        val event = WrapperPacketEvent()
+        event.player = player
+        event.packet = wrapperInputPacket
+        NoCheatPlus.instance.server.pluginManager.callEvent(event)
     }
 
 }

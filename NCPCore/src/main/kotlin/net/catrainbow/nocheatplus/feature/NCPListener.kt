@@ -22,6 +22,7 @@ import cn.nukkit.event.player.PlayerMoveEvent
 import cn.nukkit.event.player.PlayerQuitEvent
 import cn.nukkit.plugin.Plugin
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.feature.moving.MovingDataListener
 import net.catrainbow.nocheatplus.feature.moving.MovingListener
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import net.catrainbow.nocheatplus.players.PlayerData
@@ -79,6 +80,7 @@ class NCPListener : Listener {
 
     private fun registerTickListener() {
         listeners.add(MovingListener())
+        listeners.add(MovingDataListener())
     }
 
     private fun checkEvent(listener: ITickListener, event: Event) {
