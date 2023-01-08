@@ -35,6 +35,7 @@ import net.catrainbow.nocheatplus.logging.NCPLoggerCom
 import net.catrainbow.nocheatplus.permission.NCPPermissionCom
 import net.catrainbow.nocheatplus.players.PlayerData
 import net.catrainbow.nocheatplus.utilities.NCPTimeTool
+import net.catrainbow.nocheatplus.i18n.I18N.Companion.getString
 
 /**
  * NoCheatPlus 主类
@@ -53,16 +54,17 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     }
 
     override fun onEnable() {
-        this.logger.info("Loading NoCheatPlus $PLUGIN_VERSION...")
+        this.saveResource("translations.properties")
+        this.logger.info(getString("ncp.loading", PLUGIN_VERSION))
         this.ncpComManager = NCPComManager()
         this.ncpComManager.onEnabled()
         this.server.pluginManager.registerEvents(NCPListener(), this)
         if (ConfigData.config_version_notify) {
-            this.logger.info("你正在使用的配置文件版本为: ${ConfigData.config_version_version}")
+            this.logger.info(getString("ncp.currentConfigVersion", ConfigData.config_version_version))
         }
-        this.logger.info("NoCheatPlus已自动删除${this.getNCPLogger().getDeleteCount()}个过期日志文件")
-        this.logger.info("${TextFormat.YELLOW}NoCheatPlus loads successfully!")
-        this.logger.info("${TextFormat.BLUE}开源地址: https://github.com/Physical-Science-Academy/NoCheatPlus/")
+        this.logger.info(getString("ncp.autoDelete", this.getNCPLogger().getDeleteCount()))
+        this.logger.info("${TextFormat.YELLOW}${getString("ncp.loaded")}")
+        this.logger.info("${TextFormat.BLUE}${getString("ncp.link")}")
     }
 
     override fun onDisable() {
