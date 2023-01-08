@@ -14,6 +14,8 @@
 package net.catrainbow.nocheatplus.command
 
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.command.actions.KickCommand
+import net.catrainbow.nocheatplus.command.admin.ReloadCommand
 import net.catrainbow.nocheatplus.components.registry.INCPComponent
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
 
@@ -24,6 +26,8 @@ class NCPCommandCom : NCPComponent(), INCPComponent {
         this.getRegisterCom().setAuthor("Catrainbow")
         this.getRegisterCom().setVersion("1.0.0")
         NoCheatPlus.instance.server.commandMap.register("ncp", NCPCommand())
+        NCPCommand.subCommands.add(ReloadCommand())
+        NCPCommand.subCommands.add(KickCommand())
     }
 
 }

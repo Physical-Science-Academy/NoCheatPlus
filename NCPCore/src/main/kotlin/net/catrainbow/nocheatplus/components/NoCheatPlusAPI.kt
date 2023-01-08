@@ -72,4 +72,6 @@ interface NoCheatPlusAPI {
 
     fun getAllNCPCheck(): HashMap<String, Check>
 
+    fun hasPermission(player: Player, command: String): Boolean
+
 }

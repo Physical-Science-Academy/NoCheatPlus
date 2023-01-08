@@ -5,6 +5,8 @@ config-version:
 logging:
   active: true
   auto-delete-days: 1
+  debug: true
+  prefix: "§c§lNCP §7>> §r"
   extended:
     command: true
     violation: true
@@ -33,3 +35,9 @@ string:
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
   ban: "§c§lNCP §7>> §rYou are banned by NCP for §c@days,@hours,@minutes,@seconds§r because of using @hack @nextEndTime: @end"
   fly_short: "@player could be flying hack @vl"
+
+permission:
+  no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
+  policy:
+    - "nocheatplus.admin.all:reload,kick,ban"
+    - "nocheatplus.admin.helper:kick,ban"

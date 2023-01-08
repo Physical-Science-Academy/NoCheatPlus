@@ -21,6 +21,7 @@ import net.catrainbow.nocheatplus.components.config.NCPBanConfig
 import net.catrainbow.nocheatplus.components.config.NCPConfigCom
 import net.catrainbow.nocheatplus.components.task.NCPTaskCom
 import net.catrainbow.nocheatplus.logging.NCPLoggerCom
+import net.catrainbow.nocheatplus.permission.NCPPermissionCom
 
 /**
  * NCP模块管理器
@@ -58,6 +59,7 @@ class NCPComManager {
         this.registerCom(NCPTaskCom())
         this.registerCom(NCPCommandCom())
         this.registerCom(ActionCom())
+        this.registerCom(NCPPermissionCom())
         NoCheatPlus.instance.getNCPLogger().info("NoCheatPlus 已启用!")
     }
 

@@ -34,6 +34,10 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         return Config("${NoCheatPlus.instance.dataFolder}/ncpconfig.yml", 2)
     }
 
+    fun reload() {
+        this.inputConfig(this.getNCPConfig())
+    }
+
     private fun inputConfig(config: Config) {
         ConfigData.config_version_notify = config.getBoolean("config-version.notify")
         ConfigData.config_version_version = config.getInt("config-version.version")
@@ -41,12 +45,15 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.logging_auto_delete_days = config.getInt("auto-delete-days")
         ConfigData.logging_command = config.getBoolean("logging.extended.command")
         ConfigData.logging_violation = config.getBoolean("logging.extended.violation")
+        ConfigData.logging_debug = config.getBoolean("logging.debug")
+        ConfigData.logging_prefix = config.getString("logging.prefix")
         ConfigData.action_waring_delay = config.getInt("actions.waring_delay")
         ConfigData.protection_command_hide_active = config.getBoolean("protection.command.hide.active")
         ConfigData.protection_command_hide_message = config.getString("protection.command.hide.message")
         ConfigData.protection_command_commands = config.getStringList("protection.command.hide.commands") as ArrayList
         ConfigData.string_kick_message = config.getString("string.kick")
         ConfigData.string_ban_message = config.getString("string.ban")
+        ConfigData.permission_no_permission = config.getString("permission.no_permission")
     }
 
 }

@@ -55,6 +55,7 @@ class ActionProcess(
         actionPacket.actionType = this.getActionType()
         val actionEvent = WrapperPacketEvent()
         actionEvent.player = player
+        actionEvent.packet = actionPacket
         NoCheatPlus.instance.server.pluginManager.callEvent(actionEvent)
         if (actionEvent.isCancelled) return
         val history = NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getViolationData(checkType).getHistory()
@@ -112,6 +113,7 @@ class ActionProcess(
         actionPacket.actionType = this.getActionType()
         val actionEvent = WrapperPacketEvent()
         actionEvent.player = player
+        actionEvent.packet = actionPacket
         NoCheatPlus.instance.server.pluginManager.callEvent(actionEvent)
         if (actionEvent.isCancelled) return
         val history = NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getViolationData(checkType).getHistory()

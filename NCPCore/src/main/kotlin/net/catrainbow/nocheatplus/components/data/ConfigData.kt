@@ -24,12 +24,15 @@ class ConfigData : IConfigData {
         var config_version_version = 1000
         var logging_active = false
         var logging_auto_delete_days = 1
+        var logging_debug = false
+        var logging_prefix = "§c§lNCP §7>> §r"
         var logging_command = false
         var logging_violation = false
         var action_waring_delay = 10
         var protection_command_hide_active = true
         var protection_command_hide_message = "§c§lNCP §7>> §rYou do not have permission to run this command."
         var protection_command_commands: ArrayList<String> = ArrayList()
+        var permission_no_permission = "§c§lNCP §7>> §rYou do not have permission to run this command."
         var string_kick_message = "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server"
         var string_ban_message =
             "§c§lNCP §7>> §rYou are banned by NCP for §c@days,@hours,@minutes§r because of using @hack @nextEndTime: @end"

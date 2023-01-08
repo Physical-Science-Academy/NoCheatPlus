@@ -13,11 +13,12 @@
  */
 package net.catrainbow.nocheatplus.command
 
+import cn.nukkit.Player
 import cn.nukkit.command.Command
 import cn.nukkit.command.CommandSender
 import cn.nukkit.command.data.CommandParameter
-import cn.nukkit.utils.TextFormat
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.components.data.ConfigData
 
 /**
  * NCP命令
@@ -53,19 +54,30 @@ class NCPCommand : Command("ncp") {
     }
 
     override fun execute(sender: CommandSender?, label: String?, args: Array<out String>?): Boolean {
-        for (subCommand in subCommands) {
-            if ((args?.get(0) ?: "ncp") == subCommand.subCommandStr) {
-                return execute(sender, label, args)
+        if (args!!.isNotEmpty()) for (subCommand in subCommands) {
+            if (args[0] == subCommand.subCommandStr) {
+                val inject = if (sender is Player) NoCheatPlus.instance.hasPermission(
+                    sender, subCommand.subCommandStr
+                ) else true
+                return if (inject) subCommand.execute(sender!!, label!!, args) else this.noPermission(sender!!)
             }
         }
-        val default = StringBuilder("${TextFormat.YELLOW}NoCheatPlus Build-${NoCheatPlus.PLUGIN_VERSION}")
+        val default = StringBuilder("${ConfigData.logging_prefix}Administrative Commands Overview:")
         for (subCommand in subCommands) {
-            val str2 = StringBuilder()
-            for (aliases in subCommand.getAliases())
-                str2.append("$aliases/")
-            default.append("\n").append(str2.toString())
+            val inject =
+                if (sender is Player) NoCheatPlus.instance.hasPermission(sender, subCommand.subCommandStr) else true
+            if (inject) {
+                val str2 = StringBuilder()
+                for (aliases in subCommand.getAliases()) str2.append("/ncp $aliases: ${subCommand.getDescription()}")
+                default.append("\n").append(ConfigData.logging_prefix).append(str2.toString())
+            }
         }
         sender!!.sendMessage(default.toString())
+        return true
+    }
+
+    private fun noPermission(player: CommandSender): Boolean {
+        player.sendMessage(ConfigData.permission_no_permission)
         return true
     }
 

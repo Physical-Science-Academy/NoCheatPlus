@@ -32,6 +32,7 @@ import net.catrainbow.nocheatplus.components.registry.NCPComponent
 import net.catrainbow.nocheatplus.feature.NCPListener
 import net.catrainbow.nocheatplus.logging.NCPLogger
 import net.catrainbow.nocheatplus.logging.NCPLoggerCom
+import net.catrainbow.nocheatplus.permission.NCPPermissionCom
 import net.catrainbow.nocheatplus.players.PlayerData
 import net.catrainbow.nocheatplus.utilities.NCPTimeTool
 
@@ -163,6 +164,10 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun getAllNCPCheck(): HashMap<String, Check> {
         return this.getComManager().getChecks()
+    }
+
+    override fun hasPermission(player: Player, command: String): Boolean {
+        return (this.getNCPComponent("NCP Permission") as NCPPermissionCom).hasPermission(player, command)
     }
 
 }

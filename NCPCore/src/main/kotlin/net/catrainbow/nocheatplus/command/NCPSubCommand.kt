@@ -21,6 +21,6 @@ abstract class NCPSubCommand(val subCommandStr: String) {
 
     abstract fun getAliases(): Array<String>
 
-    abstract fun execute(sender: CommandSender, label: String, args: Array<out String>)
+    abstract fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean
 
 }
