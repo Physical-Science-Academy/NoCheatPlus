@@ -58,34 +58,7 @@ class ActionProcess(
         actionEvent.packet = actionPacket
         NoCheatPlus.instance.server.pluginManager.callEvent(actionEvent)
         if (actionEvent.isCancelled) return
-        val history = NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getViolationData(checkType).getHistory()
         when (this.actionType) {
-            ActionType.SETBACK -> {
-                val setBack = NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getSetbackStorage()
-                if (!setBack.isEmpty()) {
-                    val setBackEntry = setBack.getFreeSetback()
-                    NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getSetbackStorage().pop()
-                    NoCheatPlus.instance.getPlayerProvider(this.getPlayer()).getViolationData(this.checkType)
-                        .getHistory().setLastSetBack(setBackEntry)
-                    if (setBackEntry.canLagBack()) {
-                        val packet = WrapperSetBackPacket(this.getPlayer())
-                        packet.target = setBackEntry.toLocation()
-                        packet.checkType = this.checkType
-                        val setBackEvent = WrapperPacketEvent()
-                        setBackEvent.packet = packet
-                        setBackEvent.player = player
-                        NoCheatPlus.instance.server.pluginManager.callEvent(setBackEvent)
-                        if (!setBackEvent.isCancelled) player.teleport((setBackEvent.packet as WrapperSetBackPacket).target)
-                    }
-                }
-            }
-            ActionType.LOG -> {
-                if (System.currentTimeMillis() - history.getLastLog() > ConfigData.action_waring_delay * 1000) {
-                    NoCheatPlus.instance.getPlayerProvider(player).getViolationData(checkType).getHistory()
-                        .setLastLog(System.currentTimeMillis())
-                    NoCheatPlus.instance.getNCPLogger().info("${player.name} failed $checkType Check")
-                }
-            }
 
             ActionType.KICK -> {
                 val disconnectPacket = DisconnectPacket()

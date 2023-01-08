@@ -13,10 +13,6 @@
  */
 package net.catrainbow.nocheatplus.actions.types
 
-class BanAction(days: Int, hours: Int, minutes: Int) {
-
-    var minutes = 0
-    var hours = 0
-    var days = 0
+class BanAction(var days: Int, var hours: Int, var minutes: Int) {
 
 }
