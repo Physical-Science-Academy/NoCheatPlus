@@ -13,11 +13,32 @@
  */
 package net.catrainbow.nocheatplus.checks.moving
 
+import cn.nukkit.event.Event
+import cn.nukkit.event.block.BlockPlaceEvent
+import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.player.SurvivalFly
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperPlaceBlockPacket
 
 class MovingCheckListener : CheckListener(CheckType.MOVING) {
+
+    override fun onTick(event: Event) {
+        super.onTick(event)
+        if (event is BlockPlaceEvent) {
+            val player = event.player
+            val packet = WrapperPlaceBlockPacket(player)
+            packet.block = event.block
+            packet.blockAgainst = event.blockAgainst
+            packet.blockReplace = event.blockReplace
+            packet.time = System.currentTimeMillis()
+            val wrapper = WrapperPacketEvent()
+            wrapper.player = player
+            wrapper.packet = packet
+            NoCheatPlus.instance.server.pluginManager.callEvent(wrapper)
+        }
+    }
 
     init {
         this.addCheck(SurvivalFly())

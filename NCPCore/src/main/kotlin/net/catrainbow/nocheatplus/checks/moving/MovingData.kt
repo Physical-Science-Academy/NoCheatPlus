@@ -17,7 +17,9 @@ package net.catrainbow.nocheatplus.checks.moving
 import cn.nukkit.Player
 import cn.nukkit.level.Location
 import cn.nukkit.level.Position
+import cn.nukkit.math.Vector3
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
 import net.catrainbow.nocheatplus.checks.moving.util.MovingUtil
 import net.catrainbow.nocheatplus.components.data.ICheckData
@@ -55,10 +57,24 @@ class MovingData : ICheckData {
     private var loseSprintCount = 0
     private var sprint = false
 
+    private var motionYList: ArrayList<Double> = ArrayList()
+    private var locationList: ArrayList<Location> = ArrayList()
+    private var speedList: ArrayList<Double> = ArrayList()
+    private var ghostBlockChecker: GhostBlockChecker = GhostBlockChecker("NCP", Vector3(0.0, 0.0, 0.0), 0, 0)
+
+    /**
+     * Next MovingData
+     */
+    private var nextFrictionHorizontal = 0.0
+    private var nextFrictionVertical = 0.0
+
     /**
      * 处理数据
      */
     fun handleMovingData(player: Player, from: Location, to: Location, data: DistanceData) {
+        if (this.ghostBlockChecker.getName() == "NCP") {
+            this.ghostBlockChecker = GhostBlockChecker(player.name, Vector3(0.0, 0.0, 0.0), 0, 0)
+        }
         this.lastOnGround = onGround
         this.lastLocation = location
         this.lastSpeed = speed
@@ -75,6 +91,9 @@ class MovingData : ICheckData {
         this.motionY = MovingUtil.roundDouble(to.y - from.y, 4)
         this.motionZ = MovingUtil.roundDouble(to.z - from.z, 4)
         this.speed = to.distance(from)
+        this.motionYList.add(to.y - from.y)
+        this.locationList.add(player.location)
+        this.speedList.add(this.speed)
         this.sprint = player.isSprinting
         if (loseSprintCount == 0) {
             if (this.lastSprint) {
@@ -101,8 +120,54 @@ class MovingData : ICheckData {
         return this.loseSprintCount
     }
 
+    fun setLoseSprintCount(count: Int) {
+        this.loseSprintCount = count
+    }
+
+    fun getNextHorizontalFriction(): Double {
+        return this.nextFrictionHorizontal
+    }
+
+    fun getNextVerticalFriction(): Double {
+        return this.nextFrictionVertical
+    }
+
+    fun setNextHorizontalFriction(value: Double) {
+        this.nextFrictionHorizontal = value
+    }
+
+    fun setNextVerticalFriction(value: Double) {
+        this.nextFrictionVertical = value
+    }
+
     fun getSpeed(): Double {
         return this.speed
+    }
+
+    fun clearListRecord() {
+        this.motionYList.clear()
+        this.locationList.clear()
+        this.speedList.clear()
+    }
+
+    fun getSpeedList(): ArrayList<Double> {
+        return this.speedList
+    }
+
+    fun getMotionYList(): ArrayList<Double> {
+        return this.motionYList
+    }
+
+    fun getLocationList(): ArrayList<Location> {
+        return this.locationList
+    }
+
+    fun getGhostBlockChecker(): GhostBlockChecker {
+        return this.ghostBlockChecker
+    }
+
+    fun setGhostBlockChecker(checker: GhostBlockChecker) {
+        this.ghostBlockChecker = checker
     }
 
 }

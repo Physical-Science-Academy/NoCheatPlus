@@ -59,6 +59,19 @@ class LocUtil {
             return minBlock
         }
 
+        fun isLiquid(block: Block): Boolean {
+            return block.id == 9 || block.id == 11
+                    || block.id == 8 || block.id == 10
+        }
+
+        fun isWater(block: Block): Boolean {
+            return block.id == 8 || block.id == 9
+        }
+
+        fun isLava(block: Block): Boolean {
+            return block.id == 10 || block.id == 1
+        }
+
     }
 
 }

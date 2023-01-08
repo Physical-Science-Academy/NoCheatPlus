@@ -17,6 +17,7 @@
         <option value="Kotlin Enum" />
         <option value="Interface" />
         <option value="Kotlin Interface" />
+        <option value="Kotlin Object" />
         <option value="Kotlin Class" />
       </list>
     </option>
@@ -46,13 +47,18 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "com.intellij.openapi.externalSystem.service.settings.ExternalSystemGroupConfigurable": "ALL",
-    "last_opened_file_path": "C:/Users/terri/Desktop/ncp/NoCheatPlus/NCPCore",
+    "last_opened_file_path": "C:/Users/dell/Desktop/WatchDogProject/NoCheatPlus/NCPCore/src/main/kotlin/net/catrainbow/nocheatplus/checks/moving/magic",
     "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "File.Encoding"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\dell\Desktop\WatchDogProject\NoCheatPlus\NCPCore\src\main\kotlin\net\catrainbow\nocheatplus\checks\moving\magic" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

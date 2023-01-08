@@ -17,6 +17,7 @@ import cn.nukkit.event.Event
 import cn.nukkit.event.EventHandler
 import cn.nukkit.event.EventPriority
 import cn.nukkit.event.Listener
+import cn.nukkit.event.block.BlockPlaceEvent
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent
 import cn.nukkit.event.player.PlayerJoinEvent
 import cn.nukkit.event.player.PlayerMoveEvent
@@ -131,6 +132,11 @@ class NCPListener : Listener {
     private fun playerLeave(event: PlayerQuitEvent) {
         val name = event.player.name
         PlayerData.allPlayersData.remove(name)
+    }
+
+    @EventHandler
+    private fun playerPlaces(event: BlockPlaceEvent) {
+        for (listener in listeners) checkEvent(listener, event)
     }
 
     @EventHandler
