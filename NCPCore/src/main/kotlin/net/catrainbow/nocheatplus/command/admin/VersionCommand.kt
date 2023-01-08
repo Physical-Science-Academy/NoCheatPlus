@@ -16,10 +16,11 @@ package net.catrainbow.nocheatplus.command.admin
 import cn.nukkit.command.CommandSender
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.command.NCPSubCommand
+import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
 
 class VersionCommand : NCPSubCommand("version") {
     override fun getDescription(): String {
-        return "see the version of NCP"
+        return getString("command.version.description")
     }
 
     override fun getAliases(): Array<String> {
@@ -27,10 +28,10 @@ class VersionCommand : NCPSubCommand("version") {
     }
 
     override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
-        val default = StringBuilder().append("§aNoCheatPlus§r version §a${NoCheatPlus.PLUGIN_VERSION}").append("\n")
-            .append("§rDetect and fight the exploitation of various flaws/bugs in Minecraft Bedrock").append("\n")
-            .append("§rGithub:§a https://github.com/Physical-Science-Academy/NoCheatPlus/").append("\n")
-            .append("§rAuthors:§a Catrainbow§r, §aNoCheatPlus-Nukkit Team")
+        val default = StringBuilder().append(getString("command.version.ncpversion", NoCheatPlus.PLUGIN_VERSION)).append("\n")
+            .append(getString("command.version.pluginDescription")).append("\n")
+            .append(getString("command.version.githubLink")).append("\n")
+            .append(getString("command.version.authors"))
         sender.sendMessage(default.toString())
         return true
     }

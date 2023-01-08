@@ -16,10 +16,11 @@ package net.catrainbow.nocheatplus.command.admin
 import cn.nukkit.command.CommandSender
 import net.catrainbow.nocheatplus.command.NCPSubCommand
 import net.catrainbow.nocheatplus.components.data.ConfigData
+import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
 
 class DebugCommand : NCPSubCommand("debug") {
     override fun getDescription(): String {
-        return "toggle NCP debug mode currently"
+        return getString("command.debug.description")
     }
 
     override fun getAliases(): Array<String> {
@@ -28,10 +29,10 @@ class DebugCommand : NCPSubCommand("debug") {
 
     override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         if (ConfigData.logging_debug) {
-            sender.sendMessage("${ConfigData.logging_prefix}Turn off the debug mode")
+            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.debug.on")}")
             ConfigData.logging_debug = false
         } else {
-            sender.sendMessage("${ConfigData.logging_prefix}Turn on the debug mode")
+            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.debug.off")}")
             ConfigData.logging_debug = true
         }
         return true

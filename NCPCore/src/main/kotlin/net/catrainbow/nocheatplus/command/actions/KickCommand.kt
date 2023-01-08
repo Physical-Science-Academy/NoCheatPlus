@@ -18,10 +18,12 @@ import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.command.NCPSubCommand
 import net.catrainbow.nocheatplus.components.data.ConfigData
+import net.catrainbow.nocheatplus.utilities.i18n.I18N
+import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
 
 class KickCommand : NCPSubCommand("kick") {
     override fun getDescription(): String {
-        return "Kick Command"
+        return getString("command.kick.description")
     }
 
     override fun getAliases(): Array<String> {
@@ -30,7 +32,7 @@ class KickCommand : NCPSubCommand("kick") {
 
     override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         if (args.size < 2) {
-            sender.sendMessage("${ConfigData.logging_prefix}Player is not online!")
+            sender.sendMessage("${ConfigData.logging_prefix}${I18N.getString("command.general.playerOffline")}")
             return true
         }
         val target = args[1]
@@ -40,10 +42,10 @@ class KickCommand : NCPSubCommand("kick") {
         }
         if (online) {
             NoCheatPlus.instance.kickPlayer(NoCheatPlus.instance.server.getPlayer(target), CheckType.STAFF)
-            sender.sendMessage("${ConfigData.logging_prefix}Kicked player successfully!")
-            NoCheatPlus.instance.getNCPLogger().info("$target was kicked by ${sender.name}")
+            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.kick.success")}")
+            NoCheatPlus.instance.getNCPLogger().info(getString("command.kick.message", target, sender.name))
         } else {
-            sender.sendMessage("${ConfigData.logging_prefix}Player $target is not online!")
+            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.general.playerOffline")}")
         }
         return true
     }

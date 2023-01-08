@@ -18,11 +18,12 @@ import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.command.NCPSubCommand
 import net.catrainbow.nocheatplus.components.config.NCPConfigCom
 import net.catrainbow.nocheatplus.components.data.ConfigData
+import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
 
 class ReloadCommand : NCPSubCommand("reload") {
 
     override fun getDescription(): String {
-        return "Reload NoCheatPlus Config"
+        return getString("command.reload.description")
     }
 
     override fun getAliases(): Array<String> {
@@ -30,9 +31,9 @@ class ReloadCommand : NCPSubCommand("reload") {
     }
 
     override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
-        sender.sendMessage("${ConfigData.logging_prefix}reloading...")
+        sender.sendMessage("${ConfigData.logging_prefix}${getString("command.reload.reloading")}")
         (NoCheatPlus.instance.getNCPComponent("NCP Config") as NCPConfigCom).reload()
-        sender.sendMessage("${ConfigData.logging_prefix}reload config successfully!")
+        sender.sendMessage("${ConfigData.logging_prefix}${getString("command.reload.success")}")
         return true
     }
 

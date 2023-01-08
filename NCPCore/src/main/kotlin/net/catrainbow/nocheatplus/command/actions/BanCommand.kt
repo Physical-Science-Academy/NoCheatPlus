@@ -17,10 +17,11 @@ import cn.nukkit.command.CommandSender
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.command.NCPSubCommand
 import net.catrainbow.nocheatplus.components.data.ConfigData
+import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
 
 class BanCommand : NCPSubCommand("ban") {
     override fun getDescription(): String {
-        return "(player) (days) (hours[can-ignore]) (minutes[can-ignore]) Banned a player"
+        return getString("command.ban.description")
     }
 
     override fun getAliases(): Array<String> {
@@ -29,7 +30,7 @@ class BanCommand : NCPSubCommand("ban") {
 
     override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         if (args.size < 2) {
-            sender.sendMessage("${ConfigData.logging_prefix}Unknown usages.")
+            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.general.unknownUsage")}")
             return true
         }
         val target = args[1]
@@ -38,7 +39,7 @@ class BanCommand : NCPSubCommand("ban") {
             if (player.name == target) online = true
         }
         if (!online) {
-            sender.sendMessage("${ConfigData.logging_prefix}Player is not online!")
+            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.general.playerOffline")}")
             return true
         }
         val player = NoCheatPlus.instance.server.getPlayer(target)
@@ -48,20 +49,20 @@ class BanCommand : NCPSubCommand("ban") {
                 val hours = args[3].toInt()
                 val minutes = args[4].toInt()
                 NoCheatPlus.instance.banPlayer(player, days, hours, minutes)
-                sender.sendMessage("${ConfigData.logging_prefix}Banned player ${player.name} successfully!")
+                sender.sendMessage("${ConfigData.logging_prefix}${getString("command.ban.success")}")
             }
             4 -> {
                 val days = args[2].toInt()
                 val hours = args[3].toInt()
                 NoCheatPlus.instance.banPlayer(player, days, hours)
-                sender.sendMessage("${ConfigData.logging_prefix}Banned player ${player.name} successfully!")
+                sender.sendMessage("${ConfigData.logging_prefix}${getString("command.ban.success")}")
             }
             3 -> {
                 val days = args[2].toInt()
                 NoCheatPlus.instance.banPlayer(player, days)
-                sender.sendMessage("${ConfigData.logging_prefix}Banned player ${player.name} successfully!")
+                sender.sendMessage("${ConfigData.logging_prefix}${getString("command.ban.success")}")
             }
-            else -> sender.sendMessage("${ConfigData.logging_prefix}Unknown usages.")
+            else -> sender.sendMessage("${ConfigData.logging_prefix}${getString("command.general.unknownUsage")}")
         }
         return true
     }
