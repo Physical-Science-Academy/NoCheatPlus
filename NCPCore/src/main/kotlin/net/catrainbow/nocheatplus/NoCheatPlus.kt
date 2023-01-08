@@ -21,6 +21,7 @@ import cn.nukkit.utils.Config
 import cn.nukkit.utils.TextFormat
 import net.catrainbow.nocheatplus.actions.ActionFactory
 import net.catrainbow.nocheatplus.actions.ActionType
+import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.components.NoCheatPlusAPI
 import net.catrainbow.nocheatplus.components.config.NCPBanConfig
@@ -120,7 +121,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     }
 
     override fun isPlayerBan(player: Player): Boolean {
-        if (!this.getNCPBanRecord().exists(player.name)) return false
+        return if (!this.getNCPBanRecord().exists(player.name)) false
         else {
             val now = NCPTimeTool.nowTime
             val end = NCPTimeTool.stringToTime(this.getNCPBanRecord().getStringList(player.name)[1])
@@ -128,8 +129,8 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
                 val config = this.getNCPBanRecord()
                 config.remove(player.name)
                 config.save(true)
-                return false
-            } else return true
+                false
+            } else true
         }
     }
 
@@ -150,6 +151,18 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun banPlayer(player: Player, days: Int) {
         this.banPlayer(player, days, 0, 0)
+    }
+
+    override fun getNCPCheck(checkType: CheckType): Check {
+        return this.getAllNCPCheck()[checkType.name]!!
+    }
+
+    override fun getNCPCheck(checkType: String): Check {
+        return this.getNCPCheck(CheckType.getTypeByName(checkType))
+    }
+
+    override fun getAllNCPCheck(): HashMap<String, Check> {
+        return this.getComManager().getChecks()
     }
 
 }

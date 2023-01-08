@@ -27,7 +27,9 @@ checks:
       setback_policy:
         fall_damage: true
         void_to_void: true
-      actions: "cancel vl>30&&log vl>10 break=10&&warn vl>10 message=fly_short&&kick vl>50&&ban repeat=3"
+      actions: "cancel vl>30&&log vl>10 break=10&&warn vl>10 message=fly_short&&kick vl>50&&ban repeat=3 time=3,0,0"
 
 string:
+  kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
+  ban: "§c§lNCP §7>> §rYou are banned by NCP for §c@days,@hours,@minutes,@seconds§r because of using @hack @nextEndTime: @end"
   fly_short: "@player could be flying hack @vl"

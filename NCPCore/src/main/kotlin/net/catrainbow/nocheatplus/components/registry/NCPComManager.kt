@@ -15,6 +15,7 @@ package net.catrainbow.nocheatplus.components.registry
 
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.ActionCom
+import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.command.NCPCommandCom
 import net.catrainbow.nocheatplus.components.config.NCPBanConfig
 import net.catrainbow.nocheatplus.components.config.NCPConfigCom
@@ -29,6 +30,7 @@ import net.catrainbow.nocheatplus.logging.NCPLoggerCom
 class NCPComManager {
 
     private val components: HashMap<String, NCPComponent> = HashMap()
+    private val checks: HashMap<String, Check> = HashMap()
 
     /**
      * 注册模块
@@ -43,7 +45,7 @@ class NCPComManager {
             } ${component.getRegisterCom().getVersion()}"
         )
         this.components[component.getRegisterCom().getName()] = component
-        //NoCheatPlus.instance.getNCPLogger().info("加载模块 " + component.getRegisterCom().getName() + " 成功")
+        if (component is Check) this.checks[component.getRegisterCom().getName()] = component
     }
 
     /**
@@ -67,6 +69,10 @@ class NCPComManager {
 
     fun getComponents(): HashMap<String, NCPComponent> {
         return this.components
+    }
+
+    fun getChecks(): HashMap<String, Check> {
+        return this.checks
     }
 
 }

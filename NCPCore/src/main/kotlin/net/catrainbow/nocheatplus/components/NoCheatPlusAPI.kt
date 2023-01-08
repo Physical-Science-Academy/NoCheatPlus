@@ -17,6 +17,7 @@ package net.catrainbow.nocheatplus.components
 import cn.nukkit.Player
 import cn.nukkit.utils.Config
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.components.registry.NCPComManager
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
@@ -64,5 +65,11 @@ interface NoCheatPlusAPI {
     fun banPlayer(player: Player, days: Int, hours: Int)
 
     fun banPlayer(player: Player, days: Int)
+
+    fun getNCPCheck(checkType: CheckType): Check
+
+    fun getNCPCheck(checkType: String): Check
+
+    fun getAllNCPCheck(): HashMap<String, Check>
 
 }

@@ -87,7 +87,6 @@ class ActionProcess(
             }
 
             ActionType.KICK -> {
-                ACheckData.plus(this.getPlayer())
                 val disconnectPacket = DisconnectPacket()
                 disconnectPacket.hideDisconnectionScreen = false
                 disconnectPacket.message = this.formatMessage(ConfigData.string_kick_message)
@@ -98,6 +97,10 @@ class ActionProcess(
                 ACheckData.clear(player)
                 val banAction = BanAction(days, hours, minutes)
                 this.doBan(banAction)
+                val disconnectPacket = DisconnectPacket()
+                disconnectPacket.hideDisconnectionScreen = false
+                disconnectPacket.message = this.formatMessage(ConfigData.string_kick_message)
+                player.dataPacket(disconnectPacket)
             }
 
             else -> {}
