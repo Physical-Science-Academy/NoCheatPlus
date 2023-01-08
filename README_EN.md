@@ -3,6 +3,7 @@
   English | 
   <a title="中文" href="/README.md">中文</a>
 </div>
+
 [![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com)
 # NoCheatPlus
 An advanced anti-cheat based on the core Nukkit and its derivative core development. By Catrainbow233.
