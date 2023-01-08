@@ -33,7 +33,7 @@ class LocUtil {
          */
         @JvmStatic
         fun getUnderBlock(player: Player): Block {
-            var b1 = player.level.getBlock(Location(player.x, player.y - 1, player.z, player.level))
+            val b1 = player.level.getBlock(Location(player.x, player.y - 1, player.z, player.level))
             val list: ArrayList<Block> = ArrayList()
             list.add(b1)
             list.add(player.level.getBlock(Location(player.x + 1, player.y - 1, player.z, player.level)))
@@ -50,7 +50,7 @@ class LocUtil {
                 val maxX = block.floorX + 0.35
                 val minZ = block.floorZ - 0.35
                 val maxZ = block.floorZ + 0.35
-                val bb: Cuboid = Cuboid(minX, maxX, block.y, block.y, minZ, maxZ)
+                val bb = Cuboid(minX, maxX, block.y, block.y, minZ, maxZ)
                 if (bb.isVectorInside(player)) {
                     minBlock = block
                     break

@@ -1,4 +1,4 @@
-package net.catrainbow.nocheatplus.i18n
+package net.catrainbow.nocheatplus.utilities.i18n
 
 
 import net.catrainbow.nocheatplus.NoCheatPlus

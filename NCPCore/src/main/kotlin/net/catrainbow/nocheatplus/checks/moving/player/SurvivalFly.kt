@@ -15,10 +15,13 @@ package net.catrainbow.nocheatplus.checks.moving.player
 
 import cn.nukkit.Player
 import cn.nukkit.level.Location
+import cn.nukkit.level.Position
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.MovingData
+import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
+import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import net.catrainbow.nocheatplus.players.IPlayerData
@@ -63,6 +66,32 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         now: Long,
     ) {
 
+        this.tags.clear()
+        val debug = ConfigData.logging_debug
+
+        val isSamePos = to.distance(from) == 0.0
+        val distanceData = DistanceData(Position.fromObject(from), Position.fromObject(to))
+        val xDistance = distanceData.xDiff
+        var yDistance = distanceData.yDiff
+        val zDistance = distanceData.zDiff
+        var hasHDistance = true
+
+        if (isSamePos) hasHDistance = false
+        else if (xDistance == 0.0 && zDistance == 0.0) {
+            yDistance = 0.0
+            hasHDistance = false
+        } else {
+            hasHDistance = true
+        }
+
+        val fromOnGround = from.levelBlock.id == 0
+        val toOnGround = to.levelBlock.id == 0
+        val sprinting = false
+
+        //检测玩家疾跑状态改变时的运动情况
+        if (data.getLoseSprintCount() > 0) {
+            
+        }
     }
 
 }

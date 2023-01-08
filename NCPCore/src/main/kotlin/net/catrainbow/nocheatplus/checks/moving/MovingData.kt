@@ -41,6 +41,7 @@ class MovingData : ICheckData {
     private var lastMotionY = 0.0
     private var lastMotionZ = 0.0
     private var lastSpeed = 0.0
+    private var lastSprint = false
 
     /**
      * Current Moving Data
@@ -51,7 +52,8 @@ class MovingData : ICheckData {
     private var motionY = 0.0
     private var motionZ = 0.0
     private var speed = 0.0
-
+    private var loseSprintCount = 0
+    private var sprint = false
 
     /**
      * 处理数据
@@ -63,6 +65,7 @@ class MovingData : ICheckData {
         this.lastMotionX = motionX
         this.lastMotionY = motionY
         this.lastMotionZ = motionZ
+        this.lastSprint = this.sprint
         this.location = player.location
         this.onGround = player.onGround
         this.from = from
@@ -72,6 +75,14 @@ class MovingData : ICheckData {
         this.motionY = MovingUtil.roundDouble(to.y - from.y, 4)
         this.motionZ = MovingUtil.roundDouble(to.z - from.z, 4)
         this.speed = to.distance(from)
+        this.sprint = player.isSprinting
+        if (loseSprintCount == 0) {
+            if (this.lastSprint) {
+                if (!player.isSprinting)
+                    this.loseSprintCount++
+            }
+        } else this.loseSprintCount++
+        if (this.loseSprintCount > 5) this.loseSprintCount = 0
     }
 
     fun getMotionX(): Double {
@@ -84,6 +95,10 @@ class MovingData : ICheckData {
 
     fun getMotionZ(): Double {
         return this.motionZ
+    }
+
+    fun getLoseSprintCount(): Int {
+        return this.loseSprintCount
     }
 
     fun getSpeed(): Double {

@@ -39,5 +39,5 @@ string:
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
   policy:
-    - "nocheatplus.admin.all:reload,kick,ban"
-    - "nocheatplus.admin.helper:kick,ban"
+    - "nocheatplus.admin.all:reload,kick,ban,unban,debug"
+    - "nocheatplus.admin.helper:kick,ban,unban"

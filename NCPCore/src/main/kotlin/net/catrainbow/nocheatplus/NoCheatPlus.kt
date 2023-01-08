@@ -35,7 +35,7 @@ import net.catrainbow.nocheatplus.logging.NCPLoggerCom
 import net.catrainbow.nocheatplus.permission.NCPPermissionCom
 import net.catrainbow.nocheatplus.players.PlayerData
 import net.catrainbow.nocheatplus.utilities.NCPTimeTool
-import net.catrainbow.nocheatplus.i18n.I18N.Companion.getString
+import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
 
 /**
  * NoCheatPlus 主类
