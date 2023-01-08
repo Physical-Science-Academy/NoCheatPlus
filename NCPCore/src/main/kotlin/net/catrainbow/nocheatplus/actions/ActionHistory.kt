@@ -16,6 +16,7 @@ package net.catrainbow.nocheatplus.actions
 import cn.nukkit.level.Location
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.setback.SetBackEntry
+import net.catrainbow.nocheatplus.components.data.ConfigData
 
 /**
  * 保存处罚记录
@@ -30,6 +31,14 @@ class ActionHistory {
     private var historySetback: SetBackEntry = SetBackEntry(
         Location.fromObject(NoCheatPlus.instance.server.defaultLevel.spawnLocation), 0
     )
+
+    fun canLog(): Boolean {
+        return System.currentTimeMillis() - lastLog > ConfigData.action_waring_delay * 1000
+    }
+
+    fun canWarn(): Boolean {
+        return System.currentTimeMillis() - lastWaring > ConfigData.action_waring_delay * 1000
+    }
 
     fun setLastSetBack(entry: SetBackEntry) {
         this.historySetback = entry

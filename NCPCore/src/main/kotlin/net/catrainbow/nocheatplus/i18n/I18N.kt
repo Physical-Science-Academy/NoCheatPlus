@@ -13,7 +13,8 @@ import java.util.Properties
  */
 class I18N {
     companion object {
-        private var translations =  Properties().apply { load(FileInputStream("${NoCheatPlus.instance.dataFolder}/translations.properties")) }
+        private var translations =
+            Properties().apply { load(FileInputStream("${NoCheatPlus.instance.dataFolder}/translations.properties")) }
 
         @JvmStatic
         fun getString(key: String, vararg args: Any): String {
