@@ -51,7 +51,9 @@ class ActionCom : NCPComponent(), INCPComponent {
                     actionData.enableLog = true
                     actionData.logAction = LogAction()
                     actionData.log = subCommand[1].split(">")[1].toDouble()
-                    actionData.logAction.breakDelay = subCommand[2].split("=")[1].toInt()
+                    if (subCommand.size >= 3)
+                        actionData.logAction.breakDelay = subCommand[2].split("=")[1].toInt()
+                    else actionData.logAction.breakDelay = 10
                 }
                 "warn" -> {
                     actionData.enableWarn = true

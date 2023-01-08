@@ -63,15 +63,21 @@ class NCPCommand : Command("ncp") {
             }
         }
         val default = StringBuilder("${ConfigData.logging_prefix}Administrative Commands Overview:")
+        var index = 0
         for (subCommand in subCommands) {
             val inject =
                 if (sender is Player) NoCheatPlus.instance.hasPermission(sender, subCommand.subCommandStr) else true
             if (inject) {
+                index++
                 val str2 = StringBuilder()
                 for (aliases in subCommand.getAliases()) str2.append("/ncp $aliases: ${subCommand.getDescription()}")
                 default.append("\n").append(ConfigData.logging_prefix).append(str2.toString())
             }
         }
+        if (index == 0) default.clear().append("§aNoCheatPlus§r version §a${NoCheatPlus.PLUGIN_VERSION}")
+            .append("\n").append("Detect and fight the exploitation of various flaws/bugs in Minecraft Bedrock")
+            .append("\n").append("Github:§a https://github.com/Physical-Science-Academy/NoCheatPlus/")
+            .append("\n").append("Authors:§a Catrainbow§r, §aNoCheatPlus-Nukkit Team")
         sender!!.sendMessage(default.toString())
         return true
     }
