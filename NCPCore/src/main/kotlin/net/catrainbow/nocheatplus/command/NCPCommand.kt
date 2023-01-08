@@ -75,9 +75,9 @@ class NCPCommand : Command("ncp") {
             }
         }
         if (index == 0) default.clear().append("§aNoCheatPlus§r version §a${NoCheatPlus.PLUGIN_VERSION}")
-            .append("\n").append("Detect and fight the exploitation of various flaws/bugs in Minecraft Bedrock")
-            .append("\n").append("Github:§a https://github.com/Physical-Science-Academy/NoCheatPlus/")
-            .append("\n").append("Authors:§a Catrainbow§r, §aNoCheatPlus-Nukkit Team")
+            .append("\n").append("§rDetect and fight the exploitation of various flaws/bugs in Minecraft Bedrock")
+            .append("\n").append("§rGithub:§a https://github.com/Physical-Science-Academy/NoCheatPlus/")
+            .append("\n").append("§rAuthors:§a Catrainbow§r, §aNoCheatPlus-Nukkit Team")
         sender!!.sendMessage(default.toString())
         return true
     }

@@ -14,8 +14,12 @@
 package net.catrainbow.nocheatplus.command
 
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.command.actions.BanCommand
 import net.catrainbow.nocheatplus.command.actions.KickCommand
+import net.catrainbow.nocheatplus.command.actions.UnBanCommand
+import net.catrainbow.nocheatplus.command.admin.DebugCommand
 import net.catrainbow.nocheatplus.command.admin.ReloadCommand
+import net.catrainbow.nocheatplus.command.admin.VersionCommand
 import net.catrainbow.nocheatplus.components.registry.INCPComponent
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
 
@@ -28,6 +32,10 @@ class NCPCommandCom : NCPComponent(), INCPComponent {
         NoCheatPlus.instance.server.commandMap.register("ncp", NCPCommand())
         NCPCommand.subCommands.add(ReloadCommand())
         NCPCommand.subCommands.add(KickCommand())
+        NCPCommand.subCommands.add(VersionCommand())
+        NCPCommand.subCommands.add(DebugCommand())
+        NCPCommand.subCommands.add(BanCommand())
+        NCPCommand.subCommands.add(UnBanCommand())
     }
 
 }

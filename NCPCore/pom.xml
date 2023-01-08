@@ -89,13 +89,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.fap.nk</groupId>
-            <artifactId>NK</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/dell/Desktop/FAP 3/pm1e.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>
             <version>1.6.21</version>

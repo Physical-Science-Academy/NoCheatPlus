@@ -29,15 +29,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: cn.nukkit:nukkit:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="module-library">
-      <library name="Maven: net.fap.nk:NK:1.0.0">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../FAP 3/pm1e.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains.kotlin:kotlin-test-junit5:1.6.21" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains.kotlin:kotlin-test:1.6.21" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-api:5.6.0" level="project" />
