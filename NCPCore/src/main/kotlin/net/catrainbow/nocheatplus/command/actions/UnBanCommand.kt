@@ -30,8 +30,9 @@ class UnBanCommand : NCPSubCommand("unban") {
     override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         if (args.size < 2) {
             sender.sendMessage("${ConfigData.logging_prefix}Player is not banned!")
+            return true
         }
-        val playerName = args[2]
+        val playerName = args[1]
         if (NoCheatPlus.instance.getNCPBanRecord().exists(playerName)) {
             val config = NoCheatPlus.instance.getNCPBanRecord()
             config.remove(playerName)
