@@ -22,6 +22,7 @@ import net.catrainbow.nocheatplus.components.config.NCPConfigCom
 import net.catrainbow.nocheatplus.components.task.NCPTaskCom
 import net.catrainbow.nocheatplus.logging.NCPLoggerCom
 import net.catrainbow.nocheatplus.permission.NCPPermissionCom
+import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
 
 /**
  * NCP模块管理器
@@ -40,11 +41,7 @@ class NCPComManager {
      */
     fun registerCom(component: NCPComponent) {
         component.onEnabled()
-        NoCheatPlus.instance.logger.info(
-            "Loading Module: ${
-                component.getRegisterCom().getName()
-            } ${component.getRegisterCom().getVersion()}"
-        )
+        NoCheatPlus.instance.logger.info(getString("ncp.load.module", component.getRegisterCom().getName(),component.getRegisterCom().getVersion()))
         this.components[component.getRegisterCom().getName()] = component
         if (component is Check) this.checks[component.getRegisterCom().getName()] = component
     }

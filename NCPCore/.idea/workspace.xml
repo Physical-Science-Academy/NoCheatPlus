@@ -6,12 +6,27 @@
   <component name="ChangeListManager">
     <list default="true" id="3eff6659-3a37-4e17-ba76-8d7746f51d42" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/command/actions/BanCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/command/actions/BanCommand.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/command/actions/KickCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/command/actions/KickCommand.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/command/admin/DebugCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/command/admin/DebugCommand.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/command/admin/ReloadCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/command/admin/ReloadCommand.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/command/admin/VersionCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/command/admin/VersionCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/components/registry/NCPComManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/net/catrainbow/nocheatplus/components/registry/NCPComManager.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/translations.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/translations.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/NoCheatPlus-1.0-SNAPSHOT.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/checks/moving/MovingCheckListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/checks/moving/MovingCheckListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/checks/moving/MovingData.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/checks/moving/MovingData.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/checks/moving/location/LocUtil$Companion.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/checks/moving/location/LocUtil$Companion.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/checks/moving/player/SurvivalFly.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/checks/moving/player/SurvivalFly.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/command/actions/BanCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/command/actions/BanCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/command/actions/KickCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/command/actions/KickCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/command/admin/DebugCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/command/admin/DebugCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/command/admin/ReloadCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/command/admin/ReloadCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/command/admin/VersionCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/command/admin/VersionCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$5.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$Companion.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener$Companion.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/catrainbow/nocheatplus/feature/NCPListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/translations.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/translations.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,6 +81,11 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\dell\Desktop\WatchDogProject\NoCheatPlus\NCPCore\src\main\kotlin\net\catrainbow\nocheatplus\checks\moving\magic" />
     </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn package" />
+    </option>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
