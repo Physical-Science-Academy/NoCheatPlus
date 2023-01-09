@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.checks.moving.player
 
 import cn.nukkit.Player
+import cn.nukkit.Server
 import cn.nukkit.block.Block
 import cn.nukkit.level.Location
 import cn.nukkit.level.Position
@@ -25,11 +26,13 @@ import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.magic.Magic
 import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
+import net.catrainbow.nocheatplus.checks.moving.util.MovingUtil
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPlaceBlockPacket
 import net.catrainbow.nocheatplus.players.IPlayerData
+import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -94,8 +97,8 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             hasHDistance = true
         }
 
-        val fromOnGround = from.levelBlock.id == 0
-        val toOnGround = to.levelBlock.id == 0
+        val fromOnGround = from.add(0.0,-0.5,0.0).levelBlock.id != 0
+        val toOnGround = to.add(0.0,-0.5,0.0).levelBlock.id != 0
         var sprinting = false
 
         //检测玩家疾跑状态改变时的运动情况
@@ -152,6 +155,14 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         data: MovingData,
         pData: IPlayerData,
     ): DoubleArray {
+        if (!toOnGround && !fromOnGround) {
+            val vanillaFall = this.onFallingVertical(data) && this.onFallingHorizontal(
+                yDistance, data.getLastMotionY(), data.getLastFrictionVertical(), 0.0
+            )
+
+            if (!vanillaFall) data.clearListRecord()
+            else player.sendMessage("11")
+        }
         return doubleArrayOf(0.0, 0.0)
     }
 
@@ -216,60 +227,12 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
     }
 
     /**
-     * on horizontal falling
-     *
-     * @return
-     */
-    private fun onFallingHorizontal(
-        yDistance: Double, lastYDist: Double,
-        lastFrictionVertical: Double, extraGravity: Double,
-    ): Boolean {
-        if (yDistance >= lastYDist) {
-            return false
-        }
-        val frictionDist = lastYDist * lastFrictionVertical - Magic.GRAVITY_MIN
-        return yDistance <= frictionDist + extraGravity && yDistance > frictionDist - Magic.GRAVITY_SPAN - extraGravity
-    }
-
-    /**
      * on vertical falling
      *
      * @return
      */
-    private fun onFallingVertical(data: MovingData): Boolean {
-        var tick = 0
-        var failedTick = 0
-        val g = -0.9800000190734863
-        for (delta in data.getMotionYList()) {
-            if (failedTick > 10) {
-                return false
-            }
-            val speedList = data.getSpeedList()
-            val locationList = data.getLocationList()
-            if (locationList.size < 2 || speedList.size < 2) break
-            if (locationList.size <= tick || speedList.size <= tick) break
-            val x0 = locationList[0].x
-            val y0 = locationList[0].y
-            val z0 = locationList[0].z
-            val x1 = locationList[1].x
-            val z1 = locationList[1].z
-            //总速度方向
-            val motionDeltaX = sqrt((x0 - x1).pow(2) + (z0 - z1).pow(2))
-            val speed = speedList[tick]
-            val x = locationList[tick].x
-            val y = locationList[tick].y
-            val z = locationList[tick].z
-            val motionX = sqrt(x.pow(2) + z.pow(2))
-            val deltaXZ = motionX - motionDeltaX
-            val locDeltaY = y - y0
-            val mathSpeed = (g * deltaXZ.pow(2) / (2 * locDeltaY) + 2 * g * locDeltaY).pow(0.5)
-            val mathDeltaXZ = motionDeltaX * tick
-            if (speed > mathSpeed || (sqrt((x - x0).pow(2) + (z - z0).pow(2)) > mathDeltaXZ * 1.5) || locDeltaY > 0) {
-                failedTick++
-            }
-            tick++
-        }
-        return true
+    private fun onFallingVertical(data: MovingData,samePos:Boolean): Boolean {
+
     }
 
 }

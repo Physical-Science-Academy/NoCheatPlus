@@ -91,6 +91,9 @@ class NCPListener : Listener {
             true,
             EventPriority.HIGHEST
         )
+        registerEvent(
+            this, NoCheatPlus.instance, BlockPlaceEvent::class.java, { playerPlaces(it) }, true, EventPriority.HIGHEST
+        )
         registerTickListener()
     }
 

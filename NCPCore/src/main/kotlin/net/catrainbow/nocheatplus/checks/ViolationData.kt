@@ -82,6 +82,7 @@ class ViolationData(type: CheckType, private val player: Player) {
     }
 
     private fun executeAction() {
+        if (!ActionFactory.actionDataMap.containsKey(this.checkType.name)) return
         val data = ActionFactory.actionDataMap[this.checkType.name]
         if (data!!.enableLog) if (this.history.canLog()) this.actions.add(
             ActionFactory(

@@ -44,6 +44,8 @@ class MovingData : ICheckData {
     private var lastMotionZ = 0.0
     private var lastSpeed = 0.0
     private var lastSprint = false
+    private var lastFrictionHorizontal = 0.0
+    private var lastFrictionVertical = 0.0
 
     /**
      * Current Moving Data
@@ -87,9 +89,9 @@ class MovingData : ICheckData {
         this.from = from
         this.to = to
         this.distanceData = data
-        this.motionX = MovingUtil.roundDouble(to.x - from.x, 4)
-        this.motionY = MovingUtil.roundDouble(to.y - from.y, 4)
-        this.motionZ = MovingUtil.roundDouble(to.z - from.z, 4)
+        this.motionX = to.x - from.x
+        this.motionY = to.y - from.y
+        this.motionZ = to.z - from.z
         this.speed = to.distance(from)
         this.motionYList.add(to.y - from.y)
         this.locationList.add(player.location)
@@ -133,10 +135,12 @@ class MovingData : ICheckData {
     }
 
     fun setNextHorizontalFriction(value: Double) {
+        this.lastFrictionHorizontal = this.nextFrictionHorizontal
         this.nextFrictionHorizontal = value
     }
 
     fun setNextVerticalFriction(value: Double) {
+        this.lastFrictionVertical = this.nextFrictionVertical
         this.nextFrictionVertical = value
     }
 
@@ -164,6 +168,14 @@ class MovingData : ICheckData {
 
     fun getGhostBlockChecker(): GhostBlockChecker {
         return this.ghostBlockChecker
+    }
+
+    fun getLastMotionY(): Double {
+        return this.lastMotionY
+    }
+
+    fun getLastFrictionVertical(): Double {
+        return this.lastFrictionVertical
     }
 
     fun setGhostBlockChecker(checker: GhostBlockChecker) {
