@@ -20,6 +20,7 @@ import cn.nukkit.event.Listener
 import cn.nukkit.event.block.BlockPlaceEvent
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent
 import cn.nukkit.event.player.PlayerJoinEvent
+import cn.nukkit.event.player.PlayerJumpEvent
 import cn.nukkit.event.player.PlayerMoveEvent
 import cn.nukkit.event.player.PlayerQuitEvent
 import cn.nukkit.network.protocol.DisconnectPacket
@@ -94,6 +95,9 @@ class NCPListener : Listener {
         registerEvent(
             this, NoCheatPlus.instance, BlockPlaceEvent::class.java, { playerPlaces(it) }, true, EventPriority.HIGHEST
         )
+        registerEvent(
+            this, NoCheatPlus.instance, PlayerJumpEvent::class.java, { playerJumps(it) }, true, EventPriority.HIGHEST
+        )
         registerTickListener()
     }
 
@@ -135,6 +139,11 @@ class NCPListener : Listener {
     private fun playerLeave(event: PlayerQuitEvent) {
         val name = event.player.name
         PlayerData.allPlayersData.remove(name)
+    }
+
+    @EventHandler
+    private fun playerJumps(event: PlayerJumpEvent) {
+        for (listener in listeners) checkEvent(listener, event)
     }
 
     @EventHandler

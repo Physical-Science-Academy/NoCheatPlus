@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.feature.moving
 
 import cn.nukkit.event.Event
+import cn.nukkit.event.player.PlayerJumpEvent
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.feature.ITickListener
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
@@ -28,6 +29,13 @@ class MovingListener : ITickListener {
 
     override fun onTick(event: Event) {
         if (event is WrapperPacketEvent) this.verifyInputPacket(event)
+        if (event is PlayerJumpEvent) this.handlePlayerJump(event)
+    }
+
+    private fun handlePlayerJump(event: PlayerJumpEvent) {
+        val player = event.player
+        val data = NoCheatPlus.instance.getPlayerProvider(player)
+        data.movingData.onJump()
     }
 
     private fun verifyInputPacket(event: WrapperPacketEvent) {

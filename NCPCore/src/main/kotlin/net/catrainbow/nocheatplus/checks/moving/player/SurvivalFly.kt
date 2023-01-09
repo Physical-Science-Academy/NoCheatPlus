@@ -97,8 +97,8 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             hasHDistance = true
         }
 
-        val fromOnGround = from.add(0.0,-0.5,0.0).levelBlock.id != 0
-        val toOnGround = to.add(0.0,-0.5,0.0).levelBlock.id != 0
+        val fromOnGround = from.add(0.0, -0.5, 0.0).levelBlock.id != 0
+        val toOnGround = to.add(0.0, -0.5, 0.0).levelBlock.id != 0
         var sprinting = false
 
         //检测玩家疾跑状态改变时的运动情况
@@ -156,9 +156,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         pData: IPlayerData,
     ): DoubleArray {
         if (!toOnGround && !fromOnGround) {
-            val vanillaFall = this.onFallingVertical(data) && this.onFallingHorizontal(
-                yDistance, data.getLastMotionY(), data.getLastFrictionVertical(), 0.0
-            )
+            val vanillaFall = this.onFallingVertical(data, to.distance(from) <= 0.1)
 
             if (!vanillaFall) data.clearListRecord()
             else player.sendMessage("11")
@@ -231,8 +229,72 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
      *
      * @return
      */
-    private fun onFallingVertical(data: MovingData,samePos:Boolean): Boolean {
+    private fun onFallingVertical(data: MovingData, samePos: Boolean): Boolean {
+        var failedTick = 0
+        var maxSpeed = 0.0
 
+        //玩家跳跃时跳过此检测
+        if (data.isJump()) return true
+
+        //强制判断结果
+        if (!samePos) {
+            for (speed in data.getSpeedList()) {
+                if (speed >= maxSpeed) {
+                    maxSpeed = speed
+                    failedTick = 0
+                } else {
+                    if (failedTick > 10) {
+                        return true
+                    } else failedTick++
+                }
+            }
+            failedTick = 0
+            var deltaY = 0.0
+            for (delta in data.getMotionYList()) {
+                if (failedTick > 20) {
+                    return false
+                }
+                val preY = (deltaY - 0.08) * 0.9800000190734863
+                val diff = abs(delta - preY)
+                if (diff > 0.017 && abs(preY) > 0.005) {
+                    failedTick++
+                }
+                deltaY = delta
+            }
+        } else {
+            var tick = 0
+            failedTick = 0
+            val g = -0.9800000190734863
+            for (delta in data.getMotionYList()) {
+                if (failedTick > 10) {
+                    return false
+                }
+                val locationList = data.getLocationList()
+                val speedList = data.getSpeedList()
+                if (locationList.size < 2 || speedList.size < 2) break
+                if (locationList.size <= tick || speedList.size <= tick) break
+                val x0 = locationList[0].x
+                val y0 = locationList[0].y
+                val z0 = locationList[0].z
+                val x1 = locationList[1].x
+                val z1 = locationList[1].z
+                val motionDeltaX = sqrt((x0 - x1).pow(2) + (z0 - z1).pow(2))
+                val speed = speedList[tick]
+                val x = locationList[tick].x
+                val y = locationList[tick].y
+                val z = locationList[tick].z
+                val motionX = sqrt(x.pow(2) + z.pow(2))
+                val deltaXZ = motionX - motionDeltaX
+                val locDeltaY = y - y0
+                val mathSpeed = (g * deltaXZ.pow(2) / (2 * locDeltaY) + 2 * g * locDeltaY).pow(0.5)
+                val mathDeltaXZ = motionDeltaX * tick
+                if (speed > mathSpeed || (sqrt((x - x0).pow(2) + (z - z0).pow(2)) > mathDeltaXZ * 1.5) || locDeltaY > 0) {
+                    failedTick++
+                }
+                tick++
+            }
+        }
+        return true
     }
 
 }

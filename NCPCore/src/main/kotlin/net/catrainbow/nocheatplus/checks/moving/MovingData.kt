@@ -46,6 +46,7 @@ class MovingData : ICheckData {
     private var lastSprint = false
     private var lastFrictionHorizontal = 0.0
     private var lastFrictionVertical = 0.0
+    private var lastPlayerJump = System.currentTimeMillis()
 
     /**
      * Current Moving Data
@@ -180,6 +181,14 @@ class MovingData : ICheckData {
 
     fun setGhostBlockChecker(checker: GhostBlockChecker) {
         this.ghostBlockChecker = checker
+    }
+
+    fun onJump() {
+        this.lastPlayerJump = System.currentTimeMillis()
+    }
+
+    fun isJump(): Boolean {
+        return System.currentTimeMillis() - this.lastPlayerJump <= 800
     }
 
 }
