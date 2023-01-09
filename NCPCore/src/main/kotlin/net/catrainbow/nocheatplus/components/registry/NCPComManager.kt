@@ -57,7 +57,7 @@ class NCPComManager {
         this.registerCom(NCPCommandCom())
         this.registerCom(ActionCom())
         this.registerCom(NCPPermissionCom())
-        NoCheatPlus.instance.getNCPLogger().info("NoCheatPlus 已启用!")
+        NoCheatPlus.instance.getNCPLogger().info(getString("ncp.enabled"))
     }
 
     fun onDisabled() {
