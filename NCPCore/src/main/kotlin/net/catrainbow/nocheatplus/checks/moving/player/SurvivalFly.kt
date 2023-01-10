@@ -14,7 +14,6 @@
 package net.catrainbow.nocheatplus.checks.moving.player
 
 import cn.nukkit.Player
-import cn.nukkit.Server
 import cn.nukkit.block.Block
 import cn.nukkit.level.Location
 import cn.nukkit.level.Position
@@ -156,7 +155,9 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         pData: IPlayerData,
     ): DoubleArray {
         if (!toOnGround && !fromOnGround) {
-            val vanillaFall = this.onFallingVertical(data, to.distance(from) <= 0.1)
+            player.sendMessage("$yDistance")
+            val vanillaFall =
+                this.onFallingVertical(data, to.distance(from) <= 0.1) && player.inAirTicks > 15 && yDistance != 0.0
 
             if (!vanillaFall) data.clearListRecord()
             else player.sendMessage("11")
