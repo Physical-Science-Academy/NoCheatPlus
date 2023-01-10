@@ -29,10 +29,10 @@ class DebugCommand : NCPSubCommand("debug") {
 
     override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         if (ConfigData.logging_debug) {
-            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.debug.on")}")
+            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.debug.off")}")
             ConfigData.logging_debug = false
         } else {
-            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.debug.off")}")
+            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.debug.on")}")
             ConfigData.logging_debug = true
         }
         return true

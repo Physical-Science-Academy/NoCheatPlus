@@ -59,7 +59,7 @@ class SetBackEntry(location: Location, private var tick: Int) {
     }
 
     fun canLagBack(): Boolean {
-        return this.toLocation().add(0.0, -0.5, 0.0).levelBlock.isSolid
+        return true
     }
 
 }

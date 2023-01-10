@@ -30,6 +30,7 @@ class ACheckData {
         }
 
         fun plus(player: String) {
+            if (!offlineAccess.containsKey(player)) offlineAccess[player] = 0
             offlineAccess[player] = offlineAccess[player]!! + 1
         }
 
@@ -41,7 +42,7 @@ class ACheckData {
             clear(player.name)
         }
 
-        fun clear(player: String) {
+        private fun clear(player: String) {
             offlineAccess[player] = 0
         }
 

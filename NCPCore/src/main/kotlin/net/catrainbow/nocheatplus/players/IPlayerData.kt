@@ -14,6 +14,9 @@
 package net.catrainbow.nocheatplus.players
 
 import cn.nukkit.Player
+import net.catrainbow.nocheatplus.actions.ActionProcess
+import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.checks.ViolationData
 
 /**
  * 玩家信息储存接口
@@ -35,5 +38,21 @@ interface IPlayerData {
      * @return 玩家对象
      */
     fun getPlayer(): Player
+
+    /**
+     * 向Buffer中添加VL值
+     *
+     */
+    fun addViolationToBuffer(type: CheckType, violation: Double)
+
+    /**
+     * 向Buffer中添加Action
+     */
+    fun addActionToBuffer(type: CheckType, action: ActionProcess)
+
+    /**
+     * @return ViolationData
+     */
+    fun getViolationData(type: CheckType): ViolationData
 
 }

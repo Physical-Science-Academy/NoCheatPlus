@@ -173,7 +173,7 @@ class ActionProcess(
     }
 
     private fun getPlayer(): Player {
-        return this.player
+        return NoCheatPlus.instance.server.getPlayer(this.player.name)
     }
 
     private fun formatMessage(string: String): String {

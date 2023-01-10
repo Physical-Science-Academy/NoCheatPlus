@@ -15,13 +15,15 @@
 package net.catrainbow.nocheatplus.checks.moving
 
 import cn.nukkit.Player
+import cn.nukkit.Server
 import cn.nukkit.level.Location
 import cn.nukkit.level.Position
 import cn.nukkit.math.Vector3
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
-import net.catrainbow.nocheatplus.checks.moving.util.MovingUtil
+import net.catrainbow.nocheatplus.checks.moving.model.MoveTracker
 import net.catrainbow.nocheatplus.components.data.ICheckData
 
 /**
@@ -46,7 +48,9 @@ class MovingData : ICheckData {
     private var lastSprint = false
     private var lastFrictionHorizontal = 0.0
     private var lastFrictionVertical = 0.0
+    private var lastInAirTick = 0
     private var lastPlayerJump = System.currentTimeMillis()
+    private var moveTracker: MoveTracker? = null
 
     /**
      * Current Moving Data
@@ -59,11 +63,16 @@ class MovingData : ICheckData {
     private var speed = 0.0
     private var loseSprintCount = 0
     private var sprint = false
+    private var inAirTick = 0
+    private var fullAirTick = 0
+    private var liquidTick = 0
 
     private var motionYList: ArrayList<Double> = ArrayList()
     private var locationList: ArrayList<Location> = ArrayList()
     private var speedList: ArrayList<Double> = ArrayList()
     private var ghostBlockChecker: GhostBlockChecker = GhostBlockChecker("NCP", Vector3(0.0, 0.0, 0.0), 0, 0)
+
+    private var normalGround = Location(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Server.getInstance().defaultLevel)
 
     /**
      * Next MovingData
@@ -75,9 +84,6 @@ class MovingData : ICheckData {
      * 处理数据
      */
     fun handleMovingData(player: Player, from: Location, to: Location, data: DistanceData) {
-        if (this.ghostBlockChecker.getName() == "NCP") {
-            this.ghostBlockChecker = GhostBlockChecker(player.name, Vector3(0.0, 0.0, 0.0), 0, 0)
-        }
         this.lastOnGround = onGround
         this.lastLocation = location
         this.lastSpeed = speed
@@ -85,6 +91,19 @@ class MovingData : ICheckData {
         this.lastMotionY = motionY
         this.lastMotionZ = motionZ
         this.lastSprint = this.sprint
+        this.lastInAirTick = this.inAirTick
+
+        if (this.moveTracker == null) {
+            this.moveTracker = MoveTracker(player)
+            this.moveTracker!!.close()
+        } else {
+            this.moveTracker!!.onUpdate(System.currentTimeMillis())
+        }
+
+        if (this.ghostBlockChecker.getName() == "NCP") {
+            this.ghostBlockChecker = GhostBlockChecker(player.name, Vector3(0.0, 0.0, 0.0), 0, 0)
+        }
+        if (normalGround.x == 0.0 && normalGround.y == 0.0 && normalGround.z == 0.0) this.normalGround = player.location
         this.location = player.location
         this.onGround = player.onGround
         this.from = from
@@ -93,6 +112,7 @@ class MovingData : ICheckData {
         this.motionX = to.x - from.x
         this.motionY = to.y - from.y
         this.motionZ = to.z - from.z
+        this.inAirTick = player.inAirTicks
         this.speed = to.distance(from)
         this.motionYList.add(to.y - from.y)
         this.locationList.add(player.location)
@@ -100,11 +120,17 @@ class MovingData : ICheckData {
         this.sprint = player.isSprinting
         if (loseSprintCount == 0) {
             if (this.lastSprint) {
-                if (!player.isSprinting)
-                    this.loseSprintCount++
+                if (!player.isSprinting) this.loseSprintCount++
             }
         } else this.loseSprintCount++
         if (this.loseSprintCount > 5) this.loseSprintCount = 0
+        if (this.onGround) fullAirTick = 0
+        if (LocUtil.isLiquid(LocUtil.getUnderBlock(player)) || LocUtil.isLiquid(player.levelBlock))
+            this.liquidTick++ else this.liquidTick = 0
+    }
+
+    fun getLiquidTick(): Int {
+        return this.liquidTick
     }
 
     fun getMotionX(): Double {
@@ -189,6 +215,38 @@ class MovingData : ICheckData {
 
     fun isJump(): Boolean {
         return System.currentTimeMillis() - this.lastPlayerJump <= 800
+    }
+
+    fun getLastJump(): Long {
+        return this.lastPlayerJump
+    }
+
+    fun updateNormalLoc(location: Location) {
+        this.normalGround = location
+    }
+
+    fun getLastInAirTicks(): Int {
+        return this.lastInAirTick
+    }
+
+    fun getMovementTracker(): MoveTracker? {
+        return this.moveTracker
+    }
+
+    fun onFullAir() {
+        this.fullAirTick++
+    }
+
+    fun getFullAirTick(): Int {
+        return this.fullAirTick
+    }
+
+    fun setFullAirTick(tick: Int) {
+        this.fullAirTick = 0
+    }
+
+    fun getLastNormalGround(): Location {
+        return this.normalGround
     }
 
 }

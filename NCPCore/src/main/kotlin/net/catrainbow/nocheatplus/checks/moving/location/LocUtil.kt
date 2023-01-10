@@ -72,6 +72,23 @@ class LocUtil {
             return block.id == 10 || block.id == 1
         }
 
+        fun getPlayerHeight(player: Player): Int {
+            if (player.floorY <= 0) {
+                return 0
+            } else {
+                for (y in 0 until 256) {
+                    val level = player.getLevel()
+                    val block = level.getBlock(player.floorX, (player.floorY - y), player.floorZ)
+                    if (block.id != 0) {
+                        return if ((player.floorY - block.floorY) - 1 < 0) {
+                            0
+                        } else (player.floorY - block.floorY) - 1
+                    }
+                }
+            }
+            return player.floorY
+        }
+
     }
 
 }

@@ -17,6 +17,7 @@ package net.catrainbow.nocheatplus.players
 import cn.nukkit.Player
 import cn.nukkit.level.Location
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.actions.ActionProcess
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.ViolationData
 import net.catrainbow.nocheatplus.checks.moving.MovingData
@@ -54,8 +55,8 @@ open class PlayerData(player: Player) : IPlayerData {
         this.from = packet.to
     }
 
-    fun getViolationData(checkType: CheckType): ViolationData {
-        return this.getViolationData(checkType.name)
+    override fun getViolationData(type: CheckType): ViolationData {
+        return this.getViolationData(type.name)
     }
 
     private fun getViolationData(checkType: String): ViolationData {
@@ -81,4 +82,13 @@ open class PlayerData(player: Player) : IPlayerData {
     override fun getPlayer(): Player {
         return NoCheatPlus.instance.server.getPlayer(this.getPlayerName())
     }
+
+    override fun addViolationToBuffer(type: CheckType, violation: Double) {
+        NoCheatPlus.instance.getPlayerProvider(this.getPlayerName()).getViolationData(type.name).addVL(violation)
+    }
+
+    override fun addActionToBuffer(type: CheckType, action: ActionProcess) {
+        NoCheatPlus.instance.getPlayerProvider(this.getPlayerName()).getViolationData(type.name).addAction(action)
+    }
+
 }

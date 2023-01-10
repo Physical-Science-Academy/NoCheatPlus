@@ -16,7 +16,8 @@ package net.catrainbow.nocheatplus.checks.moving.player
 import cn.nukkit.Player
 import cn.nukkit.block.Block
 import cn.nukkit.level.Location
-import cn.nukkit.level.Position
+import cn.nukkit.math.BlockFace
+import cn.nukkit.potion.Effect
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
@@ -24,16 +25,12 @@ import net.catrainbow.nocheatplus.checks.moving.MovingData
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.magic.Magic
-import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
-import net.catrainbow.nocheatplus.checks.moving.util.MovingUtil
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPlaceBlockPacket
 import net.catrainbow.nocheatplus.players.IPlayerData
-import kotlin.math.abs
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 /**
  * 检测玩家处于生存/冒险状态下,潜行/疾跑/游泳时的
@@ -45,6 +42,9 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
 
     // Tags
     private val tags: ArrayList<String> = ArrayList()
+
+    //bunny jump
+    private var bunnyHop = 0
 
     override fun onCheck(event: WrapperPacketEvent) {
         val player = event.player
@@ -77,27 +77,16 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
     ) {
 
         this.tags.clear()
+        this.bunnyHop = 0
         val debug = ConfigData.logging_debug
 
         val isSamePos = to.distance(from) == 0.0
-        val distanceData = DistanceData(Position.fromObject(from), Position.fromObject(to))
-        val xDistance = distanceData.xDiff
-        var yDistance = distanceData.yDiff
-        val zDistance = distanceData.zDiff
-        var hasHDistance = true
+        val xDistance = data.getMotionX()
+        val yDistance = data.getMotionY()
+        val zDistance = data.getMotionZ()
 
-        //Ghost Block Tracker
-
-        if (isSamePos) hasHDistance = false
-        else if (xDistance == 0.0 && zDistance == 0.0) {
-            yDistance = 0.0
-            hasHDistance = false
-        } else {
-            hasHDistance = true
-        }
-
-        val fromOnGround = from.add(0.0, -0.5, 0.0).levelBlock.id != 0
-        val toOnGround = to.add(0.0, -0.5, 0.0).levelBlock.id != 0
+        val fromOnGround = from.add(0.0, -0.5, 0.0).levelBlock.id != 0 && LocUtil.getUnderBlock(player).id != 0
+        val toOnGround = to.add(0.0, -0.5, 0.0).levelBlock.id != 0 && LocUtil.getUnderBlock(player).id != 0
         var sprinting = false
 
         //检测玩家疾跑状态改变时的运动情况
@@ -114,6 +103,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         }
 
         val walkSpeed = Magic.WALK_SPEED * (player.movementSpeed / Magic.DEFAULT_WALK_SPEED)
+        if (sprinting) this.tags.add("sprint")
         this.setNextFriction(from, to, data)
         data.getGhostBlockChecker().run()
 
@@ -124,7 +114,35 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             if (vDistGhost[0] >= vDistGhost[1]) lagGhostBlock = true
         }
 
-        val distAir = this.vDistAir(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+        if (data.isJump()) this.bunnyHop += round((now - data.getLastJump()) / 100.0).toInt()
+
+        if (player.hasEffect(Effect.JUMP_BOOST)) this.tags.add("effect_jump")
+        if (player.hasEffect(Effect.SPEED)) this.tags.add("effect_speed")
+
+        if (data.getLiquidTick() == 0) {
+            val distAir = this.vDistAir(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+            if (distAir[0] > distAir[1]) pData.addViolationToBuffer(typeName, (distAir[0] - distAir[1]) * 10.0 + 1.1)
+        }
+
+        //滞空时长
+        if (data.getFullAirTick() > 7) {
+            data.setFullAirTick(0)
+            pData.addViolationToBuffer(typeName, (data.getFullAirTick() * 1.3))
+            pData.getViolationData(typeName).setLagBack(data.getLastNormalGround())
+        }
+
+        if (lagGhostBlock) pData.getViolationData(typeName).setCancel()
+
+        if (debug) {
+            val builder = StringBuilder("empty")
+            for (tag in this.tags) builder.append(" ").append(tag)
+            player.sendPopup(builder.toString())
+        }
+
+        if (!pData.getViolationData(typeName)
+                .isCheat() && fromOnGround && toOnGround
+        ) data.updateNormalLoc(player.location)
+        pData.getViolationData(typeName).preVL(0.998)
 
     }
 
@@ -154,15 +172,184 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         data: MovingData,
         pData: IPlayerData,
     ): DoubleArray {
-        if (!toOnGround && !fromOnGround) {
-            player.sendMessage("$yDistance")
-            val vanillaFall =
-                this.onFallingVertical(data, to.distance(from) <= 0.1) && player.inAirTicks > 15 && yDistance != 0.0
+        val vanillaFall = this.onFallingVertical(
+            data, hypot(abs(data.getMotionX()), abs(data.getMotionZ())) <= 0.3
+        ) && player.inAirTicks > 15 && yDistance < 0.0
+        val flying = !vanillaFall && player.inAirTicks > 15 && yDistance >= 0.0
+        var allowDistance = Double.MIN_VALUE
+        var limitDistance = Double.MAX_VALUE
+        if (!toOnGround && !fromOnGround && flying) this.tags.add("flying")
+        val sprint = this.tags.contains("sprint")
 
-            if (!vanillaFall) data.clearListRecord()
-            else player.sendMessage("11")
+        val direction = player.horizontalFacing
+        val block = player.getSide(direction).levelBlock
+        if (block.id != 0) this.tags.add("face_block")
+
+        //重置目标点 并发送拉回操作
+        var resetTo = false
+        var isBunnyHop = false
+
+        if (data.getMovementTracker() != null) {
+            val tracker = data.getMovementTracker()!!
+            val height = tracker.getHeight()
+            if (height == 0.0) this.tags.add("ground_walk")
+            else {
+                this.tags.add("bunny_hop")
+                if (this.tags.contains("effect_jump")) {
+                    val boost = player.getEffect(Effect.JUMP_BOOST).amplifier
+                    allowDistance = height
+                    limitDistance = if (boost == 1) Magic.JUMP_BOOST_V1_MAX_HEIGHT else Magic.JUMP_BOOST_V2_MAX_HEIGHT
+                } else {
+                    allowDistance = height
+                    limitDistance = Magic.JUMP_NORMAL_WALK
+                }
+                limitDistance += player.ping * 0.00008 + 0.0001
+                if (allowDistance in Magic.BLOCK_BUNNY_MIN..Magic.BLOCK_BUNNY_MAX || tags.contains("face_block")) {
+                    allowDistance = limitDistance
+                }
+                isBunnyHop = true
+                if (allowDistance > limitDistance) {
+                    resetTo = true
+                    if (ConfigData.logging_debug) player.sendMessage("BunnyHop LagBack $allowDistance/$limitDistance")
+                }
+            }
         }
-        return doubleArrayOf(0.0, 0.0)
+
+        if (sprint && !isBunnyHop) {
+            if (bunnyHop in 1..2) {
+                allowDistance = data.getSpeed()
+                limitDistance = Magic.SPRINT_CHANGE_MAX_SPEED
+                if (this.tags.contains("face_block")) limitDistance = Magic.SPRINT_CHANGE_FACE_BLOCK_MAX_SPEED
+                if (this.tags.contains("lose_sprint") && player.inAirTicks > 5) limitDistance += Magic.SPRINT_CHANGE_SPEED_ADDITION * player.inAirTicks
+                if (player.inAirTicks in 0..5) limitDistance += Magic.SPRINT_CHANGE_SPEED_ADDITION_V2 * player.inAirTicks
+                if (data.getLoseSprintCount() >= 2) limitDistance += data.getLoseSprintCount() * Magic.SPRINT_CHANGE_SPEED_BACK_DIRECTION
+                if (allowDistance > limitDistance) {
+                    resetTo = true
+                    if (ConfigData.logging_debug) player.sendMessage("BunnySprint LagBack")
+                }
+            }
+        }
+
+        if (flying && !isBunnyHop) {
+
+            if (player.inAirTicks >= 30 && yDistance == 0.0) if (to.y - data.getLastNormalGround().y >= 1.57) {
+                resetTo = true
+                allowDistance = player.inAirTicks * 0.15 + (to.y - data.getLastNormalGround().y) * 10
+                limitDistance = 0.0
+            } else {
+                val downBlock = player.add(0.0, -1.0, 0.0).levelBlock
+                val towardB = player.levelBlock.getSide(BlockFace.DOWN).getSide(player.direction)
+                val backDirection = when (player.direction) {
+                    BlockFace.WEST -> BlockFace.EAST
+                    BlockFace.EAST -> BlockFace.WEST
+                    BlockFace.SOUTH -> BlockFace.NORTH
+                    BlockFace.NORTH -> BlockFace.SOUTH
+                    else -> {
+                        BlockFace.DOWN
+                    }
+                }
+                val leftDirection = when (player.direction) {
+                    BlockFace.NORTH -> BlockFace.WEST
+                    BlockFace.SOUTH -> BlockFace.EAST
+                    BlockFace.WEST -> BlockFace.SOUTH
+                    BlockFace.EAST -> BlockFace.NORTH
+                    else -> BlockFace.DOWN
+                }
+                val rightDirection = when (player.direction) {
+                    BlockFace.NORTH -> BlockFace.EAST
+                    BlockFace.EAST -> BlockFace.SOUTH
+                    BlockFace.SOUTH -> BlockFace.WEST
+                    BlockFace.WEST -> BlockFace.NORTH
+                    else -> BlockFace.DOWN
+                }
+                val rightB = player.levelBlock.down().getSide(rightDirection)
+                val leftB = player.levelBlock.down().getSide(leftDirection)
+                val backB = player.levelBlock.getSide(BlockFace.DOWN).getSide(backDirection)
+                if (player.inAirTicks == data.getLastInAirTicks()) {
+                    this.tags.add("same_at")
+                    if (downBlock.id == 0 && towardB.id == 0 && rightB.id == 0 && leftB.id == 0 && backB.id == 0) {
+                        this.tags.add("full_air")
+                        data.onFullAir()
+                        if (!data.isJump()) resetTo = true
+                    }
+                }
+
+            }
+
+            if (player.inAirTicks >= 15 * 20) {
+                this.tags.add("long_fly")
+                resetTo = true
+            }
+
+        }
+
+        if (isBunnyHop) {
+            val bunny = this.onBunnyHop(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+            if (bunny[0] > bunny[1]) {
+                allowDistance = bunny[0]
+                limitDistance = bunny[1]
+                resetTo = true
+            }
+        }
+
+        //清除Buffer 防止下一次检测误判
+        if (!vanillaFall) data.clearListRecord()
+
+        if (resetTo) pData.getViolationData(typeName).setLagBack(data.getLastNormalGround())
+
+        return doubleArrayOf(allowDistance, limitDistance)
+    }
+
+    /**
+     *  跳跃检测
+     *
+     * @param now
+     * @param player
+     * @param from
+     * @param to
+     * @param fromOnGround
+     * @param toOnGround
+     * @param yDistance
+     * @param data
+     * @param pData
+     *
+     * @return Bunny Distance
+     */
+    private fun onBunnyHop(
+        now: Long,
+        player: Player,
+        from: Location,
+        to: Location,
+        fromOnGround: Boolean,
+        toOnGround: Boolean,
+        yDistance: Double,
+        data: MovingData,
+        pData: IPlayerData,
+    ): DoubleArray {
+        var allowDistance = 0.0
+        var limitDistance = 0.0
+
+        val tinyHeight = this.getTinyHeight(player, ArrayList())
+        val speed = from.distance(to)
+        if (data.getMovementTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
+        val height = data.getMovementTracker()!!.getHeight()
+        if (now - data.getLastJump() <= 50) {
+            //短跳冲刺,完成Fly的第一个过程
+            allowDistance = speed
+            limitDistance = Magic.BUNNY_HOP_MAX_SPEED
+            val upBlock = player.add(0.0, 2.0, 0.0).levelBlock
+            val upBlock2 = player.add(0.0, 1.75, 0.0).levelBlock
+            if (upBlock.id != 0 || upBlock2.id != 0)
+                limitDistance = Magic.BLOCK_BUNNY_MAX
+            if (allowDistance > limitDistance) {
+                this.tags.add("bad_bunny_hop")
+                if (ConfigData.logging_debug) {
+                    player.sendMessage("$speed  $tinyHeight  $height")
+                }
+            }
+        }
+
+        return doubleArrayOf(allowDistance, limitDistance)
     }
 
     /**
@@ -231,45 +418,31 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
      * @return
      */
     private fun onFallingVertical(data: MovingData, samePos: Boolean): Boolean {
-        var failedTick = 0
         var maxSpeed = 0.0
-
+        var lagTick = 0
         //玩家跳跃时跳过此检测
         if (data.isJump()) return true
 
         //强制判断结果
-        if (!samePos) {
+        if (samePos) {
             for (speed in data.getSpeedList()) {
                 if (speed >= maxSpeed) {
                     maxSpeed = speed
-                    failedTick = 0
-                } else {
-                    if (failedTick > 10) {
-                        return true
-                    } else failedTick++
-                }
+                } else lagTick++
             }
-            failedTick = 0
             var deltaY = 0.0
             for (delta in data.getMotionYList()) {
-                if (failedTick > 20) {
-                    return false
-                }
                 val preY = (deltaY - 0.08) * 0.9800000190734863
                 val diff = abs(delta - preY)
-                if (diff > 0.017 && abs(preY) > 0.005) {
-                    failedTick++
-                }
+                if (diff > 0.017 && abs(preY) > 0.005) lagTick++
                 deltaY = delta
             }
+            return lagTick <= 8
         } else {
             var tick = 0
-            failedTick = 0
+            lagTick = 0
             val g = -0.9800000190734863
             for (delta in data.getMotionYList()) {
-                if (failedTick > 10) {
-                    return false
-                }
                 val locationList = data.getLocationList()
                 val speedList = data.getSpeedList()
                 if (locationList.size < 2 || speedList.size < 2) break
@@ -290,12 +463,22 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 val mathSpeed = (g * deltaXZ.pow(2) / (2 * locDeltaY) + 2 * g * locDeltaY).pow(0.5)
                 val mathDeltaXZ = motionDeltaX * tick
                 if (speed > mathSpeed || (sqrt((x - x0).pow(2) + (z - z0).pow(2)) > mathDeltaXZ * 1.5) || locDeltaY > 0) {
-                    failedTick++
+                    lagTick++
                 }
                 tick++
             }
         }
-        return true
+        return lagTick <= 10
+    }
+
+    private fun getTinyHeight(player: Player, expect: List<Int>): Double {
+        return if (LocUtil.getPlayerHeight(player) <= 1) {
+            val b1 = player.levelBlock
+            val b2 = LocUtil.getUnderBlock(player)
+            if (expect.contains(b1.id)) {
+                player.y - b2.maxY
+            } else player.y - b1.minY
+        } else 0.0
     }
 
 }

@@ -24,8 +24,8 @@ class DistanceData(val from: Position, val to: Position) : ICheckData {
 
     val toY = to.getY()
     val fromY = from.getY()
-    val xDiff = abs(to.x - from.x)
-    val yDiff = abs(to.x - from.x)
-    val zDiff = abs(to.z - from.z)
+    val xDiff = to.x - from.x
+    val yDiff = to.x - from.x
+    val zDiff = to.z - from.z
 
 }

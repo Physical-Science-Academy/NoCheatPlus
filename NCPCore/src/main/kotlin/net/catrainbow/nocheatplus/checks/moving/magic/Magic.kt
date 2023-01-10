@@ -18,16 +18,21 @@ package net.catrainbow.nocheatplus.checks.moving.magic
  * Keeping some magic confined in here.
  *
  * @author aso-fold
+ * @author Catrainbow
+ *
+ * 添加基岩版数据,并修改Java版中不合理的数据
  *
  */
 object Magic {
 
+    //Java版数据
+    //aso-fold
     const val DEFAULT_WALK_SPEED = 0.2
     const val DEFAULT_FLY_SPEED = 0.1
-    const val GRAVITY_MAX = 0.0834
-    const val GRAVITY_MIN = 0.0624
-    const val GRAVITY_SPAN = GRAVITY_MAX - GRAVITY_MIN
-    const val GRAVITY_ODD = 0.05
+    private const val GRAVITY_MAX = 0.0834
+    private const val GRAVITY_MIN = 0.0624
+    private const val GRAVITY_SPAN = GRAVITY_MAX - GRAVITY_MIN
+    private const val GRAVITY_ODD = 0.05
     const val GRAVITY_VAC_C = (GRAVITY_MIN * 0.6).toFloat()
     const val FRICTION_MEDIUM_AIR = 0.98
     const val FRICTION_MEDIUM_WATER = 0.89
@@ -35,7 +40,7 @@ object Magic {
     const val WALK_SPEED = 0.221
     const val modSneak = 0.13 / WALK_SPEED
     const val modBlock = 0.16 / WALK_SPEED
-    const val modSwim = 0.115 / WALK_SPEED
+    private const val modSwim = 0.115 / WALK_SPEED
     val modDepthStrider = doubleArrayOf(
         1.0,
         0.1645 / modSwim / WALK_SPEED,
@@ -61,6 +66,20 @@ object Magic {
     const val EXTREME_MOVE_DIST_VERTICAL = 4.0
     const val EXTREME_MOVE_DIST_HORIZONTAL = 22.0
     const val CHUNK_LOAD_MARGIN_MIN = 3.0
+
+    //Bedrock
+    //Catrainbow
+    const val SPRINT_CHANGE_MAX_SPEED = 0.41
+    const val SPRINT_CHANGE_FACE_BLOCK_MAX_SPEED = 0.43
+    const val SPRINT_CHANGE_SPEED_ADDITION = 0.004478
+    const val SPRINT_CHANGE_SPEED_ADDITION_V2 = 0.00522
+    const val SPRINT_CHANGE_SPEED_BACK_DIRECTION = 0.098
+    const val JUMP_BOOST_V2_MAX_HEIGHT = 1.9968048095703068
+    const val JUMP_BOOST_V1_MAX_HEIGHT = 1.4161010742187443
+    const val JUMP_NORMAL_WALK = 0.9321990966796818
+    const val BLOCK_BUNNY_MIN = 1.352197265624994
+    const val BLOCK_BUNNY_MAX = 1.35221
+    const val BUNNY_HOP_MAX_SPEED = 0.71
 
     fun swimBaseSpeedV(): Double {
         return WALK_SPEED * modSwim + 0.02

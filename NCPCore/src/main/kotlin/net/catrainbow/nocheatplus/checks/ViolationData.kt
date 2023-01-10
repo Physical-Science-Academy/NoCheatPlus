@@ -14,10 +14,14 @@
 package net.catrainbow.nocheatplus.checks
 
 import cn.nukkit.Player
+import cn.nukkit.level.Location
+import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.ActionFactory
 import net.catrainbow.nocheatplus.actions.ActionHistory
 import net.catrainbow.nocheatplus.actions.ActionProcess
 import net.catrainbow.nocheatplus.actions.ActionType
+import net.catrainbow.nocheatplus.checks.moving.location.setback.SetBackEntry
+import net.catrainbow.nocheatplus.components.data.ConfigData
 
 /**
  * Violation Level 数据
@@ -46,7 +50,7 @@ class ViolationData(type: CheckType, private val player: Player) {
 
     private fun clearBuffer() {
         this.addedVL = 0.0
-        this.multiply = 0.0
+        this.multiply = 1.0
     }
 
     fun addVL(vl: Double) {
@@ -58,13 +62,20 @@ class ViolationData(type: CheckType, private val player: Player) {
         this.addedVL = 0.0
     }
 
+    fun setCancel() {
+        this.willCancel = true
+    }
+
     fun preVL(buffer: Double) {
         this.multiply = buffer
     }
 
     fun update() {
-        if (!this.willCancel) {
-            this.vl += this.addedVL
+        if (this.addedVL != 0.0) {
+            if (!willCancel) {
+                this.vl += this.addedVL
+                if (ConfigData.logging_debug) NoCheatPlus.instance.server.broadcastMessage("${ConfigData.logging_prefix}${this.player.name} failed ${this.checkType.name} vl: ${this.addedVL} total: ${this.vl}")
+            }
         } else {
             this.vl *= this.multiply
         }
@@ -72,13 +83,18 @@ class ViolationData(type: CheckType, private val player: Player) {
         this.executeAction()
     }
 
-    fun setLagBack() {
+    fun setLagBack(loc: Location) {
         val action = ActionFactory(player, this, ActionType.SETBACK).build()
         this.actions.add(action)
+        NoCheatPlus.instance.getPlayerProvider(this.player.name).getSetbackStorage().push(SetBackEntry(loc, 0))
     }
 
     fun getHistory(): ActionHistory {
         return this.history
+    }
+
+    fun isCheat(): Boolean {
+        return this.addedVL != 0.0
     }
 
     private fun executeAction() {
@@ -104,10 +120,15 @@ class ViolationData(type: CheckType, private val player: Player) {
         val checkType = action.getCheckType()
         val actionData = ActionFactory.actionDataMap[checkType.name]!!
         action.doAction(actionData)
+        this.actions.remove(action)
     }
 
     fun getCheckType(): CheckType {
         return this.checkType
+    }
+
+    fun addAction(actionProcess: ActionProcess) {
+        this.actions.add(actionProcess)
     }
 
 }
