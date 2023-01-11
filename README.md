@@ -43,9 +43,53 @@
 ## 配置
 
 接下来启动服务器。之后，你会看到`plugins/`下生成了一个名为`NoCheatPlus`的目录。
-让我们首先打开其中的配置文件 `config.yml` 。
+让我们首先打开其中的配置文件 `ncpconfig.yml` 。
 ~~~yaml
-待补充
+#NoCheatPlus AntiCheat Config
+config-version:
+  notify: false
+  version: 1000
+logging:
+  active: true
+  auto-delete-days: 1
+  debug: true
+  prefix: "§c§lNCP §7>> §r"
+  extended:
+    command: true
+    violation: true
+actions:
+  waring_delay: 10
+protection:
+  command:
+    hide:
+      active: true
+      message: "§c§lNCP §7>> §rYou do not have permission to run this command."
+      commands:
+        - "?"
+        - "plugins"
+        - "version"
+        - "about"
+checks:
+  moving:
+    survivalfly:
+      active: true
+      setback_policy:
+        fall_damage: true
+        void_to_void: true
+      actions: "cancel vl>50&&log vl>30 break=10&&warn vl>150 message=fly_short&&kick vl>200&&ban repeat=3 time=3,0,0"
+
+string:
+  #被反作弊踢出后给出的信息
+  kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
+  #被反作弊封禁后进入游戏的提示
+  ban: "§c§lNCP §7>> §rYou are banned by NCP for §c@days,@hours,@minutes,@seconds§r because of using @hack @nextEndTime: @end"
+  fly_short: "@player could be flying hack @vl"
+
+permission:
+  no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
+  policy:
+    - "nocheatplus.admin.all:reload,kick,ban,unban,debug"
+    - "nocheatplus.admin.helper:kick,ban,unban"
 ~~~
 
 ## 视频教程
