@@ -74,4 +74,8 @@ interface NoCheatPlusAPI {
 
     fun hasPermission(player: Player, command: String): Boolean
 
+    fun setPlayerCheck(player: Player)
+
+    fun setPlayerBypass(player: Player)
+
 }

@@ -49,6 +49,8 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     }
 
     private lateinit var ncpComManager: NCPComManager
+
+    private val toggleNCP: HashMap<String, Boolean> = HashMap()
     override fun onLoad() {
         instance = this
     }
@@ -170,6 +172,15 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun hasPermission(player: Player, command: String): Boolean {
         return (this.getNCPComponent("NCP Permission") as NCPPermissionCom).hasPermission(player, command)
+    }
+
+    override fun setPlayerBypass(player: Player) {
+        this.toggleNCP[player.name] = true
+    }
+
+    override fun setPlayerCheck(player: Player) {
+        if (this.toggleNCP.containsKey(player.name))
+            this.toggleNCP.remove(player.name)
     }
 
 }

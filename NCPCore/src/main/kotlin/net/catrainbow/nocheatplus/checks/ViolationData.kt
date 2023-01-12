@@ -44,6 +44,8 @@ class ViolationData(type: CheckType, private val player: Player) {
 
     private var history: ActionHistory = ActionHistory()
 
+    private val preLogger: HashMap<String, Int> = HashMap()
+
     fun getVL(): Double {
         return this.vl
     }
@@ -129,6 +131,22 @@ class ViolationData(type: CheckType, private val player: Player) {
 
     fun addAction(actionProcess: ActionProcess) {
         this.actions.add(actionProcess)
+    }
+
+    fun addPreVL(name: String) {
+        if (!preLogger.containsKey(name))
+            preLogger[name] = 0
+        preLogger[name] = preLogger[name]!! + 1
+    }
+
+    fun clearPreVL(name: String) {
+        preLogger[name] = 0
+    }
+
+    fun getPreVL(name: String): Int {
+        if (!preLogger.containsKey(name))
+            preLogger[name] = 0
+        return preLogger[name]!!
     }
 
 }

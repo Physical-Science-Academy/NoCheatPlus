@@ -230,41 +230,46 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             }
         }
 
-        if (flying && !isBunnyHop) {
+        val downBlock = player.add(0.0, -1.0, 0.0).levelBlock
+        val towardB = player.levelBlock.getSide(BlockFace.DOWN).getSide(player.direction)
+        val backDirection = when (player.direction) {
+            BlockFace.WEST -> BlockFace.EAST
+            BlockFace.EAST -> BlockFace.WEST
+            BlockFace.SOUTH -> BlockFace.NORTH
+            BlockFace.NORTH -> BlockFace.SOUTH
+            else -> {
+                BlockFace.DOWN
+            }
+        }
+        val leftDirection = when (player.direction) {
+            BlockFace.NORTH -> BlockFace.WEST
+            BlockFace.SOUTH -> BlockFace.EAST
+            BlockFace.WEST -> BlockFace.SOUTH
+            BlockFace.EAST -> BlockFace.NORTH
+            else -> BlockFace.DOWN
+        }
+        val rightDirection = when (player.direction) {
+            BlockFace.NORTH -> BlockFace.EAST
+            BlockFace.EAST -> BlockFace.SOUTH
+            BlockFace.SOUTH -> BlockFace.WEST
+            BlockFace.WEST -> BlockFace.NORTH
+            else -> BlockFace.DOWN
+        }
+        val rightB = player.levelBlock.down().getSide(rightDirection)
+        val leftB = player.levelBlock.down().getSide(leftDirection)
+        val backB = player.levelBlock.getSide(BlockFace.DOWN).getSide(backDirection)
 
+        if (player.getSide(leftDirection).levelBlock.id != 0 || player.getSide(rightDirection).levelBlock.id != 0) this.tags.add(
+            "friction_block"
+        )
+
+        if (flying) {
             if (player.inAirTicks >= 30 && yDistance == 0.0) if (to.y - data.getLastNormalGround().y >= 1.57) {
                 resetTo = true
                 allowDistance = player.inAirTicks * 0.15 + (to.y - data.getLastNormalGround().y) * 10
                 limitDistance = 0.0
+                if (ConfigData.logging_debug) player.sendMessage("Flying LagBack")
             } else {
-                val downBlock = player.add(0.0, -1.0, 0.0).levelBlock
-                val towardB = player.levelBlock.getSide(BlockFace.DOWN).getSide(player.direction)
-                val backDirection = when (player.direction) {
-                    BlockFace.WEST -> BlockFace.EAST
-                    BlockFace.EAST -> BlockFace.WEST
-                    BlockFace.SOUTH -> BlockFace.NORTH
-                    BlockFace.NORTH -> BlockFace.SOUTH
-                    else -> {
-                        BlockFace.DOWN
-                    }
-                }
-                val leftDirection = when (player.direction) {
-                    BlockFace.NORTH -> BlockFace.WEST
-                    BlockFace.SOUTH -> BlockFace.EAST
-                    BlockFace.WEST -> BlockFace.SOUTH
-                    BlockFace.EAST -> BlockFace.NORTH
-                    else -> BlockFace.DOWN
-                }
-                val rightDirection = when (player.direction) {
-                    BlockFace.NORTH -> BlockFace.EAST
-                    BlockFace.EAST -> BlockFace.SOUTH
-                    BlockFace.SOUTH -> BlockFace.WEST
-                    BlockFace.WEST -> BlockFace.NORTH
-                    else -> BlockFace.DOWN
-                }
-                val rightB = player.levelBlock.down().getSide(rightDirection)
-                val leftB = player.levelBlock.down().getSide(leftDirection)
-                val backB = player.levelBlock.getSide(BlockFace.DOWN).getSide(backDirection)
                 if (player.inAirTicks == data.getLastInAirTicks()) {
                     this.tags.add("same_at")
                     if (downBlock.id == 0 && towardB.id == 0 && rightB.id == 0 && leftB.id == 0 && backB.id == 0) {
@@ -273,14 +278,11 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                         if (!data.isJump()) resetTo = true
                     }
                 }
-
             }
-
             if (player.inAirTicks >= 15 * 20) {
                 this.tags.add("long_fly")
                 resetTo = true
             }
-
         }
 
         if (isBunnyHop) {
@@ -289,13 +291,21 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 allowDistance = bunny[0]
                 limitDistance = bunny[1]
                 resetTo = true
+            } else {
+                val shortBunny =
+                    this.vShortBunny(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+                if (shortBunny[0] > shortBunny[1]) {
+                    allowDistance = shortBunny[0]
+                    limitDistance = shortBunny[1]
+                    resetTo = true
+                }
             }
         }
 
         //清除Buffer 防止下一次检测误判
         if (!vanillaFall) data.clearListRecord()
 
-        if (resetTo) pData.getViolationData(typeName).setLagBack(data.getLastNormalGround())
+        if (resetTo) player.teleport(data.getLastNormalGround())
 
         return doubleArrayOf(allowDistance, limitDistance)
     }
@@ -328,6 +338,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
     ): DoubleArray {
         var allowDistance = 0.0
         var limitDistance = 0.0
+        val vData = pData.getViolationData(typeName)
 
         val tinyHeight = this.getTinyHeight(player, ArrayList())
         val speed = from.distance(to)
@@ -339,14 +350,47 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             limitDistance = Magic.BUNNY_HOP_MAX_SPEED
             val upBlock = player.add(0.0, 2.0, 0.0).levelBlock
             val upBlock2 = player.add(0.0, 1.75, 0.0).levelBlock
-            if (upBlock.id != 0 || upBlock2.id != 0)
-                limitDistance = Magic.BLOCK_BUNNY_MAX
-            if (allowDistance > limitDistance) {
-                this.tags.add("bad_bunny_hop")
-                if (ConfigData.logging_debug) {
-                    player.sendMessage("$speed  $tinyHeight  $height")
+            if (upBlock.id != 0 || upBlock2.id != 0) limitDistance = Magic.BLOCK_BUNNY_MAX
+            if (tinyHeight == Magic.BUNNY_HOP_TINY_JUMP_FIRST || tinyHeight == Magic.BUNNY_HOP_TINY_JUMP_SECOND) {
+                allowDistance = speed
+                limitDistance = Magic.BUNNY_TINY_JUMP_MAX
+                if (this.tags.contains("friction_block") || this.tags.contains("face_block")) {
+                    limitDistance = Magic.BUNNY_TINY_JUMP_FRICTION
+                }
+                if (allowDistance > limitDistance) vData.addPreVL("tiny_bunny")
+                else vData.clearPreVL("tiny_bunny")
+                if (vData.getPreVL("tiny_bunny") > 4) {
+                    if (ConfigData.logging_debug) {
+                        player.sendMessage("TinyBunny LagBack $speed $height")
+                    }
+                    this.tags.add("bad_tinny")
+                    vData.clearPreVL("tiny_bunny")
+                } else {
+                    allowDistance = Double.MIN_VALUE
+                    limitDistance = Double.MAX_VALUE
+                }
+                return doubleArrayOf(allowDistance, limitDistance)
+            }
+            if (this.tags.contains("bad_tinny")) {
+                if (this.tags.contains("friction_block") || this.tags.contains("face_block")) limitDistance =
+                    Magic.BUNNY_TINY_JUMP_FRICTION
+            }
+            //解决边角问题
+            if (to.x != from.x && to.z != from.z) {
+                if (tinyHeight < Magic.BUNNY_TINY_DIRECTION_HEIGHT && speed > Magic.BUNNY_TINY_JUMP_MAX) {
+                    if (yDistance < 0.0 && !fromOnGround && !toOnGround) {
+                        if (ConfigData.logging_debug) {
+                            player.sendMessage("BunnyBHop $speed $yDistance $tinyHeight")
+                        }
+                        return doubleArrayOf(speed, Magic.BUNNY_TINY_JUMP_MAX)
+                    }
                 }
             }
+            if (allowDistance > limitDistance) {
+                this.tags.add("bad_bunny_hop")
+                if (ConfigData.logging_debug) player.sendMessage("Bad Bunny All $speed/$limitDistance")
+            }
+            //解决MoveDown问题
         }
 
         return doubleArrayOf(allowDistance, limitDistance)
@@ -377,6 +421,38 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             }
         }
         return doubleArrayOf(vAllowDistance, vLimitDistance)
+    }
+
+    /**
+     * 短跳跃检测
+     *
+     * @param now
+     * @param player
+     * @param from
+     * @param to
+     * @param fromOnGround
+     * @param toOnGround
+     * @param yDistance
+     * @param data
+     * @param pData
+     *
+     * @return
+     */
+    private fun vShortBunny(
+        now: Long,
+        player: Player,
+        from: Location,
+        to: Location,
+        fromOnGround: Boolean,
+        toOnGround: Boolean,
+        yDistance: Double,
+        data: MovingData,
+        pData: IPlayerData,
+    ): DoubleArray {
+        val allowDistance = 0.0
+        val limitDistance = 0.0
+
+        return doubleArrayOf(allowDistance, limitDistance)
     }
 
     /**

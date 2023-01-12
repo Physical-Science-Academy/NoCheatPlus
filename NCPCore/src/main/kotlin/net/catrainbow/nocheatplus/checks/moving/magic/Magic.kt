@@ -80,6 +80,11 @@ object Magic {
     const val BLOCK_BUNNY_MIN = 1.352197265624994
     const val BLOCK_BUNNY_MAX = 1.35221
     const val BUNNY_HOP_MAX_SPEED = 0.71
+    const val BUNNY_HOP_TINY_JUMP_FIRST = 0.7531994581222534
+    const val BUNNY_HOP_TINY_JUMP_SECOND = 2.7418136596679688E-6
+    const val BUNNY_TINY_JUMP_MAX = 0.40
+    const val BUNNY_TINY_JUMP_FRICTION = 0.43
+    const val BUNNY_TINY_DIRECTION_HEIGHT = 0.17
 
     fun swimBaseSpeedV(): Double {
         return WALK_SPEED * modSwim + 0.02
