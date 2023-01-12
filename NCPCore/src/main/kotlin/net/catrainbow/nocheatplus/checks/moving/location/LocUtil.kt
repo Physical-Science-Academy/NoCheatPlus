@@ -68,6 +68,10 @@ class LocUtil {
             return block.id == 8 || block.id == 9
         }
 
+        fun isIce(block: Block): Boolean {
+            return block.id == Block.ICE || block.id == Block.ICE_FROSTED || block.id == Block.PACKED_ICE
+        }
+
         fun isLava(block: Block): Boolean {
             return block.id == 10 || block.id == 1
         }

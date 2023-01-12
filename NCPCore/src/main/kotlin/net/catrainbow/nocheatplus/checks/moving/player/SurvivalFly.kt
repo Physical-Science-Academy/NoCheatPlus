@@ -118,6 +118,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
 
         if (player.hasEffect(Effect.JUMP_BOOST)) this.tags.add("effect_jump")
         if (player.hasEffect(Effect.SPEED)) this.tags.add("effect_speed")
+        if (player.foodData.level <= 6) this.tags.add("hunger")
 
         if (data.getLiquidTick() == 0) {
             val distAir = this.vDistAir(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
@@ -198,7 +199,11 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 if (this.tags.contains("effect_jump")) {
                     val boost = player.getEffect(Effect.JUMP_BOOST).amplifier
                     allowDistance = height
-                    limitDistance = if (boost == 1) Magic.JUMP_BOOST_V1_MAX_HEIGHT else Magic.JUMP_BOOST_V2_MAX_HEIGHT
+                    limitDistance = if (boost == 0) Magic.JUMP_BOOST_V1_MAX_HEIGHT else Magic.JUMP_BOOST_V2_MAX_HEIGHT
+                    if (allowDistance in Magic.BLOCK_BUNNY_BYPASS_V1_MIN..Magic.BLOCK_BUNNY_BYPASS_V1_MAX && boost == 0) limitDistance =
+                        allowDistance
+                    if (allowDistance in Magic.BLOCK_BUNNY_BYPASS_V2_MIN..Magic.BLOCK_BUNNY_BYPASS_V2_MAX && boost == 1) limitDistance =
+                        allowDistance
                 } else {
                     allowDistance = height
                     limitDistance = Magic.JUMP_NORMAL_WALK
@@ -207,7 +212,9 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 if (allowDistance in Magic.BLOCK_BUNNY_MIN..Magic.BLOCK_BUNNY_MAX || tags.contains("face_block")) {
                     allowDistance = limitDistance
                 }
-                isBunnyHop = true
+                if (!this.tags.contains("effect_jump")) {
+                    isBunnyHop = true
+                }
                 if (allowDistance > limitDistance) {
                     resetTo = true
                     if (ConfigData.logging_debug) player.sendMessage("BunnyHop LagBack $allowDistance/$limitDistance")
@@ -291,7 +298,8 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 allowDistance = bunny[0]
                 limitDistance = bunny[1]
                 resetTo = true
-            } else {
+            } else if (this.tags.contains("hunger")) {
+                //饥饿时检测更严格
                 val shortBunny =
                     this.vShortBunny(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                 if (shortBunny[0] > shortBunny[1]) {
@@ -344,7 +352,23 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         val speed = from.distance(to)
         if (data.getMovementTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
         val height = data.getMovementTracker()!!.getHeight()
-        if (now - data.getLastJump() <= 50) {
+        if (now - data.getLastJump() <= 100) {
+
+            //冰块单独判断
+            if (data.getIceTick() >= 2) {
+                this.tags.add("ice_ground")
+                allowDistance = 0.0
+                limitDistance = 0.0
+                if (data.getSpeedTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
+                if (!data.getSpeedTracker()!!.isLive()) {
+                    val maxSpeed = data.getSpeedTracker()!!.getMaxSpeed()
+                    //重新使追踪器跳动,进行下一次追踪
+                    data.getSpeedTracker()!!.run()
+                    player.sendMessage("$maxSpeed")
+                }
+                return doubleArrayOf(allowDistance, limitDistance)
+            }
+
             //短跳冲刺,完成Fly的第一个过程
             allowDistance = speed
             limitDistance = Magic.BUNNY_HOP_MAX_SPEED
@@ -356,6 +380,13 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 limitDistance = Magic.BUNNY_TINY_JUMP_MAX
                 if (this.tags.contains("friction_block") || this.tags.contains("face_block")) {
                     limitDistance = Magic.BUNNY_TINY_JUMP_FRICTION
+                }
+                if (this.tags.contains("effect_speed")) {
+                    (if (player.getEffect(Effect.SPEED).amplifier == 0) {
+                        Magic.BUNNY_TINY_JUMP_SPEED_BOOST_V1
+                    } else {
+                        Magic.BUNNY_TINY_JUMP_SPEED_BOOST_V2
+                    }).also { limitDistance = it }
                 }
                 if (allowDistance > limitDistance) vData.addPreVL("tiny_bunny")
                 else vData.clearPreVL("tiny_bunny")
@@ -386,11 +417,27 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                     }
                 }
             }
+            if (tinyHeight < Magic.DEFAULT_JUMP_HEIGHT) return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
             if (allowDistance > limitDistance) {
                 this.tags.add("bad_bunny_hop")
-                if (ConfigData.logging_debug) player.sendMessage("Bad Bunny All $speed/$limitDistance")
-            }
-            //解决MoveDown问题
+                vData.addPreVL("bad_bunny_hop")
+                limitDistance = Magic.BUNNY_HOP_MAX_SPEED_MAX
+                if (this.tags.contains("effect_speed")) {
+                    limitDistance = if (player.getEffect(Effect.SPEED).amplifier == 0) {
+                        Magic.SPEED_BOOST_V1_BUNNY_HOP
+                    } else Magic.SPEED_BOOST_V2_BUNNY_HOP
+                }
+                if (allowDistance > limitDistance) {
+                    vData.addPreVL("bad_bunny_hop")
+                }
+                if (vData.getPreVL("bad_bunny_hop") > 3) {
+                    if (ConfigData.logging_debug) player.sendMessage("Bad Bunny All S=$speed/$limitDistance $yDistance")
+                    vData.clearPreVL("bad_bunny_hop")
+                } else {
+                    allowDistance = Double.MIN_VALUE
+                    limitDistance = Double.MAX_VALUE
+                }
+            } else vData.clearPreVL("bad_bunny_hop")
         }
 
         return doubleArrayOf(allowDistance, limitDistance)
@@ -547,6 +594,14 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         return lagTick <= 10
     }
 
+    /**
+     * 获取精确高度
+     *
+     * @param player
+     * @param expect
+     *
+     * @return Height
+     */
     private fun getTinyHeight(player: Player, expect: List<Int>): Double {
         return if (LocUtil.getPlayerHeight(player) <= 1) {
             val b1 = player.levelBlock

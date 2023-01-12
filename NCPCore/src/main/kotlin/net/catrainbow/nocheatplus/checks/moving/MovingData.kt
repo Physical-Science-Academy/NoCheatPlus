@@ -24,6 +24,7 @@ import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
 import net.catrainbow.nocheatplus.checks.moving.model.MoveTracker
+import net.catrainbow.nocheatplus.checks.moving.model.SpeedTracker
 import net.catrainbow.nocheatplus.components.data.ICheckData
 
 /**
@@ -51,6 +52,7 @@ class MovingData : ICheckData {
     private var lastInAirTick = 0
     private var lastPlayerJump = System.currentTimeMillis()
     private var moveTracker: MoveTracker? = null
+    private var speedTracker: SpeedTracker? = null
 
     /**
      * Current Moving Data
@@ -66,6 +68,7 @@ class MovingData : ICheckData {
     private var inAirTick = 0
     private var fullAirTick = 0
     private var liquidTick = 0
+    private var iceTick = 0
 
     private var motionYList: ArrayList<Double> = ArrayList()
     private var locationList: ArrayList<Location> = ArrayList()
@@ -100,6 +103,13 @@ class MovingData : ICheckData {
             this.moveTracker!!.onUpdate(System.currentTimeMillis())
         }
 
+        if (this.speedTracker == null) {
+            this.speedTracker = SpeedTracker(this)
+            this.speedTracker!!.kill()
+        } else {
+            this.speedTracker!!.onUpdate()
+        }
+
         if (this.ghostBlockChecker.getName() == "NCP") {
             this.ghostBlockChecker = GhostBlockChecker(player.name, Vector3(0.0, 0.0, 0.0), 0, 0)
         }
@@ -125,8 +135,10 @@ class MovingData : ICheckData {
         } else this.loseSprintCount++
         if (this.loseSprintCount > 5) this.loseSprintCount = 0
         if (this.onGround) fullAirTick = 0
-        if (LocUtil.isLiquid(LocUtil.getUnderBlock(player)) || LocUtil.isLiquid(player.levelBlock))
-            this.liquidTick++ else this.liquidTick = 0
+        if (LocUtil.isLiquid(LocUtil.getUnderBlock(player)) || LocUtil.isLiquid(player.levelBlock)) this.liquidTick++ else if (this.liquidTick in 1..50) this.liquidTick-- else this.liquidTick =
+            0
+        if (LocUtil.isIce(LocUtil.getUnderBlock(player))) this.iceTick++
+        else if (this.iceTick in 1..50) this.iceTick-- else this.iceTick = 0
     }
 
     fun getLiquidTick(): Int {
@@ -247,6 +259,14 @@ class MovingData : ICheckData {
 
     fun getLastNormalGround(): Location {
         return this.normalGround
+    }
+
+    fun getIceTick(): Int {
+        return this.iceTick
+    }
+
+    fun getSpeedTracker(): SpeedTracker? {
+        return this.speedTracker
     }
 
 }
