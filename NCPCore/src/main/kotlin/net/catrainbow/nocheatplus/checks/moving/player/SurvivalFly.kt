@@ -186,56 +186,6 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         val block = player.getSide(direction).levelBlock
         if (block.id != 0) this.tags.add("face_block")
 
-        //重置目标点 并发送拉回操作
-        var resetTo = false
-        var isBunnyHop = false
-
-        if (data.getMovementTracker() != null) {
-            val tracker = data.getMovementTracker()!!
-            val height = tracker.getHeight()
-            if (height == 0.0) this.tags.add("ground_walk")
-            else {
-                this.tags.add("bunny_hop")
-                if (this.tags.contains("effect_jump")) {
-                    val boost = player.getEffect(Effect.JUMP_BOOST).amplifier
-                    allowDistance = height
-                    limitDistance = if (boost == 0) Magic.JUMP_BOOST_V1_MAX_HEIGHT else Magic.JUMP_BOOST_V2_MAX_HEIGHT
-                    if (allowDistance in Magic.BLOCK_BUNNY_BYPASS_V1_MIN..Magic.BLOCK_BUNNY_BYPASS_V1_MAX && boost == 0) limitDistance =
-                        allowDistance
-                    if (allowDistance in Magic.BLOCK_BUNNY_BYPASS_V2_MIN..Magic.BLOCK_BUNNY_BYPASS_V2_MAX && boost == 1) limitDistance =
-                        allowDistance
-                } else {
-                    allowDistance = height
-                    limitDistance = Magic.JUMP_NORMAL_WALK
-                }
-                limitDistance += player.ping * 0.00008 + 0.0001
-                if (allowDistance in Magic.BLOCK_BUNNY_MIN..Magic.BLOCK_BUNNY_MAX || tags.contains("face_block")) {
-                    allowDistance = limitDistance
-                }
-                if (!this.tags.contains("effect_jump")) {
-                    isBunnyHop = true
-                }
-                if (allowDistance > limitDistance) {
-                    resetTo = true
-                    if (ConfigData.logging_debug) player.sendMessage("BunnyHop LagBack $allowDistance/$limitDistance")
-                }
-            }
-        }
-
-        if (sprint && !isBunnyHop) {
-            if (bunnyHop in 1..2) {
-                allowDistance = data.getSpeed()
-                limitDistance = Magic.SPRINT_CHANGE_MAX_SPEED
-                if (this.tags.contains("face_block")) limitDistance = Magic.SPRINT_CHANGE_FACE_BLOCK_MAX_SPEED
-                if (this.tags.contains("lose_sprint") && player.inAirTicks > 5) limitDistance += Magic.SPRINT_CHANGE_SPEED_ADDITION * player.inAirTicks
-                if (player.inAirTicks in 0..5) limitDistance += Magic.SPRINT_CHANGE_SPEED_ADDITION_V2 * player.inAirTicks
-                if (data.getLoseSprintCount() >= 2) limitDistance += data.getLoseSprintCount() * Magic.SPRINT_CHANGE_SPEED_BACK_DIRECTION
-                if (allowDistance > limitDistance) {
-                    resetTo = true
-                    if (ConfigData.logging_debug) player.sendMessage("BunnySprint LagBack")
-                }
-            }
-        }
 
         val downBlock = player.add(0.0, -1.0, 0.0).levelBlock
         val towardB = player.levelBlock.getSide(BlockFace.DOWN).getSide(player.direction)
@@ -269,6 +219,60 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         if (player.getSide(leftDirection).levelBlock.id != 0 || player.getSide(rightDirection).levelBlock.id != 0) this.tags.add(
             "friction_block"
         )
+
+        //重置目标点 并发送拉回操作
+        var resetTo = false
+        var isBunnyHop = false
+
+        if (data.getMovementTracker() != null) {
+            val tracker = data.getMovementTracker()!!
+            val height = tracker.getHeight()
+            if (height == 0.0) this.tags.add("ground_walk")
+            else {
+                this.tags.add("bunny_hop")
+                if (this.tags.contains("effect_jump")) {
+                    val boost = player.getEffect(Effect.JUMP_BOOST).amplifier
+                    allowDistance = height
+                    limitDistance = if (boost == 0) Magic.JUMP_BOOST_V1_MAX_HEIGHT else Magic.JUMP_BOOST_V2_MAX_HEIGHT
+                    if (allowDistance in Magic.BLOCK_BUNNY_BYPASS_V1_MIN..Magic.BLOCK_BUNNY_BYPASS_V1_MAX && boost == 0) limitDistance =
+                        allowDistance
+                    if (allowDistance in Magic.BLOCK_BUNNY_BYPASS_V2_MIN..Magic.BLOCK_BUNNY_BYPASS_V2_MAX && boost == 1) limitDistance =
+                        allowDistance
+                } else {
+                    allowDistance = height
+                    limitDistance = Magic.JUMP_NORMAL_WALK
+                }
+                limitDistance += player.ping * 0.00008 + 0.0001
+                if (allowDistance in Magic.BLOCK_BUNNY_MIN..Magic.BLOCK_BUNNY_MAX || tags.contains("face_block") || tags.contains(
+                        "friction_block"
+                    )
+                ) {
+                    allowDistance = limitDistance
+                }
+                if (!this.tags.contains("effect_jump")) {
+                    isBunnyHop = true
+                }
+                if (allowDistance > limitDistance) {
+                    resetTo = true
+                    if (ConfigData.logging_debug) player.sendMessage("BunnyHop LagBack $allowDistance/$limitDistance")
+                }
+            }
+        }
+
+        if (sprint && !isBunnyHop) {
+            if (bunnyHop in 1..2) {
+                allowDistance = data.getSpeed()
+                limitDistance = Magic.SPRINT_CHANGE_MAX_SPEED
+                if (this.tags.contains("face_block")) limitDistance = Magic.SPRINT_CHANGE_FACE_BLOCK_MAX_SPEED
+                if (this.tags.contains("lose_sprint") && player.inAirTicks > 5) limitDistance += Magic.SPRINT_CHANGE_SPEED_ADDITION * player.inAirTicks
+                if (player.inAirTicks in 0..5) limitDistance += Magic.SPRINT_CHANGE_SPEED_ADDITION_V2 * player.inAirTicks
+                if (data.getLoseSprintCount() >= 2) limitDistance += data.getLoseSprintCount() * Magic.SPRINT_CHANGE_SPEED_BACK_DIRECTION
+                if (allowDistance > limitDistance) {
+                    resetTo = true
+                    if (ConfigData.logging_debug) player.sendMessage("BunnySprint LagBack")
+                }
+            }
+        }
 
         if (flying) {
             if (player.inAirTicks >= 30 && yDistance == 0.0) if (to.y - data.getLastNormalGround().y >= 1.57) {
@@ -361,17 +365,23 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 limitDistance = 0.0
                 if (data.getSpeedTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
                 if (!data.getSpeedTracker()!!.isLive()) {
-                    val maxSpeed = data.getSpeedTracker()!!.getMaxSpeed()
+                    allowDistance = data.getSpeedTracker()!!.getMaxSpeed()
                     //重新使追踪器跳动,进行下一次追踪
                     data.getSpeedTracker()!!.run()
-                    player.sendMessage("$maxSpeed")
+                    //头顶跳加速单独考虑
+                    val headB1 = player.add(0.0, 1.75, 0.0).levelBlock
+                    val headB2 = player.add(0.0, 2.0, 0.0).levelBlock
+                    limitDistance = if (headB1.id == 0 && headB2.id == 0) Magic.BUNNY_ICE_GROUND_DEFAULT
+                    else Magic.BUNNY_ICE_GROUND_DEFAULT + Magic.BUNNY_UP_BLOCK_ADDITION
                 }
+                if (allowDistance > limitDistance) if (ConfigData.logging_debug) player.sendMessage("ice bunny $allowDistance/$limitDistance")
                 return doubleArrayOf(allowDistance, limitDistance)
             }
 
             //短跳冲刺,完成Fly的第一个过程
             allowDistance = speed
             limitDistance = Magic.BUNNY_HOP_MAX_SPEED
+            val absHeight = data.getMovementTracker()!!.getAbsHeight()
             val upBlock = player.add(0.0, 2.0, 0.0).levelBlock
             val upBlock2 = player.add(0.0, 1.75, 0.0).levelBlock
             if (upBlock.id != 0 || upBlock2.id != 0) limitDistance = Magic.BLOCK_BUNNY_MAX
@@ -388,12 +398,16 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                         Magic.BUNNY_TINY_JUMP_SPEED_BOOST_V2
                     }).also { limitDistance = it }
                 }
-                if (allowDistance > limitDistance) vData.addPreVL("tiny_bunny")
-                else vData.clearPreVL("tiny_bunny")
-                if (vData.getPreVL("tiny_bunny") > 4) {
-                    if (ConfigData.logging_debug) {
-                        player.sendMessage("TinyBunny LagBack $speed $height")
+                if (allowDistance > limitDistance) {
+                    //解决冲刺出去后导致的误判
+                    if (absHeight > 0.1 && data.getIceTick() == 0) {
+                        vData.addPreVL("tiny_bunny")
+                        if (ConfigData.logging_debug) {
+                            player.sendMessage("TinyBunny LagBack $absHeight")
+                        }
                     }
+                } else vData.clearPreVL("tiny_bunny")
+                if (vData.getPreVL("tiny_bunny") > 5) {
                     this.tags.add("bad_tinny")
                     vData.clearPreVL("tiny_bunny")
                 } else {
@@ -409,9 +423,9 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             //解决边角问题
             if (to.x != from.x && to.z != from.z) {
                 if (tinyHeight < Magic.BUNNY_TINY_DIRECTION_HEIGHT && speed > Magic.BUNNY_TINY_JUMP_MAX) {
-                    if (yDistance < 0.0 && !fromOnGround && !toOnGround) {
+                    if (yDistance < 0.0 && !fromOnGround && !toOnGround && data.getIceTick() == 0) {
                         if (ConfigData.logging_debug) {
-                            player.sendMessage("BunnyBHop $speed $yDistance $tinyHeight")
+                            player.sendMessage("BunnyBHop $speed $yDistance  $tinyHeight  $absHeight")
                         }
                         return doubleArrayOf(speed, Magic.BUNNY_TINY_JUMP_MAX)
                     }
@@ -431,7 +445,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                     vData.addPreVL("bad_bunny_hop")
                 }
                 if (vData.getPreVL("bad_bunny_hop") > 3) {
-                    if (ConfigData.logging_debug) player.sendMessage("Bad Bunny All S=$speed/$limitDistance $yDistance")
+                    if (ConfigData.logging_debug) player.sendMessage("Bad Bunny All S=$speed/$limitDistance $yDistance  $absHeight")
                     vData.clearPreVL("bad_bunny_hop")
                 } else {
                     allowDistance = Double.MIN_VALUE
@@ -440,7 +454,12 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             } else vData.clearPreVL("bad_bunny_hop")
         }
 
-        return doubleArrayOf(allowDistance, limitDistance)
+        //解决常规的速度问题
+        if (allowDistance > limitDistance) {
+            val diff = allowDistance - limitDistance - 0.75
+            if (diff > 0) return doubleArrayOf(allowDistance, limitDistance)
+        }
+        return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
     }
 
     /**
@@ -472,6 +491,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
 
     /**
      * 短跳跃检测
+     * 在饥饿的状态下
      *
      * @param now
      * @param player

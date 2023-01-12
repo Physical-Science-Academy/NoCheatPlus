@@ -16,6 +16,7 @@ package net.catrainbow.nocheatplus.checks.moving.model
 import cn.nukkit.Player
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
+import kotlin.math.abs
 
 /**
  * 运动跟踪器
@@ -32,6 +33,7 @@ class MoveTracker(player: Player) {
     private var name = player.name
     private var tick = 0
     private var onGround = true
+    private var maxAbsHeight = 0.0
 
 
     fun onUpdate(now: Long) {
@@ -39,12 +41,15 @@ class MoveTracker(player: Player) {
         val player = this.getPlayer()
         val data = NoCheatPlus.instance.getPlayerProvider(player).movingData
         if (this.isLive) {
+            //初速夹角忽略计算
             if (!this.isJump && now - data.getLastJump() <= 200 && this.onGround) {
                 this.isJump = true
                 this.onGround = false
                 this.startJumpY = player.add(0.0, -0.1, 0.0).y
             }
             if (this.isJump) {
+                val h = abs(player.y - startJumpY) + LocUtil.getPlayerHeight(player)
+                if (h > this.maxAbsHeight) this.maxAbsHeight = h
                 if (player.y >= this.lastY) this.lastY = player.y
                 else {
                     this.maxHeight = this.lastY - startJumpY
@@ -72,12 +77,17 @@ class MoveTracker(player: Player) {
         return if (canReturnResult() && this.maxHeight >= 0.0) this.maxHeight else 0.0
     }
 
+    fun getAbsHeight(): Double {
+        return if (canReturnResult() && this.maxAbsHeight >= 0.0) this.maxAbsHeight else 0.0
+    }
+
     private fun reset() {
         this.maxHeight = 0.0
         this.startJumpY = 0.0
         this.lastY = 0.0
         this.isJump = false
         this.tick = 0
+        this.maxAbsHeight = 0.0
         this.isLive = true
     }
 
