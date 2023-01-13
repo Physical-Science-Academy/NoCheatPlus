@@ -139,8 +139,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 val distFullAir =
                     this.inAirCheck(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                 if (distFullAir[0] > distFullAir[1]) pData.addViolationToBuffer(
-                    typeName,
-                    (distFullAir[0] - distFullAir[1] * 10.0)
+                    typeName, (abs(distFullAir[0] - distFullAir[1]) * 10.0)
                 )
             }
         }
@@ -550,12 +549,32 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         if (this.tags.contains("same_at") && this.tags.contains("full_air")) {
             pData.getViolationData(this.typeName).addPreVL("spoof_ground")
         } else pData.getViolationData(this.typeName).clearPreVL("spoof_ground")
-        if (pData.getViolationData(this.typeName).getPreVL("spoof_ground") > 7) {
+        val limitAT = if (this.tags.contains("hunger")) 13 else 7
+        if (pData.getViolationData(this.typeName).getPreVL("spoof_ground") > limitAT) {
             allowDistance = speed
             limitDistance = if (speed > Magic.DEFAULT_FLY_SPEED) Magic.DEFAULT_FLY_SPEED else 0.0
             resetTo = true
         }
 
+        if (!fromOnGround && !toOnGround) {
+            val friction = data.getNextVerticalFriction()
+            val hAllowDistance =
+                if (abs(data.getLastMotionY() - 0.08) * friction < 0.005) -0.08 * friction else (data.getLastMotionY() - 0.08) * friction
+            if (abs(yDistance - hAllowDistance) == Magic.VANILLA_Y_DIFF && yDistance == Magic.VANILLA_Y_DELTA) {
+                allowDistance = max(yDistance, hAllowDistance)
+                limitDistance = min(yDistance, hAllowDistance)
+                resetTo = true
+            } else if (yDistance == data.getLastMotionY() && !this.tags.contains("same_at")) {
+                //检测节发的BlinkFly
+                if (abs(yDistance - hAllowDistance) == Magic.VANILLA_Y_DIFF_V2) resetTo = false
+                //非惯性运动情况单独考
+                if (this.tags.contains("ground_walk") && player.inAirTicks > this.countMaxAirTick(player, data, now)) {
+                    allowDistance = player.inAirTicks / 15 * (speed - Magic.DEFAULT_FLY_SPEED)
+                    limitDistance = 0.0
+                    resetTo = true
+                }
+            }
+        }
 
         if (resetTo) player.teleport(data.getLastNormalGround())
 
@@ -639,6 +658,29 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         }
 
         return doubleArrayOf(allowDistance, limitDistance)
+    }
+
+    /**
+     * 预测空中滞留单位时间的最大值
+     *
+     * @param player
+     * @param data
+     * @param now
+     *
+     * @return 最大值
+     */
+    private fun countMaxAirTick(player: Player, data: MovingData, now: Long): Double {
+        //默认限制值,为完成一个完整的平面斜抛运动所用的时间
+        var limitBasicTick = 13.0
+
+        //考虑药水情况
+        if (this.tags.contains("effect_jump")) limitBasicTick *= (player.getEffect(Effect.JUMP_BOOST).amplifier + 1) * 3
+        if (now - data.getLastJump() <= 500) limitBasicTick += 15
+        if (LocUtil.getPlayerHeight(player) < 3) limitBasicTick += 5
+
+        //落体运动的情况考虑
+        limitBasicTick += (LocUtil.getPlayerHeight(player) / 10 * 0.5)
+        return limitBasicTick
     }
 
     /**
