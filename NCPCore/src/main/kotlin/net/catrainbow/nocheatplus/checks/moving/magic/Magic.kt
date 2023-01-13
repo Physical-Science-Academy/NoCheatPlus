@@ -97,14 +97,16 @@ object Magic {
     const val BUNNY_TINY_DIRECTION_HEIGHT = 0.17
     const val DEFAULT_JUMP_HEIGHT = 0.42
 
-    //跳跃时的绝对高度
-    const val BUNNY_ABS_HEIGHT_DEFAULT_MIN = 0.932199
-    const val BUNNY_ABS_HEIGHT_DEFAULT_MAX = 0.9322
-
     //特殊方块
     const val BUNNY_ICE_GROUND_DEFAULT = 0.72
     const val BUNNY_UP_BLOCK_ADDITION = 0.18
 
+    //饥饿数值
+    const val HUNGER_BUNNY_MAX_SPEED = 0.86
+    const val HUNGER_BUNNY_Y_MAX = 0.421
+    const val HUNGER_BUNNY_Y_MIN = 0.1
+    const val HUNGER_BUNNY_VERTICAL_MAX_SHORT = 1.33
+    const val HUNGER_BUNNY_VERTICAL_MAX_LONG = 1.33
 
     fun swimBaseSpeedV(): Double {
         return WALK_SPEED * modSwim + 0.02

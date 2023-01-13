@@ -36,6 +36,8 @@ class MoveTracker(player: Player) {
     private var tick = 0
     private var onGround = true
     private var maxAbsHeight = 0.0
+    private var distanceXZ = 0.0
+    private var useLocation = player.location
 
 
     fun onUpdate(now: Long) {
@@ -48,9 +50,11 @@ class MoveTracker(player: Player) {
             val subBlock = player.add(0.0, -0.4, 0.0).levelBlock
             if (block is BlockSlab || block is BlockStairs) {
                 this.maxHeight = player.y - block.maxY
+                this.distanceXZ = player.distance(this.useLocation)
                 this.isLive = false
             } else if (subBlock is BlockSlab || subBlock is BlockStairs) {
                 this.maxHeight = player.y - subBlock.maxY
+                this.distanceXZ = player.distance(this.useLocation)
                 this.isLive = false
             }
             //初速夹角忽略计算
@@ -58,6 +62,7 @@ class MoveTracker(player: Player) {
                 this.isJump = true
                 this.onGround = false
                 this.startJumpY = player.add(0.0, -0.1, 0.0).y
+                this.useLocation = player.location
             }
             if (this.isJump) {
                 val h = abs(player.y - startJumpY) + LocUtil.getPlayerHeight(player)
@@ -65,6 +70,7 @@ class MoveTracker(player: Player) {
                 if (player.y >= this.lastY) this.lastY = player.y
                 else {
                     this.maxHeight = this.lastY - startJumpY
+                    this.distanceXZ = player.distance(this.useLocation)
                     this.isLive = false
                 }
             }
@@ -93,6 +99,10 @@ class MoveTracker(player: Player) {
         return if (canReturnResult() && this.maxAbsHeight >= 0.0) this.maxAbsHeight else 0.0
     }
 
+    fun getDistanceXZ(): Double {
+        return if (canReturnResult() && this.distanceXZ >= 0.0) this.distanceXZ else 0.0
+    }
+
     private fun reset() {
         this.maxHeight = 0.0
         this.startJumpY = 0.0
@@ -100,6 +110,8 @@ class MoveTracker(player: Player) {
         this.isJump = false
         this.tick = 0
         this.maxAbsHeight = 0.0
+        this.distanceXZ = 0.0
+        this.useLocation = this.getPlayer().location
         this.isLive = true
     }
 

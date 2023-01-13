@@ -15,7 +15,10 @@ package net.catrainbow.nocheatplus.checks.moving.location
 
 import cn.nukkit.Player
 import cn.nukkit.block.Block
+import cn.nukkit.block.BlockSlab
+import cn.nukkit.block.BlockStairs
 import cn.nukkit.level.Location
+import cn.nukkit.math.BlockFace
 
 /**
  * Location Util

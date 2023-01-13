@@ -135,6 +135,14 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             if (distAir[0] > distAir[1]) pData.addViolationToBuffer(
                 typeName, (distAir[0] - distAir[1]) * 10.0 + 1.1
             )
+            if (!this.tags.contains("flying")) {
+                val distFullAir =
+                    this.inAirCheck(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+                if (distFullAir[0] > distFullAir[1]) pData.addViolationToBuffer(
+                    typeName,
+                    (distFullAir[0] - distFullAir[1] * 10.0)
+                )
+            }
         }
 
         //滞空时长
@@ -256,8 +264,10 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 }
                 val sinceLastBlock = player.add(0.0, -1.0, 0.0).levelBlock.getSide(backDirection)
                 val sinceLastBlock2 = sinceLastBlock.getSide(backDirection)
+                //跳跃问题
+                val down2Block = player.add(0.0, -1.5, 0.0).levelBlock
                 val sinceLastSS =
-                    sinceLastBlock is BlockStairs || sinceLastBlock is BlockSlab || sinceLastBlock2 is BlockStairs || sinceLastBlock2 is BlockSlab
+                    sinceLastBlock is BlockStairs || sinceLastBlock is BlockSlab || sinceLastBlock2 is BlockStairs || sinceLastBlock2 is BlockSlab || down2Block is BlockStairs || down2Block is BlockSlab
                 //解决台阶和板砖的特殊问题
                 if (this.tags.contains("stair_slab")) {
                     allowDistance = 0.0
@@ -272,15 +282,15 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                         allowDistance = abs(yDistance)
                         limitDistance = 0.5
                     }
-                } else if (data.getSlabTick() > 0 || data.getStairTick() > 0 || sinceLastSS) allowDistance =
-                    limitDistance
+                } else if (data.getSlabTick() > 0 || data.getStairTick() > 0 || sinceLastSS) limitDistance =
+                    allowDistance
 
                 limitDistance += player.ping * 0.00008 + 0.0001
                 if (allowDistance in Magic.BLOCK_BUNNY_MIN..Magic.BLOCK_BUNNY_MAX || this.tags.contains("face_block") || this.tags.contains(
                         "friction_block"
                     ) || this.tags.contains("lose_sprint")
                 ) {
-                    allowDistance = limitDistance
+                    limitDistance = allowDistance
                 }
                 if (!this.tags.contains("effect_jump") && !this.tags.contains("stair_slab")) {
                     isBunnyHop = true
@@ -313,20 +323,19 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 allowDistance = player.inAirTicks * 0.15 + (to.y - data.getLastNormalGround().y) * 10
                 limitDistance = 0.0
                 if (ConfigData.logging_debug) player.sendMessage("Flying LagBack")
-            } else {
-                if (player.inAirTicks == data.getLastInAirTicks()) {
-                    this.tags.add("same_at")
-                    if (downBlock.id == 0 && towardB.id == 0 && rightB.id == 0 && leftB.id == 0 && backB.id == 0) {
-                        this.tags.add("full_air")
-                        data.onFullAir()
-                        if (!data.isJump()) resetTo = true
-                    }
-                }
             }
-            if (player.inAirTicks >= 15 * 20) {
-                this.tags.add("long_fly")
-                resetTo = true
+        }
+        if (player.inAirTicks == data.getLastInAirTicks()) {
+            this.tags.add("same_at")
+            if (downBlock.id == 0 && towardB.id == 0 && rightB.id == 0 && leftB.id == 0 && backB.id == 0) {
+                this.tags.add("full_air")
+                data.onFullAir()
+                if (!data.isJump() && flying) resetTo = true
             }
+        }
+        if (player.inAirTicks >= 15 * 20) {
+            this.tags.add("long_fly")
+            resetTo = true
         }
 
         if (isBunnyHop) {
@@ -504,6 +513,55 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         data.setGhostBlockChecker(GhostBlockChecker(player.name, packet.block, 45, player.inventory.itemInHand.id))
     }
 
+    /**
+     *  空中飞行检测
+     *
+     *  @param now
+     *  @param player
+     *  @param from
+     *  @param to
+     *  @param fromOnGround
+     *  @param toOnGround
+     *  @param yDistance
+     *  @param data
+     *  @param pData
+     *
+     *  @return
+     */
+    private fun inAirCheck(
+        now: Long,
+        player: Player,
+        from: Location,
+        to: Location,
+        fromOnGround: Boolean,
+        toOnGround: Boolean,
+        yDistance: Double,
+        data: MovingData,
+        pData: IPlayerData,
+    ): DoubleArray {
+        var allowDistance = 0.0
+        var limitDistance = 0.0
+
+        var resetTo = false
+
+        val speed = to.distance(from)
+
+        //异常的移动情况
+        if (this.tags.contains("same_at") && this.tags.contains("full_air")) {
+            pData.getViolationData(this.typeName).addPreVL("spoof_ground")
+        } else pData.getViolationData(this.typeName).clearPreVL("spoof_ground")
+        if (pData.getViolationData(this.typeName).getPreVL("spoof_ground") > 7) {
+            allowDistance = speed
+            limitDistance = if (speed > Magic.DEFAULT_FLY_SPEED) Magic.DEFAULT_FLY_SPEED else 0.0
+            resetTo = true
+        }
+
+
+        if (resetTo) player.teleport(data.getLastNormalGround())
+
+        return doubleArrayOf(allowDistance, limitDistance)
+    }
+
     private fun vDistGhostBlock(ghostBlockChecker: GhostBlockChecker): DoubleArray {
         var vAllowDistance = 0.0
         val vLimitDistance = 0.5
@@ -548,12 +606,36 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         data: MovingData,
         pData: IPlayerData,
     ): DoubleArray {
-        val allowDistance = 0.0
-        val limitDistance = 0.0
+        var allowDistance = 0.0
+        var limitDistance = 0.0
         val speed = to.distance(from)
-
+        if (data.getMovementTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
+        val verticalSpeed = data.getMovementTracker()!!.getDistanceXZ()
         if (now - data.getLastJump() < 100) {
-
+            val validYDist = yDistance < Magic.HUNGER_BUNNY_Y_MIN || yDistance > Magic.HUNGER_BUNNY_Y_MAX
+            if (validYDist) if (speed > Magic.HUNGER_BUNNY_MAX_SPEED) {
+                allowDistance = speed
+                limitDistance = Magic.HUNGER_BUNNY_MAX_SPEED
+                if (ConfigData.logging_debug) if (allowDistance > limitDistance) player.sendMessage("Short Bunny Y Dist $allowDistance/$limitDistance")
+            } else if (verticalSpeed > Magic.HUNGER_BUNNY_VERTICAL_MAX_SHORT) {
+                allowDistance = verticalSpeed
+                limitDistance = Magic.HUNGER_BUNNY_VERTICAL_MAX_SHORT
+                if (ConfigData.logging_debug) if (allowDistance > limitDistance) player.sendMessage("Short Bunny vertical speed $allowDistance/$limitDistance")
+            }
+            //处理特殊情况
+            if (this.tags.contains("friction_block") || this.tags.contains("face_block") || this.tags.contains("stair_slab")) return doubleArrayOf(
+                Double.MIN_VALUE, Double.MAX_VALUE
+            )
+        } else {
+            if (verticalSpeed > Magic.HUNGER_BUNNY_VERTICAL_MAX_LONG) {
+                if (fromOnGround && !toOnGround) pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
+                if (!fromOnGround && !toOnGround) pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
+                if (fromOnGround && toOnGround) pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
+            } else pData.getViolationData(this.typeName).clearPreVL("hunger_bad_bunny")
+            if (pData.getViolationData(this.typeName).getPreVL("hunger_bad_bunny") > 5) {
+                allowDistance = verticalSpeed
+                limitDistance = Magic.HUNGER_BUNNY_VERTICAL_MAX_LONG
+            } else return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
         }
 
         return doubleArrayOf(allowDistance, limitDistance)
