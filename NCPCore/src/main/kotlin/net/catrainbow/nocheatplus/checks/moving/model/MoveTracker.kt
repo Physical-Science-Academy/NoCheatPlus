@@ -14,6 +14,8 @@
 package net.catrainbow.nocheatplus.checks.moving.model
 
 import cn.nukkit.Player
+import cn.nukkit.block.BlockSlab
+import cn.nukkit.block.BlockStairs
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import kotlin.math.abs
@@ -41,6 +43,16 @@ class MoveTracker(player: Player) {
         val player = this.getPlayer()
         val data = NoCheatPlus.instance.getPlayerProvider(player).movingData
         if (this.isLive) {
+            //解决特殊方块的问题
+            val block = LocUtil.getUnderBlock(player)
+            val subBlock = player.add(0.0, -0.4, 0.0).levelBlock
+            if (block is BlockSlab || block is BlockStairs) {
+                this.maxHeight = player.y - block.maxY
+                this.isLive = false
+            } else if (subBlock is BlockSlab || subBlock is BlockStairs) {
+                this.maxHeight = player.y - subBlock.maxY
+                this.isLive = false
+            }
             //初速夹角忽略计算
             if (!this.isJump && now - data.getLastJump() <= 200 && this.onGround) {
                 this.isJump = true

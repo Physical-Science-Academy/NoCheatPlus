@@ -15,6 +15,8 @@ package net.catrainbow.nocheatplus.checks.moving.player
 
 import cn.nukkit.Player
 import cn.nukkit.block.Block
+import cn.nukkit.block.BlockSlab
+import cn.nukkit.block.BlockStairs
 import cn.nukkit.level.Location
 import cn.nukkit.math.BlockFace
 import cn.nukkit.potion.Effect
@@ -118,11 +120,21 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
 
         if (player.hasEffect(Effect.JUMP_BOOST)) this.tags.add("effect_jump")
         if (player.hasEffect(Effect.SPEED)) this.tags.add("effect_speed")
+
         if (player.foodData.level <= 6) this.tags.add("hunger")
+
+        //处理台阶和板砖的特判问题
+        val downB1 = player.add(0.0, -0.25, 0.0).levelBlock
+        val downB2 = player.add(0.0, -1.0, 0.0).levelBlock
+        if (downB1 is BlockStairs || downB1 is BlockSlab || downB2 is BlockStairs || downB2 is BlockSlab) this.tags.add(
+            "stair_slab"
+        )
 
         if (data.getLiquidTick() == 0) {
             val distAir = this.vDistAir(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
-            if (distAir[0] > distAir[1]) pData.addViolationToBuffer(typeName, (distAir[0] - distAir[1]) * 10.0 + 1.1)
+            if (distAir[0] > distAir[1]) pData.addViolationToBuffer(
+                typeName, (distAir[0] - distAir[1]) * 10.0 + 1.1
+            )
         }
 
         //滞空时长
@@ -242,14 +254,35 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                     allowDistance = height
                     limitDistance = Magic.JUMP_NORMAL_WALK
                 }
+                val sinceLastBlock = player.add(0.0, -1.0, 0.0).levelBlock.getSide(backDirection)
+                val sinceLastBlock2 = sinceLastBlock.getSide(backDirection)
+                val sinceLastSS =
+                    sinceLastBlock is BlockStairs || sinceLastBlock is BlockSlab || sinceLastBlock2 is BlockStairs || sinceLastBlock2 is BlockSlab
+                //解决台阶和板砖的特殊问题
+                if (this.tags.contains("stair_slab")) {
+                    allowDistance = 0.0
+                    limitDistance = 0.0
+                    val verticalSpeed = to.distanceSquared(from)
+                    if (yDistance > 0) {
+                        if (verticalSpeed < 0.1 && yDistance < 0.3 && height < 0.5) {
+                            allowDistance = verticalSpeed + 0.1
+                            limitDistance = 0.1
+                        }
+                    } else if (yDistance < -0.5) {
+                        allowDistance = abs(yDistance)
+                        limitDistance = 0.5
+                    }
+                } else if (data.getSlabTick() > 0 || data.getStairTick() > 0 || sinceLastSS) allowDistance =
+                    limitDistance
+
                 limitDistance += player.ping * 0.00008 + 0.0001
-                if (allowDistance in Magic.BLOCK_BUNNY_MIN..Magic.BLOCK_BUNNY_MAX || tags.contains("face_block") || tags.contains(
+                if (allowDistance in Magic.BLOCK_BUNNY_MIN..Magic.BLOCK_BUNNY_MAX || this.tags.contains("face_block") || this.tags.contains(
                         "friction_block"
-                    )
+                    ) || this.tags.contains("lose_sprint")
                 ) {
                     allowDistance = limitDistance
                 }
-                if (!this.tags.contains("effect_jump")) {
+                if (!this.tags.contains("effect_jump") && !this.tags.contains("stair_slab")) {
                     isBunnyHop = true
                 }
                 if (allowDistance > limitDistance) {
@@ -355,7 +388,6 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         val tinyHeight = this.getTinyHeight(player, ArrayList())
         val speed = from.distance(to)
         if (data.getMovementTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
-        val height = data.getMovementTracker()!!.getHeight()
         if (now - data.getLastJump() <= 100) {
 
             //冰块单独判断
@@ -518,6 +550,11 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
     ): DoubleArray {
         val allowDistance = 0.0
         val limitDistance = 0.0
+        val speed = to.distance(from)
+
+        if (now - data.getLastJump() < 100) {
+
+        }
 
         return doubleArrayOf(allowDistance, limitDistance)
     }

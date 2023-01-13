@@ -16,6 +16,8 @@ package net.catrainbow.nocheatplus.checks.moving
 
 import cn.nukkit.Player
 import cn.nukkit.Server
+import cn.nukkit.block.BlockSlab
+import cn.nukkit.block.BlockStairs
 import cn.nukkit.level.Location
 import cn.nukkit.level.Position
 import cn.nukkit.math.Vector3
@@ -69,6 +71,8 @@ class MovingData : ICheckData {
     private var fullAirTick = 0
     private var liquidTick = 0
     private var iceTick = 0
+    private var slabTick = 0
+    private var stairTick = 0
 
     private var motionYList: ArrayList<Double> = ArrayList()
     private var locationList: ArrayList<Location> = ArrayList()
@@ -139,6 +143,10 @@ class MovingData : ICheckData {
             0
         if (LocUtil.isIce(LocUtil.getUnderBlock(player))) this.iceTick++
         else if (this.iceTick in 1..50) this.iceTick-- else this.iceTick = 0
+        if (LocUtil.getUnderBlock(player) is BlockSlab) this.slabTick++ else if (this.slabTick in 1..50) this.slabTick-- else this.slabTick =
+            0
+        if (LocUtil.getUnderBlock(player) is BlockStairs) this.stairTick++ else if (this.stairTick in 1..50) this.stairTick-- else this.stairTick =
+            0
     }
 
     fun getLiquidTick(): Int {
@@ -254,7 +262,7 @@ class MovingData : ICheckData {
     }
 
     fun setFullAirTick(tick: Int) {
-        this.fullAirTick = 0
+        this.fullAirTick = tick
     }
 
     fun getLastNormalGround(): Location {
@@ -267,6 +275,14 @@ class MovingData : ICheckData {
 
     fun getSpeedTracker(): SpeedTracker? {
         return this.speedTracker
+    }
+
+    fun getStairTick(): Int {
+        return this.stairTick
+    }
+
+    fun getSlabTick(): Int {
+        return this.slabTick
     }
 
 }
