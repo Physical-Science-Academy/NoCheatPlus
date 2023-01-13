@@ -77,7 +77,7 @@ object Magic {
     const val JUMP_BOOST_V2_MAX_HEIGHT = 1.9968048095703068
     const val JUMP_BOOST_V1_MAX_HEIGHT = 1.4161010742187443
     const val JUMP_NORMAL_WALK = 0.9321990966796818
-    const val BLOCK_BUNNY_MIN = 1.352197265624994
+    const val BLOCK_BUNNY_MIN = 1.34919165538
     const val BLOCK_BUNNY_MAX = 1.35221
     const val BLOCK_BUNNY_BYPASS_V1_MAX = 1.9361004590988102
     const val BLOCK_BUNNY_BYPASS_V1_MIN = 1.93609771
@@ -95,6 +95,7 @@ object Magic {
     const val BUNNY_TINY_JUMP_SPEED_BOOST_V1 = 0.48
     const val BUNNY_TINY_JUMP_SPEED_BOOST_V2 = 0.50
     const val BUNNY_TINY_DIRECTION_HEIGHT = 0.17
+    const val BUNNY_TINY_THIN_SPEED_MAX = 1.23
     const val DEFAULT_JUMP_HEIGHT = 0.42
 
     //特殊方块
@@ -111,6 +112,8 @@ object Magic {
     const val VANILLA_Y_DIFF = 0.08589999437332158
     const val VANILLA_Y_DIFF_V2 = 0.0784000015258789
     const val VANILLA_Y_DELTA = 0.375
+    //下蹲
+    const val SNEAK_JUMP_VERTICAL_MAX = 0.86
 
     fun swimBaseSpeedV(): Double {
         return WALK_SPEED * modSwim + 0.02

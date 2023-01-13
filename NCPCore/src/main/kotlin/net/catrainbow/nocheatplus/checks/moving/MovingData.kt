@@ -28,6 +28,7 @@ import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
 import net.catrainbow.nocheatplus.checks.moving.model.MoveTracker
 import net.catrainbow.nocheatplus.checks.moving.model.SpeedTracker
 import net.catrainbow.nocheatplus.components.data.ICheckData
+import kotlin.math.abs
 
 /**
  * 移动数据储存
@@ -73,6 +74,7 @@ class MovingData : ICheckData {
     private var iceTick = 0
     private var slabTick = 0
     private var stairTick = 0
+    private var acc = 0.0
 
     private var motionYList: ArrayList<Double> = ArrayList()
     private var locationList: ArrayList<Location> = ArrayList()
@@ -132,6 +134,7 @@ class MovingData : ICheckData {
         this.locationList.add(player.location)
         this.speedList.add(this.speed)
         this.sprint = player.isSprinting
+        this.acc = abs(this.motionY - this.lastMotionY)
         if (loseSprintCount == 0) {
             if (this.lastSprint) {
                 if (!player.isSprinting) this.loseSprintCount++
@@ -223,6 +226,10 @@ class MovingData : ICheckData {
 
     fun getLastFrictionVertical(): Double {
         return this.lastFrictionVertical
+    }
+
+    fun getAcc(): Double {
+        return this.acc
     }
 
     fun setGhostBlockChecker(checker: GhostBlockChecker) {

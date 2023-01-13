@@ -17,6 +17,7 @@ import cn.nukkit.Player
 import cn.nukkit.block.Block
 import cn.nukkit.block.BlockSlab
 import cn.nukkit.block.BlockStairs
+import cn.nukkit.block.BlockThin
 import cn.nukkit.level.Location
 import cn.nukkit.math.BlockFace
 import cn.nukkit.potion.Effect
@@ -141,6 +142,15 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 if (distFullAir[0] > distFullAir[1]) pData.addViolationToBuffer(
                     typeName, (abs(distFullAir[0] - distFullAir[1]) * 10.0)
                 )
+            } else {
+                //不规则的运动情况
+                if (this.tags.contains("bunny_hop")) {
+                    this.tags.add("air_jump")
+                    player.teleport(data.getLastNormalGround())
+                    pData.addViolationToBuffer(
+                        typeName, (player.inAirTicks / 20 * 5.0)
+                    )
+                }
             }
         }
 
@@ -195,6 +205,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         val vanillaFall = this.onFallingVertical(
             data, hypot(abs(data.getMotionX()), abs(data.getMotionZ())) <= 0.3
         ) && player.inAirTicks > 15 && yDistance < 0.0
+        if (vanillaFall) this.tags.add("fall")
         val flying = !vanillaFall && player.inAirTicks > 15 && yDistance >= 0.0
         var allowDistance = Double.MIN_VALUE
         var limitDistance = Double.MAX_VALUE
@@ -265,6 +276,16 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 val sinceLastBlock2 = sinceLastBlock.getSide(backDirection)
                 //跳跃问题
                 val down2Block = player.add(0.0, -1.5, 0.0).levelBlock
+
+                //考虑潜行的特殊问题
+                if (player.isSneaking) {
+                    val verticalSpeed = data.getMovementTracker()!!.getDistanceXZ()
+                    if (verticalSpeed > Magic.SNEAK_JUMP_VERTICAL_MAX && height > Magic.JUMP_NORMAL_WALK) {
+                        allowDistance = max(verticalSpeed, height)
+                        limitDistance = min(Magic.SNEAK_JUMP_VERTICAL_MAX, Magic.JUMP_NORMAL_WALK)
+                        resetTo = true
+                    }
+                }
                 val sinceLastSS =
                     sinceLastBlock is BlockStairs || sinceLastBlock is BlockSlab || sinceLastBlock2 is BlockStairs || sinceLastBlock2 is BlockSlab || down2Block is BlockStairs || down2Block is BlockSlab
                 //解决台阶和板砖的特殊问题
@@ -424,12 +445,18 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             val absHeight = data.getMovementTracker()!!.getAbsHeight()
             val upBlock = player.add(0.0, 2.0, 0.0).levelBlock
             val upBlock2 = player.add(0.0, 1.75, 0.0).levelBlock
+            val downBlock = LocUtil.getUnderBlock(player)
+            val downBlock2 = player.add(0.0, -1.5, 0.0).levelBlock
             if (upBlock.id != 0 || upBlock2.id != 0) limitDistance = Magic.BLOCK_BUNNY_MAX
             if (tinyHeight == Magic.BUNNY_HOP_TINY_JUMP_FIRST || tinyHeight == Magic.BUNNY_HOP_TINY_JUMP_SECOND) {
                 allowDistance = speed
                 limitDistance = Magic.BUNNY_TINY_JUMP_MAX
                 if (this.tags.contains("friction_block") || this.tags.contains("face_block")) {
                     limitDistance = Magic.BUNNY_TINY_JUMP_FRICTION
+                }
+                //解决板类方块误判的问题
+                if (downBlock is BlockThin || downBlock2 is BlockThin) {
+                    limitDistance = Magic.BUNNY_TINY_THIN_SPEED_MAX
                 }
                 if (this.tags.contains("effect_speed")) {
                     (if (player.getEffect(Effect.SPEED).amplifier == 0) {
@@ -480,6 +507,10 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                     limitDistance = if (player.getEffect(Effect.SPEED).amplifier == 0) {
                         Magic.SPEED_BOOST_V1_BUNNY_HOP
                     } else Magic.SPEED_BOOST_V2_BUNNY_HOP
+                }
+                if (downBlock is BlockThin || downBlock2 is BlockThin) {
+                    allowDistance = speed
+                    limitDistance = Magic.JUMP_NORMAL_WALK
                 }
                 if (allowDistance > limitDistance) {
                     vData.addPreVL("bad_bunny_hop")
@@ -564,11 +595,14 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 allowDistance = max(yDistance, hAllowDistance)
                 limitDistance = min(yDistance, hAllowDistance)
                 resetTo = true
-            } else if (yDistance == data.getLastMotionY() && !this.tags.contains("same_at")) {
+            } else if (yDistance == data.getLastMotionY() && !this.tags.contains("same_at") && data.getAcc() == 0.0) {
                 //检测节发的BlinkFly
                 if (abs(yDistance - hAllowDistance) == Magic.VANILLA_Y_DIFF_V2) resetTo = false
                 //非惯性运动情况单独考
-                if (this.tags.contains("ground_walk") && player.inAirTicks > this.countMaxAirTick(player, data, now)) {
+                if (this.tags.contains("fall") && player.inAirTicks > this.countMaxAirTick(
+                        player, data, now
+                    ) && yDistance > -0.31
+                ) {
                     allowDistance = player.inAirTicks / 15 * (speed - Magic.DEFAULT_FLY_SPEED)
                     limitDistance = 0.0
                     resetTo = true
