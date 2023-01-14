@@ -347,7 +347,12 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         }
         if (player.inAirTicks == data.getLastInAirTicks()) {
             this.tags.add("same_at")
-            if (downBlock.id == 0 && towardB.id == 0 && rightB.id == 0 && leftB.id == 0 && backB.id == 0) {
+            val rightBack = rightB.getSide(backDirection)
+            val rightToward = rightB.getSide(direction)
+            val leftBack = leftB.getSide(backDirection)
+            val leftToward = leftB.getSide(direction)
+            val xzAir = rightBack.id == 0 && rightToward.id == 0 && leftBack.id == 0 && leftToward.id == 0
+            if (downBlock.id == 0 && towardB.id == 0 && rightB.id == 0 && leftB.id == 0 && backB.id == 0 && xzAir) {
                 this.tags.add("full_air")
                 data.onFullAir()
                 if (!data.isJump() && flying) resetTo = true
@@ -523,6 +528,10 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                     limitDistance = Double.MAX_VALUE
                 }
             } else vData.clearPreVL("bad_bunny_hop")
+        } else {
+            val vDistVertical =
+                this.vDistVertical(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+            return doubleArrayOf(vDistVertical[0], vDistVertical[1])
         }
 
         //解决常规的速度问题
@@ -633,6 +642,81 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
     }
 
     /**
+     * 空中位移检测
+     *
+     * @param now
+     * @param player
+     * @param from
+     * @param to
+     * @param fromOnGround
+     * @param toOnGround
+     * @param yDistance
+     * @param data
+     * @param pData
+     *
+     * @return
+     */
+    private fun vDistVertical(
+        now: Long,
+        player: Player,
+        from: Location,
+        to: Location,
+        fromOnGround: Boolean,
+        toOnGround: Boolean,
+        yDistance: Double,
+        data: MovingData,
+        pData: IPlayerData,
+    ): DoubleArray {
+        var allowDistance = 0.0
+        var limitDistance = 0.0
+
+        if (data.getMovementTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
+        val verticalSpeed = data.getMovementTracker()!!.getDistanceXZ()
+
+        //跳跃检测
+        val bunny = this.tags.contains("bunny_hop")
+        if (bunny) {
+            if (yDistance < 0) {
+                allowDistance = verticalSpeed
+                limitDistance = Double.MAX_VALUE
+                this.tags.add("bunny_down")
+                if (verticalSpeed > Magic.BUNNY_DOWN_MAX_SPEED) {
+                    limitDistance =
+                        if (yDistance < -0.1) Magic.BUNNY_DOWN_MAX_SPEED else Magic.BUNNY_DOWN_MAX_SPEED + 0.45
+                    //处理起跳问题
+                    if (fromOnGround && toOnGround) limitDistance = Magic.BUNNY_DOWN_MAX_SPEED
+                }
+            } else if (yDistance > 0) {
+                allowDistance = verticalSpeed
+                limitDistance = Double.MAX_VALUE
+                this.tags.add("bunny_up")
+                if (verticalSpeed > Magic.BUNNY_UP_MAX_SPEED && yDistance < 0.01) {
+                    limitDistance = Magic.BUNNY_UP_MAX_SPEED
+                    //处理特殊情况
+                    if (player.add(0.0, 1.5, 0.0).levelBlock.id != 0)
+                        limitDistance += Magic.BUNNY_UP_BLOCK_ADDITION
+                }
+            }
+            //忽略此检查
+            if (this.tags.contains("stair_slab")) {
+                allowDistance = Double.MIN_VALUE
+                limitDistance = Double.MAX_VALUE
+            }
+            if (allowDistance > limitDistance) {
+                pData.getViolationData(this.typeName).addPreVL("bunny_vertical")
+                if (pData.getViolationData(this.typeName).getPreVL("bunny_vertical") > 12) {
+                    pData.getViolationData(this.typeName).clearPreVL("bunny_vertical")
+                } else {
+                    allowDistance = Double.MIN_VALUE
+                    limitDistance = Double.MAX_VALUE
+                }
+            } else pData.getViolationData(this.typeName).clearPreVL("bunny_vertical")
+        }
+
+        return doubleArrayOf(allowDistance, limitDistance)
+    }
+
+    /**
      * 短跳跃检测
      * 在饥饿的状态下
      *
@@ -665,6 +749,13 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         if (data.getMovementTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
         val verticalSpeed = data.getMovementTracker()!!.getDistanceXZ()
         if (now - data.getLastJump() < 100) {
+            //冰面特殊问题
+            val iceDown =
+                LocUtil.isIce(LocUtil.getUnderBlock(player)) || LocUtil.isIce(player.add(0.0, 1.25, 0.0).levelBlock)
+            if (this.tags.contains("ice_ground") || iceDown || data.getIceTick() != 0) {
+                player.sendMessage("$verticalSpeed")
+                return doubleArrayOf(allowDistance, limitDistance)
+            }
             val validYDist = yDistance < Magic.HUNGER_BUNNY_Y_MIN || yDistance > Magic.HUNGER_BUNNY_Y_MAX
             if (validYDist) if (speed > Magic.HUNGER_BUNNY_MAX_SPEED) {
                 allowDistance = speed
@@ -770,7 +861,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             }
             var deltaY = 0.0
             for (delta in data.getMotionYList()) {
-                val preY = (deltaY - 0.08) * 0.9800000190734863
+                val preY = (deltaY - 0.08) * Magic.TINY_GRAVITY
                 val diff = abs(delta - preY)
                 if (diff > 0.017 && abs(preY) > 0.005) lagTick++
                 deltaY = delta
@@ -779,7 +870,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         } else {
             var tick = 0
             lagTick = 0
-            val g = -0.9800000190734863
+            val g = -Magic.TINY_GRAVITY
             for (delta in data.getMotionYList()) {
                 val locationList = data.getLocationList()
                 val speedList = data.getSpeedList()

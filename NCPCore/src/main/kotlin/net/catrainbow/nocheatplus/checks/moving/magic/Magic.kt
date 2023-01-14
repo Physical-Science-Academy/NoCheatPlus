@@ -85,6 +85,8 @@ object Magic {
     const val BLOCK_BUNNY_BYPASS_V2_MAX = 2.3
     const val BUNNY_HOP_MAX_SPEED = 0.71
     const val BUNNY_HOP_MAX_SPEED_MAX = 0.74
+    const val BUNNY_DOWN_MAX_SPEED = 2.16
+    const val BUNNY_UP_MAX_SPEED = 2.5
     const val SPEED_BOOST_V1_BUNNY_HOP = 0.76
     const val SPEED_BOOST_V2_BUNNY_HOP = 0.82
 
@@ -114,6 +116,8 @@ object Magic {
     const val VANILLA_Y_DELTA = 0.375
     //下蹲
     const val SNEAK_JUMP_VERTICAL_MAX = 0.86
+    //重力
+    const val TINY_GRAVITY = 0.9800000190734863
 
     fun swimBaseSpeedV(): Double {
         return WALK_SPEED * modSwim + 0.02
