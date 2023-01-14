@@ -6,31 +6,27 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com)
 # NoCheatPlus
-An advanced anti-cheat based on the core Nukkit and its derivative core development. By Catrainbow233.
+Advanced anti-cheating developed by Bedrock Nukkit Server and its derivative core PM1E/PowerNukkitX. Architecture and Design Learn the Java version of NoCheatPlus, a well-known anti-cheating program. Its purpose is to fix and stop the loopholes and cheating in my world bedrock edition. You are very welcome and supportive to contribute code to contribute to the community. star is concerned about us in this project.
 
-Its goal is to meet the security requirements of the server.
-
-Welcome to contribute code, star this project to follow us.
-
-## 🎉Features
-- [x] SurvivalFly check
-- [x] ElytraFly check
-- [x] AirJump check
-- [x] Speed check
-- [x] WrongMotion check
-- [x] NoFall check
-- [x] HighJump check
-- [x] NoKnockBack check
+## 🎉Rebuild Progress
+- [ ] SurvivalFly check
+- [ ] ElytraFly check
+- [ ] AirJump check
+- [ ] Speed check
+- [ ] WrongMotion check
+- [ ] NoFall check
+- [ ] HighJump check
+- [ ] NoKnockBack check
 - [ ] Phase/NoClip/ThroughWall check
-- [x] BadPacket check
-- [x] Check bad client
-- [x] Packet Count check
-- [x] Scaffold check
-- [x] KillAura check
-- [x] Reach check
-- [x] AutoClicker check
-- [x] HitBox check
-- [x] WrongAttack check
+- [ ] BadPacket check
+- [ ] Check bad client
+- [ ] Packet Count check
+- [ ] Scaffold check
+- [ ] KillAura check
+- [ ] Reach check
+- [ ] AutoClicker check
+- [ ] HitBox check
+- [ ] WrongAttack check
 - [ ] Helper's pannel
 - [ ] Record the actions of high-risk players
 
