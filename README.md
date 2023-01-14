@@ -34,8 +34,8 @@
 - [ ] 记录高危玩家行动
 
 ## 安装
-
-在仓库[Releases](https://github.com/Physical-Science-Academy/NoCheatPlus/releases)里下载最新版本 `NoCheatPlus.jar` ，将其放入服务器的 `plugins/` 文件夹内。
+Java CI: https://ci.lanink.cn/job/NoCheatPlus
+在仓库[CI](https://ci.lanink.cn/job/NoCheatPlus/)里下载最新版本 `NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar` ，将其放入服务器的 `plugins/` 文件夹内。
 在使用插件之前，您必须安装以下依赖
  
 - 暂无
@@ -102,4 +102,3 @@ permission:
 ## 注意
 
 项目目前正处于重构状态，不保证可用性和兼容性
-
