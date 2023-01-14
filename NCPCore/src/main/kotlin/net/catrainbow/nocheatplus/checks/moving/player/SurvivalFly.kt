@@ -18,6 +18,7 @@ import cn.nukkit.block.Block
 import cn.nukkit.block.BlockSlab
 import cn.nukkit.block.BlockStairs
 import cn.nukkit.block.BlockThin
+import cn.nukkit.event.entity.EntityDamageEvent
 import cn.nukkit.level.Location
 import cn.nukkit.math.BlockFace
 import cn.nukkit.potion.Effect
@@ -381,10 +382,20 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             }
         }
 
+        //解决固定问题
+        if (player.isSneaking && this.tags.contains("bunny_down")) resetTo = false
+
         //清除Buffer 防止下一次检测误判
         if (!vanillaFall) data.clearListRecord()
 
-        if (resetTo) player.teleport(data.getLastNormalGround())
+        if (resetTo) {
+            val event =
+                EntityDamageEvent(player, EntityDamageEvent.DamageCause.FALL, this.getFallDamage(player).toFloat())
+            player.teleport(data.getLastNormalGround())
+            if (ConfigData.check_survival_fly_set_back_fall_damage) NoCheatPlus.instance.server.pluginManager.callEvent(
+                event
+            )
+        }
 
         return doubleArrayOf(allowDistance, limitDistance)
     }
@@ -621,7 +632,14 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             }
         }
 
-        if (resetTo) player.teleport(data.getLastNormalGround())
+        if (resetTo) {
+            val event =
+                EntityDamageEvent(player, EntityDamageEvent.DamageCause.FALL, this.getFallDamage(player).toFloat())
+            player.teleport(data.getLastNormalGround())
+            if (ConfigData.check_survival_fly_set_back_fall_damage) NoCheatPlus.instance.server.pluginManager.callEvent(
+                event
+            )
+        }
 
         return doubleArrayOf(allowDistance, limitDistance)
     }
@@ -754,8 +772,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         if (now - data.getLastJump() < 100) {
             //冰面特殊问题
             if (this.tags.contains("ice_ground") || iceDown || data.getIceTick() != 0) return doubleArrayOf(
-                allowDistance,
-                Magic.BUNNY_ICE_SHORT_BUNNY_SPEED_MAX
+                allowDistance, Magic.BUNNY_ICE_SHORT_BUNNY_SPEED_MAX
             )
             val validYDist = yDistance < Magic.HUNGER_BUNNY_Y_MIN || yDistance > Magic.HUNGER_BUNNY_Y_MAX
             if (validYDist) if (speed > Magic.HUNGER_BUNNY_MAX_SPEED) {
@@ -773,17 +790,15 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             )
         } else {
             if (this.tags.contains("ice_ground") || iceDown || data.getIceTick() != 0) return doubleArrayOf(
-                verticalSpeed,
-                Magic.BUNNY_ICE_SHORT_BUNNY_SPEED_MAX
+                verticalSpeed, Magic.BUNNY_ICE_SHORT_BUNNY_SPEED_MAX
             )
             if (verticalSpeed > Magic.HUNGER_BUNNY_VERTICAL_MAX_LONG) {
                 //解决方块边缘化问题
                 val block = LocUtil.getUnderBlock(player).getSide(player.direction)
                 if (block.id == 0) {
-                    player.sendMessage("$verticalSpeed $yDistance")
                     val friction = Magic.BUNNY_ICE_SHORT_BUNNY_SPEED_MAX
-                    if (yDistance in -1.0..2.75 && verticalSpeed > friction)
-                        pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
+                    if (yDistance in -1.0..2.75 && verticalSpeed > friction) pData.getViolationData(this.typeName)
+                        .addPreVL("hunger_bad_bunny")
                 } else {
                     if (fromOnGround && !toOnGround) pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
                     if (!fromOnGround && !toOnGround) pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
@@ -930,6 +945,18 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 player.y - b2.maxY
             } else player.y - b1.minY
         } else 0.0
+    }
+
+    /**
+     * 获取掉落伤害
+     * 此公式来自 Spigot
+     *
+     * @param player
+     *
+     * @return damage
+     */
+    private fun getFallDamage(player: Player): Double {
+        return if (player.fallDistance > 3) player.fallDistance - 3.0 else 0.0
     }
 
 }

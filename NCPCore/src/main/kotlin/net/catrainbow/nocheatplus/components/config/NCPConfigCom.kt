@@ -54,6 +54,8 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.string_kick_message = config.getString("string.kick")
         ConfigData.string_ban_message = config.getString("string.ban")
         ConfigData.permission_no_permission = config.getString("permission.no_permission")
+        ConfigData.check_survival_fly_set_back_fall_damage = config.getBoolean("checks.moving.survivalfly.setback_policy.fall_damage")
+        ConfigData.check_survival_fly_set_back_void_to_void = config.getBoolean("checks.moving.survivalfly.setback_policy.void_to_void")
     }
 
 }

@@ -36,7 +36,8 @@ class ConfigData : IConfigData {
         var string_kick_message = "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server"
         var string_ban_message =
             "§c§lNCP §7>> §rYou are banned by NCP for §c@days,@hours,@minutes§r because of using @hack @nextEndTime: @end"
-
+        var check_survival_fly_set_back_fall_damage = false
+        var check_survival_fly_set_back_void_to_void = false
     }
 
 }
