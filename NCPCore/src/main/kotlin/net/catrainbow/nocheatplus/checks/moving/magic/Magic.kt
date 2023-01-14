@@ -102,6 +102,7 @@ object Magic {
 
     //特殊方块
     const val BUNNY_ICE_GROUND_DEFAULT = 0.72
+    const val BUNNY_ICE_SHORT_BUNNY_SPEED_MAX = 1.52
     const val BUNNY_UP_BLOCK_ADDITION = 0.18
 
     //饥饿数值

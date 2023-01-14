@@ -439,6 +439,8 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                     val headB2 = player.add(0.0, 2.0, 0.0).levelBlock
                     limitDistance = if (headB1.id == 0 && headB2.id == 0) Magic.BUNNY_ICE_GROUND_DEFAULT
                     else Magic.BUNNY_ICE_GROUND_DEFAULT + Magic.BUNNY_UP_BLOCK_ADDITION
+                    //处理缓慢情况
+                    if (this.tags.contains("hunger")) limitDistance = Double.MAX_VALUE
                 }
                 if (allowDistance > limitDistance) if (ConfigData.logging_debug) player.sendMessage("ice bunny $allowDistance/$limitDistance")
                 return doubleArrayOf(allowDistance, limitDistance)
@@ -675,7 +677,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
 
         //跳跃检测
         val bunny = this.tags.contains("bunny_hop")
-        if (bunny) {
+        if (bunny && !this.tags.contains("hunger")) {
             if (yDistance < 0) {
                 allowDistance = verticalSpeed
                 limitDistance = Double.MAX_VALUE
@@ -693,8 +695,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 if (verticalSpeed > Magic.BUNNY_UP_MAX_SPEED && yDistance < 0.01) {
                     limitDistance = Magic.BUNNY_UP_MAX_SPEED
                     //处理特殊情况
-                    if (player.add(0.0, 1.5, 0.0).levelBlock.id != 0)
-                        limitDistance += Magic.BUNNY_UP_BLOCK_ADDITION
+                    if (player.add(0.0, 1.5, 0.0).levelBlock.id != 0) limitDistance += Magic.BUNNY_UP_BLOCK_ADDITION
                 }
             }
             //忽略此检查
@@ -748,14 +749,14 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         val speed = to.distance(from)
         if (data.getMovementTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
         val verticalSpeed = data.getMovementTracker()!!.getDistanceXZ()
+        val iceDown =
+            LocUtil.isIce(LocUtil.getUnderBlock(player)) || LocUtil.isIce(player.add(0.0, 1.25, 0.0).levelBlock)
         if (now - data.getLastJump() < 100) {
             //冰面特殊问题
-            val iceDown =
-                LocUtil.isIce(LocUtil.getUnderBlock(player)) || LocUtil.isIce(player.add(0.0, 1.25, 0.0).levelBlock)
-            if (this.tags.contains("ice_ground") || iceDown || data.getIceTick() != 0) {
-                player.sendMessage("$verticalSpeed")
-                return doubleArrayOf(allowDistance, limitDistance)
-            }
+            if (this.tags.contains("ice_ground") || iceDown || data.getIceTick() != 0) return doubleArrayOf(
+                allowDistance,
+                Magic.BUNNY_ICE_SHORT_BUNNY_SPEED_MAX
+            )
             val validYDist = yDistance < Magic.HUNGER_BUNNY_Y_MIN || yDistance > Magic.HUNGER_BUNNY_Y_MAX
             if (validYDist) if (speed > Magic.HUNGER_BUNNY_MAX_SPEED) {
                 allowDistance = speed
@@ -771,12 +772,25 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 Double.MIN_VALUE, Double.MAX_VALUE
             )
         } else {
+            if (this.tags.contains("ice_ground") || iceDown || data.getIceTick() != 0) return doubleArrayOf(
+                verticalSpeed,
+                Magic.BUNNY_ICE_SHORT_BUNNY_SPEED_MAX
+            )
             if (verticalSpeed > Magic.HUNGER_BUNNY_VERTICAL_MAX_LONG) {
-                if (fromOnGround && !toOnGround) pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
-                if (!fromOnGround && !toOnGround) pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
-                if (fromOnGround && toOnGround) pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
+                //解决方块边缘化问题
+                val block = LocUtil.getUnderBlock(player).getSide(player.direction)
+                if (block.id == 0) {
+                    player.sendMessage("$verticalSpeed $yDistance")
+                    val friction = Magic.BUNNY_ICE_SHORT_BUNNY_SPEED_MAX
+                    if (yDistance in -1.0..2.75 && verticalSpeed > friction)
+                        pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
+                } else {
+                    if (fromOnGround && !toOnGround) pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
+                    if (!fromOnGround && !toOnGround) pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
+                    if (fromOnGround && toOnGround) pData.getViolationData(this.typeName).addPreVL("hunger_bad_bunny")
+                }
             } else pData.getViolationData(this.typeName).clearPreVL("hunger_bad_bunny")
-            if (pData.getViolationData(this.typeName).getPreVL("hunger_bad_bunny") > 5) {
+            if (pData.getViolationData(this.typeName).getPreVL("hunger_bad_bunny") > 10) {
                 allowDistance = verticalSpeed
                 limitDistance = Magic.HUNGER_BUNNY_VERTICAL_MAX_LONG
             } else return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
