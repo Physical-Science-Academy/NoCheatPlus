@@ -4,7 +4,7 @@
   <a title="English" href="/README_EN.md">English</a>
 </div>
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/uses-git.svg)](https://forthebadge.com)
 # NoCheatPlus
 <br>
 <p align="center"><img src="ncp-logo.png" height="128"/></p>
@@ -14,6 +14,11 @@
 行为。
 
 非常欢迎和支持你来贡献代码，以给社区贡献，star本项目以关注我们
+
+## 特点
+- 高性能、低占用、高效率
+- 易使用、多语言、社区开源
+
 ## 🎉重构进度
 - [ ] 飞行检测 (进行中)
 - [ ] 鞘翅飞行检测
@@ -41,7 +46,16 @@ Java CI: https://ci.lanink.cn/job/NoCheatPlus
 在仓库[CI](https://ci.lanink.cn/job/NoCheatPlus/)里下载最新版本 `NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar` ，将其放入服务器的 `plugins/` 文件夹内。
 在使用插件之前，您必须安装以下依赖
  
-- 暂无
+- `KotlinLib`
+
+## 命令
+- `/ncp` 获取NCP信息
+- `/ncp version` 获取NCP信息
+- `/ncp reload` 热重载配置文件
+- `/ncp debug` 临时开关调试模式
+- `/ncp ban` 封禁一名玩家
+- `/ncp unban` 解封一名玩家
+- `/ncp kick` 踢出一名玩家
 
 ## 配置
 
@@ -95,13 +109,33 @@ permission:
     - "nocheatplus.admin.helper:kick,ban,unban"
 ~~~
 
+### 自定义处罚系统说明
+在每个检测项目中有一个actions的设定，下面给出处罚操作的格式:
+处罚类型 对象A[关系式]对象B 其他参数
+多个处罚操作之间用与&&进行连接
+支持的处罚类型如下:
+- `cancel` 产生一个拉回操作，回滚当前tick的运动
+- `log` 向NCP日志中记录玩家作弊行为，参数`break 冷却秒数`
+- `warn` 向玩家发送一个警告消息，参数`message 消息内容`
+- `kick` 将玩家踢出服务器
+- `ban` 将玩家从服务器封禁，参数`repeat 容错次数`,`time 封禁时间`
+若不设置参数，插件将使用NCP默认值
+添加警告消息需要在string中加入
+
+### NCP命令权限管理
+在permission.policy中进行设置，格式为:
+- `权限:命令表`
+命令之间用逗号连接
+若命令在NCP中没有一条记录，那么默认所有玩家都可以使用它
+例如version在事例的nocheatplus.admin.all和nocheatplus.admin.helper中都没规定
+
 ## 视频教程
 [1] https://b23.tv/3xIrYPQ
 
 ## 开发
 
-待插件稳定后补充
+公开的API在: NCP-API中
 
 ## 注意
 
-项目目前正处于重构状态，不保证可用性和兼容性
+项目目前正处于重构状态，在正式服上慎用
