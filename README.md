@@ -6,6 +6,9 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com)
 # NoCheatPlus
+<br>
+<p align="center"><img src="ncp-logo.png" height="128"/></p>
+<br>
 基岩版Nukkit服务器及其衍生核心PM1E/PowerNukkitX开发的先进反作弊。架构和设计学习Java版
 知名反作弊NoCheatPlus。其目的是修复和阻止我的世界基岩版中的漏洞和作弊
 行为。
