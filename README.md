@@ -93,7 +93,7 @@ permission:
 ~~~
 
 ## 视频教程
-暂无
+[1] https://b23.tv/3xIrYPQ
 
 ## 开发
 
