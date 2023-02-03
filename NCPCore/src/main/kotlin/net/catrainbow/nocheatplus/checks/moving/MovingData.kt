@@ -168,6 +168,14 @@ class MovingData : ICheckData {
         return this.motionZ
     }
 
+    fun getLastMotionX(): Double {
+        return this.lastMotionX
+    }
+
+    fun getLastMotionZ(): Double {
+        return this.lastMotionZ
+    }
+
     fun getLoseSprintCount(): Int {
         return this.loseSprintCount
     }

@@ -106,7 +106,6 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             }
         }
 
-        val walkSpeed = Magic.WALK_SPEED * (player.movementSpeed / Magic.DEFAULT_WALK_SPEED)
         if (sprinting) this.tags.add("sprint")
         this.setNextFriction(from, to, data)
         data.getGhostBlockChecker().run()
@@ -152,6 +151,21 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                         typeName, (player.inAirTicks / 20 * 5.0)
                     )
                 }
+            }
+            val speedChange =
+                xDistance != data.getLastMotionX() || yDistance != data.getLastMotionY() || zDistance != data.getLastMotionZ()
+            if (this.tags.contains("ground_walk") && (!isSamePos || speedChange) && this.getTinyHeight(
+                    player, ArrayList()
+                ) == 0.0
+            ) {
+                val vDistVertical =
+                    this.vDistVertical(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+                if (vDistVertical[0] > vDistVertical[1]) {
+                    player.teleport(from)
+                    pData.addViolationToBuffer(typeName, vDistVertical[0] - vDistVertical[1])
+                }
+            } else {
+                //解决空中攀升问题
             }
         }
 
@@ -722,6 +736,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 limitDistance = Double.MAX_VALUE
             }
             if (allowDistance > limitDistance) {
+                if (ConfigData.logging_debug) player.sendMessage("bunny vertical ${now - data.getLastJump()}")
                 pData.getViolationData(this.typeName).addPreVL("bunny_vertical")
                 if (pData.getViolationData(this.typeName).getPreVL("bunny_vertical") > 12) {
                     pData.getViolationData(this.typeName).clearPreVL("bunny_vertical")
@@ -730,6 +745,31 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                     limitDistance = Double.MAX_VALUE
                 }
             } else pData.getViolationData(this.typeName).clearPreVL("bunny_vertical")
+        } else if (this.tags.contains("ground_walk") && !this.tags.contains("hunger")) {
+            if ((fromOnGround && toOnGround) || (!fromOnGround && !toOnGround)) {
+                val speed = to.distance(from)
+                var walkSpeed = Magic.WALK_SPEED * (player.movementSpeed / Magic.DEFAULT_WALK_SPEED)
+                //解决加速药水问题
+                if (this.tags.contains("effect_speed")) {
+                    walkSpeed *= (1 + 0.2 * (player.getEffect(Effect.SPEED).amplifier + 1))
+                    //结局冰面匀加速问题
+                    if (data.getIceTick() > 0) walkSpeed += (0.4 * (1 + 0.2 * (player.getEffect(Effect.SPEED).amplifier + 1))) / 0.6 * (data.getIceTick() * 0.98)
+                } else if (data.getIceTick() > 0) walkSpeed += (0.4 / 0.6 * (data.getIceTick() * 0.98))
+                //水平位移粗检查
+                if (data.getLoseSprintCount() < 1 && player.isSprinting) {
+                    if (speed > walkSpeed * 2.0 || walkSpeed < 0.1436) {
+                        pData.getViolationData(this.typeName).addPreVL("ground_vertical")
+                        if (pData.getViolationData(this.typeName).getPreVL("ground_vertical") > 5) {
+                            pData.getViolationData(this.typeName).clearPreVL("ground_vertical")
+                            allowDistance = max(speed, walkSpeed * 2.0)
+                            limitDistance = min(speed, walkSpeed * 2.0)
+                        } else {
+                            allowDistance = Double.MIN_VALUE
+                            limitDistance = Double.MAX_VALUE
+                        }
+                    } else pData.getViolationData(this.typeName).clearPreVL("ground_vertical")
+                }
+            }
         }
 
         return doubleArrayOf(allowDistance, limitDistance)
