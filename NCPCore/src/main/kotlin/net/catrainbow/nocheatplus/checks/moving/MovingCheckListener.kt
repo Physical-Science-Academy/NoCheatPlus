@@ -15,17 +15,25 @@ package net.catrainbow.nocheatplus.checks.moving
 
 import cn.nukkit.event.Event
 import cn.nukkit.event.block.BlockPlaceEvent
+import cn.nukkit.event.server.DataPacketReceiveEvent
+import cn.nukkit.network.protocol.MovePlayerPacket
+import cn.nukkit.network.protocol.PlayerAuthInputPacket
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.player.SurvivalFly
+import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPlaceBlockPacket
 
+/**
+ * 子监听器
+ *
+ * @author Catrainbow
+ */
 class MovingCheckListener : CheckListener(CheckType.MOVING) {
 
     override fun onTick(event: Event) {
-        super.onTick(event)
         if (event is BlockPlaceEvent) {
             val player = event.player
             val packet = WrapperPlaceBlockPacket(player)
@@ -37,6 +45,16 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
             wrapper.player = player
             wrapper.packet = packet
             NoCheatPlus.instance.server.pluginManager.callEvent(wrapper)
+        } else if (event is DataPacketReceiveEvent) {
+            //开启权威移动数据包模式
+            if (event.packet is PlayerAuthInputPacket && !Bridge118.server_auth_mode) Bridge118.server_auth_mode = true
+            val player = event.player
+            if (event.packet is MovePlayerPacket || event.packet is PlayerAuthInputPacket) {
+                if (!NoCheatPlus.instance.hasPlayer(player)) return
+                if (NoCheatPlus.instance.getPlayerProvider(player).movingData.getPacketTracker() == null) return
+                val tracker = NoCheatPlus.instance.getPlayerProvider(player).movingData.getPacketTracker()!!
+                tracker.onPacketReceive(event.packet)
+            }
         }
     }
 

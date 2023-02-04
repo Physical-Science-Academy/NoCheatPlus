@@ -13,7 +13,6 @@
  */
 package net.catrainbow.nocheatplus.checks.moving.model
 
-import cn.nukkit.Player
 import net.catrainbow.nocheatplus.checks.moving.MovingData
 
 /**

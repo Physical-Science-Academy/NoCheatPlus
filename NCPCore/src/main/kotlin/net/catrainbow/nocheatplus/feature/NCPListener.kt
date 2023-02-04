@@ -23,6 +23,7 @@ import cn.nukkit.event.player.PlayerJoinEvent
 import cn.nukkit.event.player.PlayerJumpEvent
 import cn.nukkit.event.player.PlayerMoveEvent
 import cn.nukkit.event.player.PlayerQuitEvent
+import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.network.protocol.DisconnectPacket
 import cn.nukkit.plugin.Plugin
 import net.catrainbow.nocheatplus.NoCheatPlus
@@ -98,6 +99,14 @@ class NCPListener : Listener {
         registerEvent(
             this, NoCheatPlus.instance, PlayerJumpEvent::class.java, { playerJumps(it) }, true, EventPriority.HIGHEST
         )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            DataPacketReceiveEvent::class.java,
+            { playerPacketReceive(it) },
+            true,
+            EventPriority.HIGHEST
+        )
         registerTickListener()
     }
 
@@ -148,6 +157,11 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerPlaces(event: BlockPlaceEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerPacketReceive(event: DataPacketReceiveEvent) {
         for (listener in listeners) checkEvent(listener, event)
     }
 

@@ -29,6 +29,7 @@ import net.catrainbow.nocheatplus.checks.moving.MovingData
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.magic.Magic
+import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
@@ -161,7 +162,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 val vDistVertical =
                     this.vDistVertical(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                 if (vDistVertical[0] > vDistVertical[1]) {
-                    player.teleport(from)
+                    player.teleport(data.getLastNormalGround())
                     pData.addViolationToBuffer(typeName, vDistVertical[0] - vDistVertical[1])
                 }
             } else {
@@ -170,6 +171,10 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 if (hasMotion) {
                     val vLimitedH =
                         this.setAllowedHDist(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+                    if (vLimitedH[0] > vLimitedH[1]) {
+                        player.teleport(data.getLastNormalGround())
+                        pData.addViolationToBuffer(typeName, vLimitedH[0] - vLimitedH[1])
+                    }
                 }
             }
         }
@@ -181,6 +186,27 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             pData.getViolationData(typeName).setLagBack(data.getLastNormalGround())
         }
 
+        if (data.getPacketTracker() != null) {
+            val tracker = data.getPacketTracker()!!
+            val shortCount = tracker.getCount()
+            if (shortCount != 0) {
+                val maxCount = tracker.getMaxCount()
+                val average = tracker.getAverage()
+                if (maxCount > this.countMaxMovementPacket(data) || shortCount > this.countMaxMovementPacket(data)) {
+                    //产生先允许后拉回的延迟效果,以减少误判
+                    //此检测可能存在误判,待考证
+                    if (average > (this.countMaxMovementPacket(data) + 2)) {
+                        //重置计算,避免反复拉回
+                        tracker.resetSum()
+                        player.teleport(data.getLastNormalGround())
+                        pData.addViolationToBuffer(
+                            typeName, (max(shortCount, maxCount) - this.countMaxMovementPacket(data)) * 0.25
+                        )
+                    }
+                }
+            }
+            if (!data.getPacketTracker()!!.isLive()) data.getPacketTracker()!!.run()
+        }
         if (lagGhostBlock) pData.getViolationData(typeName).setCancel()
 
         if (debug) {
@@ -420,6 +446,23 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
     }
 
     /**
+     * 数据包计数器
+     *
+     * @return limited count
+     */
+    private fun countMaxMovementPacket(data: MovingData): Int {
+        //默认的最大允许值
+        var baseModifier = 2
+        if (data.isJump()) baseModifier += 4
+        //权威移动方式
+        if (Bridge118.server_auth_mode) baseModifier += 18
+        //如果玩家使用了自动疾跑,那么它的数量应该再加4,但大部分服主认为它是合法的
+        baseModifier += 4
+
+        return baseModifier
+    }
+
+    /**
      * 垂直检测
      *
      * @param now
@@ -461,9 +504,21 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                     limitDistance = Magic.BUNNY_TINY_JUMP_MAX
                 }
             }
-        } else if (yDistance >= 0.0) {
-            //运动轨迹从抛物线突然改变,或突然获得不沿切线方向的速度
+        } else {
+            if (data.getMovementTracker() == null) return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
+            if (data.getPacketTracker() == null) return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
+            if (yDistance >= 0.0) {
+                //运动轨迹从抛物线突然改变,或突然获得不沿切线方向的速度
+                //此情况不可能在作弊条件下触发
+                if (ConfigData.logging_debug) {
+                    player.sendMessage("${pData.getPlayerName()} y1++ height-> ground")
+                }
+                //跳过此检查
+                allowDistance = Double.MIN_VALUE
+                limitDistance = Double.MAX_VALUE
+            }
         }
+
 
         return doubleArrayOf(allowDistance, limitDistance)
     }

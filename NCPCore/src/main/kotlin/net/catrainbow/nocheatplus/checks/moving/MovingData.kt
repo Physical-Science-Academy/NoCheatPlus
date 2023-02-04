@@ -26,6 +26,7 @@ import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
 import net.catrainbow.nocheatplus.checks.moving.model.MoveTracker
+import net.catrainbow.nocheatplus.checks.moving.model.PacketTracker
 import net.catrainbow.nocheatplus.checks.moving.model.SpeedTracker
 import net.catrainbow.nocheatplus.components.data.ICheckData
 import kotlin.math.abs
@@ -56,6 +57,7 @@ class MovingData : ICheckData {
     private var lastPlayerJump = System.currentTimeMillis()
     private var moveTracker: MoveTracker? = null
     private var speedTracker: SpeedTracker? = null
+    private var packetTracker: PacketTracker? = null
 
     /**
      * Current Moving Data
@@ -115,6 +117,13 @@ class MovingData : ICheckData {
             this.speedTracker!!.kill()
         } else {
             this.speedTracker!!.onUpdate()
+        }
+
+        if (this.packetTracker == null) {
+            this.packetTracker = PacketTracker(this)
+            this.packetTracker!!.kill()
+        } else {
+            this.packetTracker!!.onUpdate()
         }
 
         if (this.ghostBlockChecker.getName() == "NCP") {
@@ -252,6 +261,10 @@ class MovingData : ICheckData {
 
     fun onJump() {
         this.lastPlayerJump = System.currentTimeMillis()
+    }
+
+    fun getPacketTracker(): PacketTracker? {
+        return this.packetTracker
     }
 
     fun isJump(): Boolean {
