@@ -135,6 +135,10 @@ For example, the version is not specified in nocheatplus.admin.all and nocheatpl
 
 Our open API: NCP-API
 
+## Test Server
+Address: axe.0mc.me
+Port: 10878
+
 ## Notice
 
 Plugin are still in development. Don't use on formal server.
