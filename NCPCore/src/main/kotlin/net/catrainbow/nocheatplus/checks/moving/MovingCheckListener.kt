@@ -18,6 +18,7 @@ import cn.nukkit.event.Event
 import cn.nukkit.event.block.BlockPlaceEvent
 import cn.nukkit.event.entity.EntityDamageEvent
 import cn.nukkit.event.player.PlayerDeathEvent
+import cn.nukkit.event.player.PlayerGameModeChangeEvent
 import cn.nukkit.event.player.PlayerRespawnEvent
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.network.protocol.MovePlayerPacket
@@ -27,6 +28,7 @@ import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.player.SurvivalFly
 import net.catrainbow.nocheatplus.compat.Bridge118
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.respawn
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPlaceBlockPacket
 
@@ -61,6 +63,7 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
             }
         } else if (event is PlayerRespawnEvent) {
             val player = event.player
+            player.respawn()
             if (NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.getPlayerProvider(player).movingData.setLive(
                 true
             )
@@ -79,6 +82,11 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
                     true
                 )
             }
+        } else if (event is PlayerGameModeChangeEvent) {
+            val player = event.player
+            if (NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.getPlayerProvider(player).movingData.setLastNormalGround(
+                player.location
+            )
         }
     }
 

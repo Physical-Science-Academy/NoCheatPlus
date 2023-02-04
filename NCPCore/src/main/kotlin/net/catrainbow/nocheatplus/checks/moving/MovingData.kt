@@ -28,6 +28,8 @@ import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
 import net.catrainbow.nocheatplus.checks.moving.model.MoveTracker
 import net.catrainbow.nocheatplus.checks.moving.model.PacketTracker
 import net.catrainbow.nocheatplus.checks.moving.model.SpeedTracker
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInWeb
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onClimbedBlock
 import net.catrainbow.nocheatplus.components.data.ICheckData
 import kotlin.math.abs
 
@@ -78,9 +80,12 @@ class MovingData : ICheckData {
     private var iceTick = 0
     private var slabTick = 0
     private var stairTick = 0
+    private var webTick = 0
+    private var ladderTick = 0
     private var acc = 0.0
     private var sinceLastYChange = 0
     private var live = true
+    private var respawnTick = 0
 
     private var motionYList: ArrayList<Double> = ArrayList()
     private var locationList: ArrayList<Location> = ArrayList()
@@ -102,6 +107,8 @@ class MovingData : ICheckData {
         //保证进服出生在虚空不会被误判
         if (!safeSpawn) if (player.onGround) this.safeSpawn = true
         if (voidHurt) if (player.onGround) this.voidHurt = false
+
+        if (player.gamemode == 1) this.normalGround = player.location
 
         this.lastOnGround = onGround
         this.lastLocation = location
@@ -160,6 +167,7 @@ class MovingData : ICheckData {
         } else this.loseSprintCount++
         if (this.loseSprintCount > 5) this.loseSprintCount = 0
         if (this.onGround) fullAirTick = 0
+        if (this.respawnTick > 0) this.respawnTick--
         if (LocUtil.isLiquid(LocUtil.getUnderBlock(player)) || LocUtil.isLiquid(player.levelBlock)) this.liquidTick++ else if (this.liquidTick in 1..50) this.liquidTick-- else this.liquidTick =
             0
         if (LocUtil.isIce(LocUtil.getUnderBlock(player))) this.iceTick++
@@ -168,6 +176,10 @@ class MovingData : ICheckData {
             0
         if (LocUtil.getUnderBlock(player) is BlockStairs) this.stairTick++ else if (this.stairTick in 1..50) this.stairTick-- else this.stairTick =
             0
+        if (player.isInWeb()) this.webTick++
+        else if (this.webTick in 1..50) this.webTick-- else this.webTick = 0
+        if (player.onClimbedBlock()) this.ladderTick++
+        else if (this.ladderTick in 1..50) this.ladderTick-- else this.ladderTick = 0
     }
 
     fun getLiquidTick(): Int {
@@ -310,6 +322,10 @@ class MovingData : ICheckData {
         return this.normalGround
     }
 
+    fun setLastNormalGround(location: Location) {
+        this.normalGround = location
+    }
+
     fun getIceTick(): Int {
         return this.iceTick
     }
@@ -320,6 +336,14 @@ class MovingData : ICheckData {
 
     fun getStairTick(): Int {
         return this.stairTick
+    }
+
+    fun respawn() {
+        this.respawnTick = 3
+    }
+
+    fun getRespawnTick(): Int {
+        return this.respawnTick
     }
 
     fun setLive(live: Boolean) {
@@ -344,6 +368,14 @@ class MovingData : ICheckData {
 
     fun getSlabTick(): Int {
         return this.slabTick
+    }
+
+    fun getWebTick(): Int {
+        return this.webTick
+    }
+
+    fun getLadderTick(): Int {
+        return this.ladderTick
     }
 
 }

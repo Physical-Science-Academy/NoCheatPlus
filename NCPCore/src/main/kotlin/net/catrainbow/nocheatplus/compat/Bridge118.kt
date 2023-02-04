@@ -14,13 +14,14 @@
 package net.catrainbow.nocheatplus.compat
 
 import cn.nukkit.Player
+import cn.nukkit.block.Block
 import cn.nukkit.level.Location
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.ActionFactory
 import net.catrainbow.nocheatplus.checks.CheckType
 
 /**
- * 多核心适配
+ * 多核心适配和架桥
  *
  * @author Catrainbow
  */
@@ -39,6 +40,26 @@ class Bridge118 {
             ) if (NoCheatPlus.instance.getPlayerProvider(player).getViolationData(type)
                     .getVL() >= ActionFactory.actionDataMap[type.name]!!.cancel
             ) player.teleport(location)
+        }
+
+        //重写核心重生算法
+        fun Player.respawn() {
+            if (!NoCheatPlus.instance.hasPlayer(player)) return
+            val provider = NoCheatPlus.instance.getPlayerProvider(player)
+            //更新位置.防止死亡拉回
+            provider.movingData.setLastNormalGround(location)
+            //更新计时器
+            provider.movingData.respawn()
+        }
+
+        //蜘蛛网判断
+        fun Player.isInWeb(): Boolean {
+            return player.levelBlock.id == Block.COBWEB
+        }
+
+        //重写核心梯子判断
+        fun Player.onClimbedBlock(): Boolean {
+            return player.levelBlock.canBeClimbed()
         }
 
     }

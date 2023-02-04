@@ -21,6 +21,7 @@ import cn.nukkit.event.block.BlockPlaceEvent
 import cn.nukkit.event.entity.EntityDamageEvent
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent
 import cn.nukkit.event.player.PlayerDeathEvent
+import cn.nukkit.event.player.PlayerGameModeChangeEvent
 import cn.nukkit.event.player.PlayerJoinEvent
 import cn.nukkit.event.player.PlayerJumpEvent
 import cn.nukkit.event.player.PlayerMoveEvent
@@ -134,6 +135,14 @@ class NCPListener : Listener {
             true,
             EventPriority.HIGHEST
         )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            PlayerGameModeChangeEvent::class.java,
+            { playerChangesGameMode(it) },
+            true,
+            EventPriority.HIGHEST
+        )
         registerTickListener()
     }
 
@@ -204,6 +213,11 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerDamages(event: EntityDamageEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerChangesGameMode(event: PlayerGameModeChangeEvent) {
         for (listener in listeners) checkEvent(listener, event)
     }
 
