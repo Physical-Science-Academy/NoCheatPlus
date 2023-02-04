@@ -156,7 +156,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 xDistance != data.getLastMotionX() || yDistance != data.getLastMotionY() || zDistance != data.getLastMotionZ()
             if (this.tags.contains("ground_walk") && (!isSamePos || speedChange) && this.getTinyHeight(
                     player, ArrayList()
-                ) == 0.0
+                ) < Magic.BUNNY_TINY_JUMP_MAX / 3.0
             ) {
                 val vDistVertical =
                     this.vDistVertical(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
@@ -166,6 +166,11 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 }
             } else {
                 //解决空中攀升问题
+                val hasMotion = this.tags.contains("ground_walk") && !this.tags.contains("same_at")
+                if (hasMotion) {
+                    val vLimitedH =
+                        this.setAllowedHDist(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+                }
             }
         }
 
@@ -409,6 +414,55 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             if (ConfigData.check_survival_fly_set_back_fall_damage) NoCheatPlus.instance.server.pluginManager.callEvent(
                 event
             )
+        }
+
+        return doubleArrayOf(allowDistance, limitDistance)
+    }
+
+    /**
+     * 垂直检测
+     *
+     * @param now
+     * @param player
+     * @param from
+     * @param to
+     * @param fromOnGround
+     * @param toOnGround
+     * @param yDistance
+     * @param data
+     * @param pData
+     *
+     * @return limited distance
+     */
+    private fun setAllowedHDist(
+        now: Long,
+        player: Player,
+        from: Location,
+        to: Location,
+        fromOnGround: Boolean,
+        toOnGround: Boolean,
+        yDistance: Double,
+        data: MovingData,
+        pData: IPlayerData,
+    ): DoubleArray {
+        var allowDistance = 0.0
+        var limitDistance = 0.0
+        //平地攀升情况分析
+        if (yDistance < 0) return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
+        if (from.floorX == to.floorX && from.floorZ == from.floorZ) {
+            if (data.getMovementTracker() == null) return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
+            if (((fromOnGround && !toOnGround) || (!fromOnGround && !toOnGround)) && yDistance > 0) {
+                val height = data.getMovementTracker()!!.getHeight()
+                //player.sendMessage("$height $yDistance ${now - data.getLastJump() < 800}")
+                val jump = now - data.getLastJump() < 800
+                //检测发包跳跃的特征漏洞
+                if (height > Magic.BUNNY_TINY_JUMP_MAX && !jump) {
+                    allowDistance = height
+                    limitDistance = Magic.BUNNY_TINY_JUMP_MAX
+                }
+            }
+        } else if (yDistance >= 0.0) {
+            //运动轨迹从抛物线突然改变,或突然获得不沿切线方向的速度
         }
 
         return doubleArrayOf(allowDistance, limitDistance)
@@ -746,6 +800,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 }
             } else pData.getViolationData(this.typeName).clearPreVL("bunny_vertical")
         } else if (this.tags.contains("ground_walk") && !this.tags.contains("hunger")) {
+            if (now - data.getLastJump() < 800) return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
             if ((fromOnGround && toOnGround) || (!fromOnGround && !toOnGround)) {
                 val speed = to.distance(from)
                 var walkSpeed = Magic.WALK_SPEED * (player.movementSpeed / Magic.DEFAULT_WALK_SPEED)
@@ -755,8 +810,12 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                     //结局冰面匀加速问题
                     if (data.getIceTick() > 0) walkSpeed += (0.4 * (1 + 0.2 * (player.getEffect(Effect.SPEED).amplifier + 1))) / 0.6 * (data.getIceTick() * 0.98)
                 } else if (data.getIceTick() > 0) walkSpeed += (0.4 / 0.6 * (data.getIceTick() * 0.98))
+                //水平运动时若突然改变y轴因夹角导致获得斜方向额外加速度的问题单独分析
+                if (data.getSinceLastYChange() > 2) walkSpeed += (data.getLastFrictionVertical() + data.getNextHorizontalFriction()) / 2.0 * 0.4 * 0.98
                 //水平位移粗检查
-                if (data.getLoseSprintCount() < 1 && player.isSprinting) {
+                if (data.getLoseSprintCount() < 1 && player.isSprinting && (yDistance > 0.0 || data.getSinceLastYChange() > 5)) {
+                    //可忽略的误差分析
+                    if (speed - walkSpeed * 2.0 < 0.1) return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
                     if (speed > walkSpeed * 2.0 || walkSpeed < 0.1436) {
                         pData.getViolationData(this.typeName).addPreVL("ground_vertical")
                         if (pData.getViolationData(this.typeName).getPreVL("ground_vertical") > 5) {

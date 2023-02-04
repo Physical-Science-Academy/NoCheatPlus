@@ -75,6 +75,7 @@ class MovingData : ICheckData {
     private var slabTick = 0
     private var stairTick = 0
     private var acc = 0.0
+    private var sinceLastYChange = 0
 
     private var motionYList: ArrayList<Double> = ArrayList()
     private var locationList: ArrayList<Location> = ArrayList()
@@ -129,6 +130,7 @@ class MovingData : ICheckData {
         this.motionY = to.y - from.y
         this.motionZ = to.z - from.z
         this.inAirTick = player.inAirTicks
+        if (this.motionY == 0.0 && this.sinceLastYChange < 50) this.sinceLastYChange++ else this.sinceLastYChange = 0
         this.speed = to.distance(from)
         this.motionYList.add(to.y - from.y)
         this.locationList.add(player.location)
@@ -230,6 +232,10 @@ class MovingData : ICheckData {
 
     fun getLastMotionY(): Double {
         return this.lastMotionY
+    }
+
+    fun getSinceLastYChange(): Int {
+        return this.sinceLastYChange
     }
 
     fun getLastFrictionVertical(): Double {
