@@ -30,6 +30,7 @@ import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.magic.Magic
 import net.catrainbow.nocheatplus.compat.Bridge118
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.setback
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
@@ -149,7 +150,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 //不规则的运动情况
                 if (this.tags.contains("bunny_hop")) {
                     this.tags.add("air_jump")
-                    player.teleport(data.getLastNormalGround())
+                    player.setback(data.getLastNormalGround(), this.typeName)
                     pData.addViolationToBuffer(
                         typeName, (player.inAirTicks / 20 * 5.0)
                     )
@@ -164,7 +165,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 val vDistVertical =
                     this.vDistVertical(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                 if (vDistVertical[0] > vDistVertical[1]) {
-                    player.teleport(data.getLastNormalGround())
+                    player.setback(data.getLastNormalGround(), this.typeName)
                     pData.addViolationToBuffer(typeName, vDistVertical[0] - vDistVertical[1])
                 }
             } else {
@@ -174,7 +175,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                     val vLimitedH =
                         this.setAllowedHDist(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                     if (vLimitedH[0] > vLimitedH[1]) {
-                        player.teleport(data.getLastNormalGround())
+                        player.setback(data.getLastNormalGround(), this.typeName)
                         pData.addViolationToBuffer(typeName, vLimitedH[0] - vLimitedH[1])
                     }
                 }
@@ -200,7 +201,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                     if (average > (this.countMaxMovementPacket(data) + 2)) {
                         //重置计算,避免反复拉回
                         tracker.resetSum()
-                        player.teleport(data.getLastNormalGround())
+                        player.setback(data.getLastNormalGround(), this.typeName)
                         pData.addViolationToBuffer(
                             typeName, (max(shortCount, maxCount) - this.countMaxMovementPacket(data)) * 0.25
                         )
@@ -438,7 +439,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         if (resetTo) {
             val event =
                 EntityDamageEvent(player, EntityDamageEvent.DamageCause.FALL, this.getFallDamage(player).toFloat())
-            player.teleport(data.getLastNormalGround())
+            player.setback(data.getLastNormalGround(), this.typeName)
             if (ConfigData.check_survival_fly_set_back_fall_damage) NoCheatPlus.instance.server.pluginManager.callEvent(
                 event
             )
@@ -760,7 +761,7 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         if (resetTo) {
             val event =
                 EntityDamageEvent(player, EntityDamageEvent.DamageCause.FALL, this.getFallDamage(player).toFloat())
-            player.teleport(data.getLastNormalGround())
+            player.setback(data.getLastNormalGround(), this.typeName)
             if (ConfigData.check_survival_fly_set_back_fall_damage) NoCheatPlus.instance.server.pluginManager.callEvent(
                 event
             )

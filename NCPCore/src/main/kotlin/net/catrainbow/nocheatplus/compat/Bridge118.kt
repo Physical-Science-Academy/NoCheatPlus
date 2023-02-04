@@ -13,6 +13,12 @@
  */
 package net.catrainbow.nocheatplus.compat
 
+import cn.nukkit.Player
+import cn.nukkit.level.Location
+import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.actions.ActionFactory
+import net.catrainbow.nocheatplus.checks.CheckType
+
 /**
  * 多核心适配
  *
@@ -24,6 +30,16 @@ class Bridge118 {
 
         //服务器是否拥有权威移动发包
         var server_auth_mode = false
+
+        //重写核心拉回算法
+        fun Player.setback(location: Location, type: CheckType) {
+            if (ActionFactory.actionDataMap.containsKey(type.name)) if (ActionFactory.actionDataMap[type.name]!!.enableCancel) if (NoCheatPlus.instance.hasPlayer(
+                    player.name
+                )
+            ) if (NoCheatPlus.instance.getPlayerProvider(player).getViolationData(type)
+                    .getVL() >= ActionFactory.actionDataMap[type.name]!!.cancel
+            ) player.teleport(location)
+        }
 
     }
 
