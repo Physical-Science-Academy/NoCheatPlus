@@ -49,7 +49,7 @@ class PacketTracker(val data: MovingData) {
             if (packet is MovePlayerPacket) countPacket = true
             else if (packet is PlayerAuthInputPacket) {
                 //忽略静默状态下的发包
-                if (data.getSpeed() > 0.1) countPacket = true
+                if (data.getSpeed() > 0.21) countPacket = true
             }
         if (countPacket) {
             this.count++

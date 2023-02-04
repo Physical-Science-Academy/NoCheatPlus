@@ -139,6 +139,8 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             "stair_slab"
         )
 
+        var revertBuffer = false
+
         if (data.getKnockBackTick() > 13) {
             if (data.getLiquidTick() == 0) {
 
@@ -152,69 +154,54 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                         pData.addViolationToBuffer(
                             typeName, (distAir[0] - distAir[1]) * 10.0 + 1.1
                         )
-                        return
-                    } else if (!this.tags.contains("flying")) {
+                        revertBuffer = true
+                    }
+                    if (!this.tags.contains("flying") && !revertBuffer) {
                         val distFullAir =
                             this.inAirCheck(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                         if (distFullAir[0] > distFullAir[1]) {
                             pData.addViolationToBuffer(
                                 typeName, (abs(distFullAir[0] - distFullAir[1]) * 10.0)
                             )
+                            revertBuffer = true
                         }
-                    } else if (this.tags.contains("bunny_hop")) {
+                    } else if (this.tags.contains("bunny_hop") && !revertBuffer) {
                         //不规则的运动情况
                         this.tags.add("air_jump")
                         player.setback(data.getLastNormalGround(), this.typeName)
                         pData.addViolationToBuffer(
                             typeName, (player.inAirTicks / 20 * 5.0)
                         )
+                        revertBuffer = true
+                    }
+
+                    val speedChange =
+                        xDistance != data.getLastMotionX() || yDistance != data.getLastMotionY() || zDistance != data.getLastMotionZ()
+                    if (this.tags.contains("ground_walk") && (!isSamePos || speedChange) && this.getTinyHeight(
+                            player, ArrayList()
+                        ) < Magic.BUNNY_TINY_JUMP_MAX / 3.0 && !revertBuffer
+                    ) {
+                        val vDistVertical = this.vDistVertical(
+                            now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData
+                        )
+                        if (vDistVertical[0] > vDistVertical[1]) {
+                            player.setback(data.getLastNormalGround(), this.typeName)
+                            pData.addViolationToBuffer(typeName, vDistVertical[0] - vDistVertical[1])
+                        }
                     } else {
-                        val speedChange =
-                            xDistance != data.getLastMotionX() || yDistance != data.getLastMotionY() || zDistance != data.getLastMotionZ()
-                        if (this.tags.contains("ground_walk") && (!isSamePos || speedChange) && this.getTinyHeight(
-                                player, ArrayList()
-                            ) < Magic.BUNNY_TINY_JUMP_MAX / 3.0
-                        ) {
-                            val vDistVertical =
-                                this.vDistVertical(
-                                    now,
-                                    player,
-                                    from,
-                                    to,
-                                    fromOnGround,
-                                    toOnGround,
-                                    yDistance,
-                                    data,
-                                    pData
-                                )
-                            if (vDistVertical[0] > vDistVertical[1]) {
+                        //解决空中攀升问题
+                        val hasMotion = this.tags.contains("ground_walk") && !this.tags.contains("same_at")
+                        if (hasMotion && !revertBuffer) {
+                            val vLimitedH = this.setAllowedHDist(
+                                now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData
+                            )
+                            if (vLimitedH[0] > vLimitedH[1]) {
                                 player.setback(data.getLastNormalGround(), this.typeName)
-                                pData.addViolationToBuffer(typeName, vDistVertical[0] - vDistVertical[1])
-                                return
-                            }
-                        } else {
-                            //解决空中攀升问题
-                            val hasMotion = this.tags.contains("ground_walk") && !this.tags.contains("same_at")
-                            if (hasMotion) {
-                                val vLimitedH =
-                                    this.setAllowedHDist(
-                                        now,
-                                        player,
-                                        from,
-                                        to,
-                                        fromOnGround,
-                                        toOnGround,
-                                        yDistance,
-                                        data,
-                                        pData
-                                    )
-                                if (vLimitedH[0] > vLimitedH[1]) {
-                                    player.setback(data.getLastNormalGround(), this.typeName)
-                                    pData.addViolationToBuffer(typeName, vLimitedH[0] - vLimitedH[1])
-                                }
+                                pData.addViolationToBuffer(typeName, vLimitedH[0] - vLimitedH[1])
                             }
                         }
                     }
+
                 }
             }
         }
