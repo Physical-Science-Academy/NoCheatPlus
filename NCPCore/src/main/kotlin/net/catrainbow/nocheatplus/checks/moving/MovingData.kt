@@ -86,6 +86,7 @@ class MovingData : ICheckData {
     private var sinceLastYChange = 0
     private var live = true
     private var respawnTick = 0
+    private var knockBackHurtTick = 100
 
     private var motionYList: ArrayList<Double> = ArrayList()
     private var locationList: ArrayList<Location> = ArrayList()
@@ -109,6 +110,7 @@ class MovingData : ICheckData {
         if (voidHurt) if (player.onGround) this.voidHurt = false
 
         if (player.gamemode == 1) this.normalGround = player.location
+        if (this.knockBackHurtTick < 100) this.knockBackHurtTick++
 
         this.lastOnGround = onGround
         this.lastLocation = location
@@ -244,6 +246,14 @@ class MovingData : ICheckData {
 
     fun getSpeedList(): ArrayList<Double> {
         return this.speedList
+    }
+
+    fun resetKnockBackTick() {
+        this.knockBackHurtTick = 0
+    }
+
+    fun getKnockBackTick(): Int {
+        return this.knockBackHurtTick
     }
 
     fun getMotionYList(): ArrayList<Double> {

@@ -30,6 +30,9 @@ import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.magic.Magic
 import net.catrainbow.nocheatplus.compat.Bridge118
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onIce
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onSlab
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onStair
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.setback
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
@@ -136,54 +139,44 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             "stair_slab"
         )
 
-        if (data.getLiquidTick() == 0) {
+        if (data.getKnockBackTick() > 13) {
+            if (data.getLiquidTick() == 0) {
 
-            if (data.getWebTick() > 10) {
+                if (data.getWebTick() > 10) {
 
-            } else if (data.getLadderTick() > 10) {
+                } else if (data.getLadderTick() > 10) {
 
-            } else {
-                val distAir = this.vDistAir(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
-                if (distAir[0] > distAir[1]) {
-                    pData.addViolationToBuffer(
-                        typeName, (distAir[0] - distAir[1]) * 10.0 + 1.1
-                    )
-                    return
-                } else if (!this.tags.contains("flying")) {
-                    val distFullAir =
-                        this.inAirCheck(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
-                    if (distFullAir[0] > distFullAir[1]) {
-                        pData.addViolationToBuffer(
-                            typeName, (abs(distFullAir[0] - distFullAir[1]) * 10.0)
-                        )
-                    }
-                } else if (this.tags.contains("bunny_hop")) {
-                    //不规则的运动情况
-                    this.tags.add("air_jump")
-                    player.setback(data.getLastNormalGround(), this.typeName)
-                    pData.addViolationToBuffer(
-                        typeName, (player.inAirTicks / 20 * 5.0)
-                    )
                 } else {
-                    val speedChange =
-                        xDistance != data.getLastMotionX() || yDistance != data.getLastMotionY() || zDistance != data.getLastMotionZ()
-                    if (this.tags.contains("ground_walk") && (!isSamePos || speedChange) && this.getTinyHeight(
-                            player, ArrayList()
-                        ) < Magic.BUNNY_TINY_JUMP_MAX / 3.0
-                    ) {
-                        val vDistVertical =
-                            this.vDistVertical(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
-                        if (vDistVertical[0] > vDistVertical[1]) {
-                            player.setback(data.getLastNormalGround(), this.typeName)
-                            pData.addViolationToBuffer(typeName, vDistVertical[0] - vDistVertical[1])
-                            return
+                    val distAir = this.vDistAir(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+                    if (distAir[0] > distAir[1]) {
+                        pData.addViolationToBuffer(
+                            typeName, (distAir[0] - distAir[1]) * 10.0 + 1.1
+                        )
+                        return
+                    } else if (!this.tags.contains("flying")) {
+                        val distFullAir =
+                            this.inAirCheck(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+                        if (distFullAir[0] > distFullAir[1]) {
+                            pData.addViolationToBuffer(
+                                typeName, (abs(distFullAir[0] - distFullAir[1]) * 10.0)
+                            )
                         }
+                    } else if (this.tags.contains("bunny_hop")) {
+                        //不规则的运动情况
+                        this.tags.add("air_jump")
+                        player.setback(data.getLastNormalGround(), this.typeName)
+                        pData.addViolationToBuffer(
+                            typeName, (player.inAirTicks / 20 * 5.0)
+                        )
                     } else {
-                        //解决空中攀升问题
-                        val hasMotion = this.tags.contains("ground_walk") && !this.tags.contains("same_at")
-                        if (hasMotion) {
-                            val vLimitedH =
-                                this.setAllowedHDist(
+                        val speedChange =
+                            xDistance != data.getLastMotionX() || yDistance != data.getLastMotionY() || zDistance != data.getLastMotionZ()
+                        if (this.tags.contains("ground_walk") && (!isSamePos || speedChange) && this.getTinyHeight(
+                                player, ArrayList()
+                            ) < Magic.BUNNY_TINY_JUMP_MAX / 3.0
+                        ) {
+                            val vDistVertical =
+                                this.vDistVertical(
                                     now,
                                     player,
                                     from,
@@ -194,9 +187,31 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                                     data,
                                     pData
                                 )
-                            if (vLimitedH[0] > vLimitedH[1]) {
+                            if (vDistVertical[0] > vDistVertical[1]) {
                                 player.setback(data.getLastNormalGround(), this.typeName)
-                                pData.addViolationToBuffer(typeName, vLimitedH[0] - vLimitedH[1])
+                                pData.addViolationToBuffer(typeName, vDistVertical[0] - vDistVertical[1])
+                                return
+                            }
+                        } else {
+                            //解决空中攀升问题
+                            val hasMotion = this.tags.contains("ground_walk") && !this.tags.contains("same_at")
+                            if (hasMotion) {
+                                val vLimitedH =
+                                    this.setAllowedHDist(
+                                        now,
+                                        player,
+                                        from,
+                                        to,
+                                        fromOnGround,
+                                        toOnGround,
+                                        yDistance,
+                                        data,
+                                        pData
+                                    )
+                                if (vLimitedH[0] > vLimitedH[1]) {
+                                    player.setback(data.getLastNormalGround(), this.typeName)
+                                    pData.addViolationToBuffer(typeName, vLimitedH[0] - vLimitedH[1])
+                                }
                             }
                         }
                     }
@@ -466,7 +481,21 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
                 event
             )
         }
-
+        if (allowDistance > limitDistance) {
+            var resetViolation = false
+            if (player.onIce() && allowDistance - limitDistance < 0.82) {
+                resetViolation = true
+            } else if ((player.onStair() || player.onSlab()) && allowDistance - limitDistance < 0.09) {
+                resetViolation = true
+            } else if (allowDistance - limitDistance < 0.02 && !ConfigData.check_survival_fly_strict_mode) {
+                //弱检测模式
+                resetViolation = true
+            }
+            if (resetViolation) {
+                allowDistance = Double.MIN_VALUE
+                limitDistance = Double.MAX_VALUE
+            }
+        }
         return doubleArrayOf(allowDistance, limitDistance)
     }
 
@@ -945,6 +974,21 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             }
         }
 
+        if (allowDistance > limitDistance) {
+            var resetViolation = false
+            if (player.onIce() && allowDistance - limitDistance < 0.82) {
+                resetViolation = true
+            } else if ((player.onStair() || player.onSlab()) && allowDistance - limitDistance < 0.09) {
+                resetViolation = true
+            } else if (allowDistance - limitDistance < 0.02 && !ConfigData.check_survival_fly_strict_mode) {
+                //弱检测模式
+                resetViolation = true
+            }
+            if (resetViolation) {
+                allowDistance = Double.MIN_VALUE
+                limitDistance = Double.MAX_VALUE
+            }
+        }
         return doubleArrayOf(allowDistance, limitDistance)
     }
 

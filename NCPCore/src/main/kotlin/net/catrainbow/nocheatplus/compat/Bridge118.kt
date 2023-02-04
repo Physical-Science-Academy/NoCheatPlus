@@ -15,10 +15,13 @@ package net.catrainbow.nocheatplus.compat
 
 import cn.nukkit.Player
 import cn.nukkit.block.Block
+import cn.nukkit.block.BlockSlab
+import cn.nukkit.block.BlockStairs
 import cn.nukkit.level.Location
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.ActionFactory
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 
 /**
  * 多核心适配和架桥
@@ -60,6 +63,24 @@ class Bridge118 {
         //重写核心梯子判断
         fun Player.onClimbedBlock(): Boolean {
             return player.levelBlock.canBeClimbed()
+        }
+
+        fun Player.onIce(): Boolean {
+            return LocUtil.isIce(player.add(0.0, -1.0, 0.0).levelBlock) || LocUtil.isIce(
+                player.add(
+                    0.0, -2.0, 0.0
+                ).levelBlock
+            )
+        }
+
+        fun Player.onStair(): Boolean {
+            return player.levelBlock is BlockStairs || player.add(0.0, -1.0, 0.0).levelBlock is BlockStairs
+                    || player.levelBlock.add(0.0, -2.0, 0.0).levelBlock is BlockStairs
+        }
+
+        fun Player.onSlab(): Boolean {
+            return player.levelBlock is BlockSlab || player.add(0.0, -1.0, 0.0).levelBlock is BlockSlab
+                    || player.levelBlock.add(0.0, -2.0, 0.0).levelBlock is BlockSlab
         }
 
     }

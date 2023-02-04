@@ -76,11 +76,16 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
             if (event.entity is Player) {
                 val player = event.entity as Player
                 //虚空行走跳过检测
-                if (event.cause == EntityDamageEvent.DamageCause.VOID) if (NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.getPlayerProvider(
-                    player
-                ).movingData.setVoidHurt(
-                    true
-                )
+                if (NoCheatPlus.instance.hasPlayer(player)) {
+                    if (event.cause == EntityDamageEvent.DamageCause.VOID) NoCheatPlus.instance.getPlayerProvider(
+                        player
+                    ).movingData.setVoidHurt(
+                        true
+                    )
+
+                    //重新计算冷却
+                    NoCheatPlus.instance.getPlayerProvider(player).movingData.resetKnockBackTick()
+                }
             }
         } else if (event is PlayerGameModeChangeEvent) {
             val player = event.player

@@ -26,6 +26,7 @@ checks:
   moving:
     survivalfly:
       active: true
+      strict_mode: false
       setback_policy:
         fall_damage: true
         void_to_void: true
