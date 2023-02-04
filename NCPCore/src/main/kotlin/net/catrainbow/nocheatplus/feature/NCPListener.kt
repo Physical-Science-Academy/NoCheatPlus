@@ -18,7 +18,6 @@ import cn.nukkit.event.EventHandler
 import cn.nukkit.event.EventPriority
 import cn.nukkit.event.Listener
 import cn.nukkit.event.block.BlockPlaceEvent
-import cn.nukkit.event.entity.EntityDamageByEntityEvent
 import cn.nukkit.event.entity.EntityDamageEvent
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent
 import cn.nukkit.event.player.PlayerDeathEvent
@@ -130,14 +129,6 @@ class NCPListener : Listener {
         registerEvent(
             this,
             NoCheatPlus.instance,
-            EntityDamageByEntityEvent::class.java,
-            { playerDamagesByEntity(it) },
-            true,
-            EventPriority.HIGHEST
-        )
-        registerEvent(
-            this,
-            NoCheatPlus.instance,
             EntityDamageEvent::class.java,
             { playerDamages(it) },
             true,
@@ -208,11 +199,6 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerDies(event: PlayerDeathEvent) {
-        for (listener in listeners) checkEvent(listener, event)
-    }
-
-    @EventHandler
-    private fun playerDamagesByEntity(event: EntityDamageByEntityEvent) {
         for (listener in listeners) checkEvent(listener, event)
     }
 
