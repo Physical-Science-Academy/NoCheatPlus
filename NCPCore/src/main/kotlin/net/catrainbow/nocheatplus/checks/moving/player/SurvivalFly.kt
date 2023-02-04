@@ -56,6 +56,8 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         if (player.gamemode == 1 || player.gamemode == 3) return
         val pData = NoCheatPlus.instance.getPlayerProvider(player)
         val data = pData.movingData
+        if (!data.isSafeSpawn() || !data.isLive()) return
+        if (ConfigData.check_survival_fly_set_back_void_to_void && data.isVoidHurt()) return
         val packet = event.packet
         if (packet is WrapperInputPacket) this.checkPlayerFly(
             player, packet.from, packet.to, data, pData, System.currentTimeMillis()

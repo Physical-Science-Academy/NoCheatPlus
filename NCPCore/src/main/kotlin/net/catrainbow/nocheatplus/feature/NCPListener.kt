@@ -18,11 +18,15 @@ import cn.nukkit.event.EventHandler
 import cn.nukkit.event.EventPriority
 import cn.nukkit.event.Listener
 import cn.nukkit.event.block.BlockPlaceEvent
+import cn.nukkit.event.entity.EntityDamageByEntityEvent
+import cn.nukkit.event.entity.EntityDamageEvent
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent
+import cn.nukkit.event.player.PlayerDeathEvent
 import cn.nukkit.event.player.PlayerJoinEvent
 import cn.nukkit.event.player.PlayerJumpEvent
 import cn.nukkit.event.player.PlayerMoveEvent
 import cn.nukkit.event.player.PlayerQuitEvent
+import cn.nukkit.event.player.PlayerRespawnEvent
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.network.protocol.DisconnectPacket
 import cn.nukkit.plugin.Plugin
@@ -107,6 +111,33 @@ class NCPListener : Listener {
             true,
             EventPriority.HIGHEST
         )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            PlayerRespawnEvent::class.java,
+            { playerSpawns(it) },
+            true,
+            EventPriority.HIGHEST
+        )
+        registerEvent(
+            this, NoCheatPlus.instance, PlayerDeathEvent::class.java, { playerDies(it) }, true, EventPriority.HIGHEST
+        )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            EntityDamageByEntityEvent::class.java,
+            { playerDamagesByEntity(it) },
+            true,
+            EventPriority.HIGHEST
+        )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            EntityDamageEvent::class.java,
+            { playerDamages(it) },
+            true,
+            EventPriority.HIGHEST
+        )
         registerTickListener()
     }
 
@@ -162,6 +193,26 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerPacketReceive(event: DataPacketReceiveEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerSpawns(event: PlayerRespawnEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerDies(event: PlayerDeathEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerDamagesByEntity(event: EntityDamageByEntityEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerDamages(event: EntityDamageEvent) {
         for (listener in listeners) checkEvent(listener, event)
     }
 

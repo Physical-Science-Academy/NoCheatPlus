@@ -58,6 +58,8 @@ class MovingData : ICheckData {
     private var moveTracker: MoveTracker? = null
     private var speedTracker: SpeedTracker? = null
     private var packetTracker: PacketTracker? = null
+    private var safeSpawn = false
+    private var voidHurt = false
 
     /**
      * Current Moving Data
@@ -78,6 +80,7 @@ class MovingData : ICheckData {
     private var stairTick = 0
     private var acc = 0.0
     private var sinceLastYChange = 0
+    private var live = true
 
     private var motionYList: ArrayList<Double> = ArrayList()
     private var locationList: ArrayList<Location> = ArrayList()
@@ -96,6 +99,10 @@ class MovingData : ICheckData {
      * 处理数据
      */
     fun handleMovingData(player: Player, from: Location, to: Location, data: DistanceData) {
+        //保证进服出生在虚空不会被误判
+        if (!safeSpawn) if (player.onGround) this.safeSpawn = true
+        if (voidHurt) if (player.onGround) this.voidHurt = false
+
         this.lastOnGround = onGround
         this.lastLocation = location
         this.lastSpeed = speed
@@ -313,6 +320,26 @@ class MovingData : ICheckData {
 
     fun getStairTick(): Int {
         return this.stairTick
+    }
+
+    fun setLive(live: Boolean) {
+        this.live = live
+    }
+
+    fun isLive(): Boolean {
+        return this.live
+    }
+
+    fun isSafeSpawn(): Boolean {
+        return this.safeSpawn
+    }
+
+    fun setVoidHurt(boolean: Boolean) {
+        this.voidHurt = boolean
+    }
+
+    fun isVoidHurt(): Boolean {
+        return this.voidHurt
     }
 
     fun getSlabTick(): Int {

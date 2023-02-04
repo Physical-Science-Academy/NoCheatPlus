@@ -13,8 +13,12 @@
  */
 package net.catrainbow.nocheatplus.checks.moving
 
+import cn.nukkit.Player
 import cn.nukkit.event.Event
 import cn.nukkit.event.block.BlockPlaceEvent
+import cn.nukkit.event.entity.EntityDamageEvent
+import cn.nukkit.event.player.PlayerDeathEvent
+import cn.nukkit.event.player.PlayerRespawnEvent
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.network.protocol.MovePlayerPacket
 import cn.nukkit.network.protocol.PlayerAuthInputPacket
@@ -54,6 +58,26 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
                 if (NoCheatPlus.instance.getPlayerProvider(player).movingData.getPacketTracker() == null) return
                 val tracker = NoCheatPlus.instance.getPlayerProvider(player).movingData.getPacketTracker()!!
                 tracker.onPacketReceive(event.packet)
+            }
+        } else if (event is PlayerRespawnEvent) {
+            val player = event.player
+            if (NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.getPlayerProvider(player).movingData.setLive(
+                true
+            )
+        } else if (event is PlayerDeathEvent) {
+            val player = event.entity
+            if (NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.getPlayerProvider(player).movingData.setLive(
+                false
+            )
+        } else if (event is EntityDamageEvent) {
+            if (event.entity is Player) {
+                val player = event.entity as Player
+                //虚空行走跳过检测
+                if (event.cause == EntityDamageEvent.DamageCause.VOID) if (NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.getPlayerProvider(
+                    player
+                ).movingData.setVoidHurt(
+                    true
+                )
             }
         }
     }
