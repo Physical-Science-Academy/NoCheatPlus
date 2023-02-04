@@ -59,14 +59,19 @@ class NCPListener : Listener {
             ignoreCancelled: Boolean = false,
             priority: EventPriority = EventPriority.NORMAL,
         ) {
-            plugin.server.pluginManager.registerEvent(
-                clazz,
-                listener,
-                priority,
-                { _: Listener?, event: Event? -> executor(event as T) },
-                plugin,
-                ignoreCancelled
-            )
+            try {
+                plugin.server.pluginManager.registerEvent(
+                    clazz,
+                    listener,
+                    priority,
+                    { _: Listener?, event: Event? -> executor(event as T) },
+                    plugin,
+                    ignoreCancelled
+                )
+            } catch (ignore: Exception) {
+                //忽略Kotlin事件转换错误
+                //可能是KotlinLib的问题
+            }
         }
 
     }
