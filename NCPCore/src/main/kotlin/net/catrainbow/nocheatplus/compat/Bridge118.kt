@@ -57,7 +57,11 @@ class Bridge118 {
 
         //蜘蛛网判断
         fun Player.isInWeb(): Boolean {
-            return player.levelBlock.id == Block.COBWEB
+            return player.levelBlock.id == Block.COBWEB || player.add(
+                0.0, -0.25, 0.0
+            ).levelBlock.id == Block.COBWEB || player.add(0.0, 1.0, 0.0).levelBlock.id == Block.COBWEB || player.add(
+                0.0, 1.5, 0.0
+            ).levelBlock.id == Block.COBWEB
         }
 
         //重写核心梯子判断
@@ -74,13 +78,15 @@ class Bridge118 {
         }
 
         fun Player.onStair(): Boolean {
-            return player.levelBlock is BlockStairs || player.add(0.0, -1.0, 0.0).levelBlock is BlockStairs
-                    || player.levelBlock.add(0.0, -2.0, 0.0).levelBlock is BlockStairs
+            return player.levelBlock is BlockStairs || player.add(
+                0.0, -1.0, 0.0
+            ).levelBlock is BlockStairs || player.levelBlock.add(0.0, -2.0, 0.0).levelBlock is BlockStairs
         }
 
         fun Player.onSlab(): Boolean {
-            return player.levelBlock is BlockSlab || player.add(0.0, -1.0, 0.0).levelBlock is BlockSlab
-                    || player.levelBlock.add(0.0, -2.0, 0.0).levelBlock is BlockSlab
+            return player.levelBlock is BlockSlab || player.add(
+                0.0, -1.0, 0.0
+            ).levelBlock is BlockSlab || player.levelBlock.add(0.0, -2.0, 0.0).levelBlock is BlockSlab
         }
 
         //获取玩家的真实延迟

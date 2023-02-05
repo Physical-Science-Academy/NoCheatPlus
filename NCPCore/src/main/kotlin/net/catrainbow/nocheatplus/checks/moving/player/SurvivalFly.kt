@@ -23,6 +23,8 @@ import cn.nukkit.level.Location
 import cn.nukkit.math.BlockFace
 import cn.nukkit.potion.Effect
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.actions.ActionFactory
+import net.catrainbow.nocheatplus.actions.ActionType
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.MovingData
@@ -145,9 +147,13 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
 
         if (data.getKnockBackTick() > 13) {
             if (data.getLiquidTick() == 0) {
-
                 if (data.getWebTick() > 10) {
-
+                    val distWeb = this.vDistWeb(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+                    if (distWeb[0] > distWeb[1]) {
+                        val violation = min(abs((distWeb[0] - distWeb[1]) * 100.0), 5.0)
+                        pData.addViolationToBuffer(this.typeName, violation)
+                        player.setback(data.getLastNormalGround(), this.typeName)
+                    }
                 } else if (data.getLadderTick() > 10) {
 
                 } else {
@@ -221,22 +227,27 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             if (shortCount != 0) {
                 val maxCount = tracker.getMaxCount()
                 val average = tracker.getAverage()
-                if (!data.isBalance()) {
-                    if (maxCount > this.countMaxMovementPacket(data) || shortCount > this.countMaxMovementPacket(data)) {
-                        //产生先允许后拉回的延迟效果,以减少误判
-                        //此检测可能存在误判,待考证
-                        if (average > (this.countMaxMovementPacket(data) + 2)) {
+                if (maxCount > this.countMaxMovementPacket(data) || shortCount > this.countMaxMovementPacket(data)) {
+                    //产生先允许后拉回的延迟效果,以减少误判
+                    //此检测可能存在误判,待考证
+                    if (average > (this.countMaxMovementPacket(data) + 2)) {
+                        if (!data.isBalance()) {
                             //重置计算,避免反复拉回
                             tracker.resetSum()
                             //将该包设置为不应该发送的
                             this.tags.add("resend_pk")
-                            player.setback(data.getLastNormalGround(), this.typeName)
                             pData.addViolationToBuffer(
                                 typeName, (max(shortCount, maxCount) - this.countMaxMovementPacket(data)) * 0.25
                             )
-                        }
+                            //防止强制绕过,给予一个延迟操作
+                            pData.addActionToBuffer(
+                                this.typeName,
+                                ActionFactory(player, pData.getViolationData(this.typeName), ActionType.SETBACK).build()
+                            )
+                        } else data.balance()
+                        player.setback(data.getLastNormalGround(), this.typeName)
                     }
-                } else data.balance()
+                }
             }
             if (!data.getPacketTracker()!!.isLive()) data.getPacketTracker()!!.run()
         }
@@ -596,10 +607,80 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         data: MovingData,
         pData: IPlayerData,
     ): DoubleArray {
-        val allowDistance = 0.0
-        val limitDistance = 0.0
+        var allowDistance = 0.0
+        var limitDistance = 0.0
+        val vData = pData.getViolationData(this.typeName)
 
+        var reset = true
 
+        if (fromOnGround && toOnGround) {
+            val upWeb = player.add(0.0, 1.5, 0.0).levelBlock.id == Block.COBWEB
+            val speed = from.distance(to)
+            if (yDistance == 0.0) {
+                this.tags.add("web_ground")
+                var invalidWeb = false
+                if (speed > Magic.GROUND_COBWEB_MAX_SPEED) {
+                    val violationDiff = speed - Magic.GROUND_COBWEB_MAX_SPEED
+                    if (violationDiff > Magic.GROUND_COBWEB_MAX_SPEED) invalidWeb = true
+                    else if (vData.getPreVL("web_hack") > 10) {
+                        vData.clearPreVL("web_hack")
+                        allowDistance = speed * 2
+                        limitDistance = Magic.GROUND_COBWEB_MAX_SPEED
+                    } else vData.addPreVL("web_hack")
+                    reset = false
+                }
+                if (invalidWeb) {
+                    allowDistance = max(speed * 2.5, Magic.GROUND_COBWEB_MAX_SPEED * 1.5)
+                    limitDistance = min(speed * 2.5, Magic.GROUND_COBWEB_MAX_SPEED * 1.5)
+                }
+            } else if (yDistance > 0.0) {
+                this.tags.add("web_up")
+                if (speed in Magic.GROUND_COBWEB_VERTICAL_SPEED_MIN..Magic.GROUND_COBWEB_VERTICAL_SPEED_MAX) {
+                    if (yDistance > Magic.GROUND_COBWEB_MAX_MOTION_Y) {
+                        allowDistance = yDistance
+                        limitDistance = Magic.GROUND_COBWEB_MAX_MOTION_Y
+                    }
+                    //头顶是蜘蛛网时候的情况单独分析
+                } else if (speed < Magic.GROUND_COBWEB_VERTICAL_SPEED_MIN || upWeb) {
+                    if (yDistance > 2.75) return doubleArrayOf(max(yDistance, 2.75 / 1.5), min(yDistance, 2.75 / 1.5))
+                } else if (speed > Magic.GROUND_COBWEB_VERTICAL_SPEED_MAX) {
+                    if (vData.getPreVL("web_hack") > 10) {
+                        vData.clearPreVL("web_hack")
+                        allowDistance = speed * 1.5
+                        limitDistance = Magic.GROUND_COBWEB_VERTICAL_SPEED_MAX
+                    } else vData.addPreVL("web_hack")
+                    reset = false
+                }
+            } else if (yDistance < 0.0) {
+                var invalid = false
+                val absMotionY = abs(yDistance)
+                if (speed <= 0.0040) {
+                    if (absMotionY > (Magic.GROUND_COBWEB_MAX_SPEED / 3.0) + 0.002) invalid = true
+                } else if (speed > 0.0076) invalid = true
+                if (invalid) {
+                    if (vData.getPreVL("web_hack") > 10) {
+                        vData.clearPreVL("web_hack")
+                        allowDistance = speed * 1.5
+                        limitDistance = Magic.GROUND_COBWEB_VERTICAL_SPEED_MAX
+                    } else vData.addPreVL("web_hack")
+                    reset = false
+                }
+            }
+
+        } else {
+            if (ConfigData.logging_debug) {
+                player.sendMessage("web speed ${data.getSpeed()} ${now - data.getLastJump()}")
+            }
+            return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
+        }
+
+        if (reset) vData.clearPreVL("web_hack")
+
+        //弱检测模式绕过部分
+        if (allowDistance > limitDistance) if (allowDistance - limitDistance < 0.1 && !ConfigData.check_survival_fly_strict_mode) {
+            allowDistance = Double.MIN_VALUE
+            limitDistance = Double.MAX_VALUE
+        }
 
         return doubleArrayOf(allowDistance, limitDistance)
     }

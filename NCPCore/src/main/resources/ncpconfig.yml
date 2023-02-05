@@ -33,6 +33,7 @@ checks:
       actions: "cancel vl>50&&log vl>30 break=10&&warn vl>150 message=fly_short&&kick vl>200&&ban repeat=3 time=3,0,0"
     morepackets:
       active: true
+      actions: "cancel vl>5&&kick vl>15&&ban repeat=3 time=3,0,0"
 
 string:
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"

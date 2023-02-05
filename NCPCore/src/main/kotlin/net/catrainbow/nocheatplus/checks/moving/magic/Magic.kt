@@ -111,14 +111,23 @@ object Magic {
     const val HUNGER_BUNNY_Y_MIN = 0.1
     const val HUNGER_BUNNY_VERTICAL_MAX_SHORT = 1.33
     const val HUNGER_BUNNY_VERTICAL_MAX_LONG = 1.33
+
     //香草飞数据
     const val VANILLA_Y_DIFF = 0.08589999437332158
     const val VANILLA_Y_DIFF_V2 = 0.0784000015258789
     const val VANILLA_Y_DELTA = 0.375
+
     //下蹲
     const val SNEAK_JUMP_VERTICAL_MAX = 0.86
+
     //重力
     const val TINY_GRAVITY = 0.9800000190734863
+
+    //蜘蛛网
+    const val GROUND_COBWEB_MAX_SPEED = 0.032
+    const val GROUND_COBWEB_MAX_MOTION_Y = 0.021
+    const val GROUND_COBWEB_VERTICAL_SPEED_MIN = 0.0845
+    const val GROUND_COBWEB_VERTICAL_SPEED_MAX = 0.085
 
     fun swimBaseSpeedV(): Double {
         return WALK_SPEED * modSwim + 0.02

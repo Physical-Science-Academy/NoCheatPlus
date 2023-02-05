@@ -32,7 +32,10 @@ class ActionCom : NCPComponent(), INCPComponent {
         this.getRegisterCom().setName("NPC BanWave")
         this.getRegisterCom().setAuthor("Catrainbow")
         this.getRegisterCom().setVersion("1.0.0")
+
+        //注册Action
         this.loadAction("moving.survivalfly", CheckType.MOVING_SURVIVAL_FLY.name)
+        this.loadAction("moving.morepackets", CheckType.MOVING_MORE_PACKETS.name)
     }
 
     private fun loadAction(path: String, type: String) {
