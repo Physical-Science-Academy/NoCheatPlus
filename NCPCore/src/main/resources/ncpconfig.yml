@@ -1,7 +1,12 @@
-#NoCheatPlus AntiCheat Config
+# NoCheatPlus AntiCheat Config
 config-version:
   notify: false
   version: 1000
+
+# Currently "en" and "zh" are supported languages
+# You are able to create your own language in the "lang" config directory
+lang: "en"
+
 logging:
   active: true
   auto-delete-days: 1

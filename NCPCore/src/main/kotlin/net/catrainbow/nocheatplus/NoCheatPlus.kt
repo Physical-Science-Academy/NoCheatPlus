@@ -35,7 +35,9 @@ import net.catrainbow.nocheatplus.logging.NCPLoggerCom
 import net.catrainbow.nocheatplus.permission.NCPPermissionCom
 import net.catrainbow.nocheatplus.players.PlayerData
 import net.catrainbow.nocheatplus.utilities.NCPTimeTool
+import net.catrainbow.nocheatplus.utilities.i18n.I18N
 import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
+import java.io.File
 
 /**
  * NoCheatPlus 主类
@@ -46,6 +48,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     companion object {
         lateinit var instance: NoCheatPlus
         const val PLUGIN_VERSION: String = "1.0.0"
+        val supportedLanguages = arrayOf("en", "zh")
     }
 
     private lateinit var ncpComManager: NCPComManager
@@ -56,10 +59,21 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     }
 
     override fun onEnable() {
-        this.saveResource("translations.properties")
+        // Registers and saves language files
+        // saveResource("lang/", false)
+        saveResource("ncpconfig.yml")
+        supportedLanguages.forEach {
+            saveResource("lang/$it.properties")
+        }
+
+        // Sets the language from the config
+        I18N.updateLanguage(Config("$dataFolder/ncpconfig.yml", Config.YAML).getString("lang", "zh"))
+
+        // Load components manager
         this.logger.info(getString("ncp.loading", PLUGIN_VERSION))
         this.ncpComManager = NCPComManager()
         this.ncpComManager.onEnabled()
+
         this.server.pluginManager.registerEvents(NCPListener(), this)
         if (ConfigData.config_version_notify) {
             this.logger.info(getString("ncp.currentConfigVersion", ConfigData.config_version_version))
