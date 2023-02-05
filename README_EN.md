@@ -55,6 +55,7 @@ And It needs Library plugin
 - `/ncp ban` ban a player
 - `/ncp unban` unban a player
 - `/ncp kick` kick a player
+- `/ncp toggle` Switch detection
 
 ## Config
 
@@ -89,22 +90,24 @@ checks:
   moving:
     survivalfly:
       active: true
+      strict_mode: false
       setback_policy:
         fall_damage: true
         void_to_void: true
       actions: "cancel vl>50&&log vl>30 break=10&&warn vl>150 message=fly_short&&kick vl>200&&ban repeat=3 time=3,0,0"
+    morepackets:
+      active: true
+      actions: "cancel vl>5&&kick vl>15&&ban repeat=3 time=3,0,0"
 
 string:
-  #the info to show whom was kicked
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
-  #the info to show whom was banned
   ban: "§c§lNCP §7>> §rYou are banned by NCP for §c@days,@hours,@minutes,@seconds§r because of using @hack @nextEndTime: @end"
   fly_short: "@player could be flying hack @vl"
 
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
   policy:
-    - "nocheatplus.admin.all:reload,kick,ban,unban,debug"
+    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle"
     - "nocheatplus.admin.helper:kick,ban,unban"
 ~~~
 
