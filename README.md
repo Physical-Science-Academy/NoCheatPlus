@@ -146,3 +146,6 @@ permission:
 ## 注意
 
 项目目前正处于重构状态，在正式服上慎用
+
+## 联系我们
+Discord频道: https://discord.gg/bCQ8pEgk4t
