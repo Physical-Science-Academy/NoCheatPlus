@@ -22,6 +22,7 @@ import net.catrainbow.nocheatplus.actions.ActionProcess
 import net.catrainbow.nocheatplus.actions.ActionType
 import net.catrainbow.nocheatplus.checks.moving.location.setback.SetBackEntry
 import net.catrainbow.nocheatplus.components.data.ConfigData
+import java.util.Vector
 
 /**
  * Violation Level 数据
@@ -40,7 +41,7 @@ class ViolationData(type: CheckType, private val player: Player) {
 
     private var multiply = 1.0
 
-    private var actions: ArrayList<ActionProcess> = ArrayList()
+    private var actions: Vector<ActionProcess> = Vector()
 
     private var history: ActionHistory = ActionHistory()
 
@@ -102,23 +103,34 @@ class ViolationData(type: CheckType, private val player: Player) {
     private fun executeAction() {
         if (!ActionFactory.actionDataMap.containsKey(this.checkType.name)) return
         val data = ActionFactory.actionDataMap[this.checkType.name]
-        if (data!!.enableLog) if (this.history.canLog()) this.actions.add(
-            ActionFactory(
-                player, this, ActionType.LOG
-            ).build()
-        )
-        if (data.enableWarn) if (this.history.canWarn()) this.actions.add(
-            ActionFactory(
-                player, this, ActionType.WARING
-            ).build()
-        )
-        if (data.enableKick) if (this.vl > data.kick) this.actions.add(
-            ActionFactory(
-                player, this, ActionType.KICK
-            ).build()
-        )
+        if (actions.size < 5) {
+            var revert = false
+            if (data!!.enableKick) if (this.vl > data.kick) {
+                this.actions.addElement(
+                    ActionFactory(
+                        player, this, ActionType.KICK
+                    ).build()
+                )
+                revert = true
+            }
+            if (data.enableWarn) if (this.history.canWarn() && !revert) if (this.vl > data.warn) {
+                this.actions.addElement(
+                    ActionFactory(
+                        player, this, ActionType.WARING
+                    ).build()
+                )
+                revert = true
+            }
+            if (data.enableLog) if (this.history.canLog() && !revert) if (this.vl > data.log) {
+                this.actions.addElement(
+                    ActionFactory(
+                        player, this, ActionType.LOG
+                    ).build()
+                )
+            }
+        }
         if (actions.isEmpty()) return
-        val action = actions[0]
+        val action = actions.firstElement()
         val checkType = action.getCheckType()
         val actionData = ActionFactory.actionDataMap[checkType.name]!!
         action.doAction(actionData)
@@ -130,12 +142,11 @@ class ViolationData(type: CheckType, private val player: Player) {
     }
 
     fun addAction(actionProcess: ActionProcess) {
-        this.actions.add(actionProcess)
+        this.actions.addElement(actionProcess)
     }
 
     fun addPreVL(name: String) {
-        if (!preLogger.containsKey(name))
-            preLogger[name] = 0
+        if (!preLogger.containsKey(name)) preLogger[name] = 0
         preLogger[name] = preLogger[name]!! + 1
     }
 
@@ -144,8 +155,7 @@ class ViolationData(type: CheckType, private val player: Player) {
     }
 
     fun getPreVL(name: String): Int {
-        if (!preLogger.containsKey(name))
-            preLogger[name] = 0
+        if (!preLogger.containsKey(name)) preLogger[name] = 0
         return preLogger[name]!!
     }
 

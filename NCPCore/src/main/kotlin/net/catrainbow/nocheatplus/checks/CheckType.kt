@@ -27,7 +27,7 @@ enum class CheckType(private val parent: CheckType?) {
     MOVING_MORE_PACKETS(MOVING);
 
     fun isUsedCheck(): Boolean {
-        return parent != null && parent != ALL
+        return (parent != null && parent != ALL) || this == STAFF
     }
 
     companion object {
