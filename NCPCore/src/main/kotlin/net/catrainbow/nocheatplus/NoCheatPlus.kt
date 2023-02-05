@@ -48,6 +48,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     companion object {
         lateinit var instance: NoCheatPlus
         const val PLUGIN_VERSION: String = "1.0.0"
+        val supportedLanguages = arrayOf("en", "zh")
     }
 
     private lateinit var ncpComManager: NCPComManager
@@ -59,15 +60,19 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun onEnable() {
         // Registers and saves language files
-        File(dataFolder.absolutePath).walkTopDown().forEach { saveResource("lang/${it.name}") }
+        // saveResource("lang/", false)
+        saveResource("ncpconfig.yml")
+        supportedLanguages.forEach {
+            saveResource("lang/$it.properties")
+        }
+
+        // Sets the language from the config
+        I18N.updateLanguage(Config("$dataFolder/ncpconfig.yml", Config.YAML).getString("lang", "zh"))
 
         // Load components manager
         this.logger.info(getString("ncp.loading", PLUGIN_VERSION))
         this.ncpComManager = NCPComManager()
         this.ncpComManager.onEnabled()
-
-        // Sets the language from the config
-        I18N.updateLanguage(getNCPConfig().getString("language", "zh"))
 
         this.server.pluginManager.registerEvents(NCPListener(), this)
         if (ConfigData.config_version_notify) {
