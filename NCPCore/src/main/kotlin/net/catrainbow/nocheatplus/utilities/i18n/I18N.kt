@@ -13,8 +13,14 @@ import java.util.Properties
  */
 class I18N {
     companion object {
+        private var language: String = "zh"
+
+        fun updateLanguage(languageKey: String) {
+            language = languageKey
+        }
+
         private var translations =
-            Properties().apply { load(FileInputStream("${NoCheatPlus.instance.dataFolder}/translations.properties")) }
+            Properties().apply { load(FileInputStream("${NoCheatPlus.instance.dataFolder}/lang/$language.properties")) }
 
         @JvmStatic
         fun getString(key: String, vararg args: Any): String {

@@ -2,7 +2,7 @@ name: "NoCheatPlus"
 version: "1.0.0"
 api: [ "1.0.0" ]
 author: Catrainbow
-description: a advanced anti-cheat plugin on Nukkit
+description: An advanced Anti-Cheat plugin on Nukkit
 main: net.catrainbow.nocheatplus.NoCheatPlus
 
 depend:
