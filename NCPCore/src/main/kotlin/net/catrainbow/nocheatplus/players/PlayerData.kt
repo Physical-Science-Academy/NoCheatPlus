@@ -47,7 +47,8 @@ open class PlayerData(player: Player) : IPlayerData {
 
     init {
         for (type in CheckType.values()) {
-            violations[type.name] = ViolationData(type, this.getPlayer())
+            if (type.isUsedCheck())
+                violations[type.name] = ViolationData(type, this.getPlayer())
         }
     }
 

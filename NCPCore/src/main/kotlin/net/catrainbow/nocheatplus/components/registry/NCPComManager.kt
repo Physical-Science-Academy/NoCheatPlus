@@ -33,6 +33,7 @@ class NCPComManager {
 
     private val components: HashMap<String, NCPComponent> = HashMap()
     private val checks: HashMap<String, Check> = HashMap()
+    private val usedChecks: HashMap<String, Boolean> = HashMap()
 
     /**
      * 注册模块
@@ -41,9 +42,17 @@ class NCPComManager {
      */
     fun registerCom(component: NCPComponent) {
         component.onEnabled()
-        NoCheatPlus.instance.logger.info(getString("ncp.load.module", component.getRegisterCom().getName(),component.getRegisterCom().getVersion()))
+        NoCheatPlus.instance.logger.info(
+            getString(
+                "ncp.load.module", component.getRegisterCom().getName(), component.getRegisterCom().getVersion()
+            )
+        )
         this.components[component.getRegisterCom().getName()] = component
-        if (component is Check) this.checks[component.getRegisterCom().getName()] = component
+        if (component is Check) {
+            this.checks[component.getRegisterCom().getName()] = component
+            this.usedChecks[component.baseName] =
+                NoCheatPlus.instance.getNCPConfig().getBoolean("${component.baseName}.active")
+        }
     }
 
     /**
@@ -64,6 +73,15 @@ class NCPComManager {
         for (com in this.components.values) {
             com.onDisabled()
         }
+    }
+
+    fun isUsedChecks(baseName: String): Boolean {
+        return if (!this.usedChecks.containsKey(baseName)) false
+        else this.usedChecks[baseName]!!
+    }
+
+    fun setChecksUsed(baseName: String, boolean: Boolean) {
+        this.usedChecks[baseName] = boolean
     }
 
     fun getComponents(): HashMap<String, NCPComponent> {

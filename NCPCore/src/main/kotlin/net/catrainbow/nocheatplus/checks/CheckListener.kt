@@ -29,7 +29,9 @@ open class CheckListener(protected val type: CheckType) : ITickListener {
     private val subListeners: ArrayList<CheckListener> = ArrayList()
     override fun onTick(event: Event) {
         for (listener in this.subListeners) listener.onTick(event)
-        if (event is WrapperPacketEvent) for (check in NoCheatPlus.instance.getAllNCPCheck().values) check.onCheck(event)
+        if (event is WrapperPacketEvent) for (check in NoCheatPlus.instance.getAllNCPCheck().values) if (NoCheatPlus.instance.getComManager()
+                .isUsedChecks(check.baseName)
+        ) check.onCheck(event)
     }
 
     fun prepareDefault(): CheckListener {

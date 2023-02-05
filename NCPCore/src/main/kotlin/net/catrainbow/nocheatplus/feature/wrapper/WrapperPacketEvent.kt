@@ -28,6 +28,17 @@ class WrapperPacketEvent : Event(), Cancellable {
     lateinit var player: Player
     lateinit var packet: WrapperPacket
 
+    //这个包是否异常?
+    private var invalid = false
+
+    fun setInvalid() {
+        this.invalid = true
+    }
+
+    fun isInvalid(): Boolean {
+        return this.invalid
+    }
+
     companion object {
         private val handlers = HandlerList()
 

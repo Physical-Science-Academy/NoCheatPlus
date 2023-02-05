@@ -88,6 +88,9 @@ class MovingData : ICheckData {
     private var respawnTick = 0
     private var knockBackHurtTick = 100
 
+    //Timer Clock
+    private var timeBalance = System.currentTimeMillis() - 5000L
+
     private var motionYList: ArrayList<Double> = ArrayList()
     private var locationList: ArrayList<Location> = ArrayList()
     private var speedList: ArrayList<Double> = ArrayList()
@@ -246,6 +249,15 @@ class MovingData : ICheckData {
 
     fun getSpeedList(): ArrayList<Double> {
         return this.speedList
+    }
+
+    fun balance() {
+        this.timeBalance = System.currentTimeMillis()
+    }
+
+    fun isBalance(): Boolean {
+        this.timeBalance -= 1000
+        return System.currentTimeMillis() - timeBalance >= 5000
     }
 
     fun resetKnockBackTick() {

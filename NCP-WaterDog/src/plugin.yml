@@ -1,0 +1,4 @@
+name: "NCPBridge"
+author: "Catrainbow"
+version: "1.0.0"
+main: "net.catrainbow.nocheatplus.bridge.NCPWaterDogBridge"

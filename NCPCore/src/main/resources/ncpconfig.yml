@@ -31,6 +31,8 @@ checks:
         fall_damage: true
         void_to_void: true
       actions: "cancel vl>50&&log vl>30 break=10&&warn vl>150 message=fly_short&&kick vl>200&&ban repeat=3 time=3,0,0"
+    morepackets:
+      active: true
 
 string:
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
@@ -40,5 +42,5 @@ string:
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
   policy:
-    - "nocheatplus.admin.all:reload,kick,ban,unban,debug"
+    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle"
     - "nocheatplus.admin.helper:kick,ban,unban"

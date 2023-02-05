@@ -33,6 +33,7 @@ import cn.nukkit.plugin.Plugin
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.compat.BridgeWaterDog
 import net.catrainbow.nocheatplus.components.config.NCPBanConfig
 import net.catrainbow.nocheatplus.feature.chat.ChatTickListener
 import net.catrainbow.nocheatplus.feature.moving.MovingDataListener
@@ -168,6 +169,10 @@ class NCPListener : Listener {
                 (NoCheatPlus.instance.getNCPComponent("NCP AutoBan") as NCPBanConfig).formatMessage(event.player)
             event.player.dataPacket(disconnectPacket)
         }
+
+        //水狗模式,从WaterDog返回真实的延迟
+        if (event.player.address == "127.0.0.1" && !BridgeWaterDog.waterDog_ping)
+            BridgeWaterDog.waterDog_ping = true
     }
 
     @EventHandler

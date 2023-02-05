@@ -11,41 +11,20 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.catrainbow.nocheatplus.checks
+package net.catrainbow.nocheatplus.compat
 
 /**
- * 作弊类型
+ * 水狗群组服架桥
  *
  * @author Catrainbow
  */
-enum class CheckType(private val parent: CheckType?) {
-
-    ALL(null),
-    STAFF(ALL),
-    MOVING(ALL),
-    MOVING_SURVIVAL_FLY(MOVING),
-    MOVING_MORE_PACKETS(MOVING);
-
-    fun isUsedCheck(): Boolean {
-        return parent != null && parent != ALL
-    }
+class BridgeWaterDog {
 
     companion object {
 
-        /**
-         * 获得CheckType
-         *
-         * @return CheckType
-         */
-        @JvmStatic
-        fun getTypeByName(name: String): CheckType {
-            for (type in CheckType.values()) {
-                if (type.toString() == name) {
-                    return type
-                }
-            }
-            return ALL
-        }
+        //水狗延迟增益
+        var waterDog_ping = false
+
     }
 
 }

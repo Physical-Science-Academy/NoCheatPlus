@@ -26,6 +26,7 @@ import cn.nukkit.network.protocol.PlayerAuthInputPacket
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.checks.moving.player.MorePackets
 import net.catrainbow.nocheatplus.checks.moving.player.SurvivalFly
 import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.respawn
@@ -97,6 +98,7 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
 
     init {
         this.addCheck(SurvivalFly())
+        this.addCheck(MorePackets())
     }
 
 }

@@ -47,7 +47,7 @@ import kotlin.math.*
  *
  * @author Catrainbow
  */
-class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
+class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL_FLY) {
 
     // Tags
     private val tags: ArrayList<String> = ArrayList()
@@ -67,6 +67,8 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
         if (packet is WrapperInputPacket) this.checkPlayerFly(
             player, packet.from, packet.to, data, pData, System.currentTimeMillis()
         ) else if (packet is WrapperPlaceBlockPacket) this.updateGhostBlock(packet, data)
+
+        if (this.tags.contains("resend_pk")) event.setInvalid()
     }
 
     /**
@@ -219,18 +221,22 @@ class SurvivalFly : Check("survival fly", CheckType.MOVING_SURVIVAL_FLY) {
             if (shortCount != 0) {
                 val maxCount = tracker.getMaxCount()
                 val average = tracker.getAverage()
-                if (maxCount > this.countMaxMovementPacket(data) || shortCount > this.countMaxMovementPacket(data)) {
-                    //产生先允许后拉回的延迟效果,以减少误判
-                    //此检测可能存在误判,待考证
-                    if (average > (this.countMaxMovementPacket(data) + 2)) {
-                        //重置计算,避免反复拉回
-                        tracker.resetSum()
-                        player.setback(data.getLastNormalGround(), this.typeName)
-                        pData.addViolationToBuffer(
-                            typeName, (max(shortCount, maxCount) - this.countMaxMovementPacket(data)) * 0.25
-                        )
+                if (!data.isBalance()) {
+                    if (maxCount > this.countMaxMovementPacket(data) || shortCount > this.countMaxMovementPacket(data)) {
+                        //产生先允许后拉回的延迟效果,以减少误判
+                        //此检测可能存在误判,待考证
+                        if (average > (this.countMaxMovementPacket(data) + 2)) {
+                            //重置计算,避免反复拉回
+                            tracker.resetSum()
+                            //将该包设置为不应该发送的
+                            this.tags.add("resend_pk")
+                            player.setback(data.getLastNormalGround(), this.typeName)
+                            pData.addViolationToBuffer(
+                                typeName, (max(shortCount, maxCount) - this.countMaxMovementPacket(data)) * 0.25
+                            )
+                        }
                     }
-                }
+                } else data.balance()
             }
             if (!data.getPacketTracker()!!.isLive()) data.getPacketTracker()!!.run()
         }

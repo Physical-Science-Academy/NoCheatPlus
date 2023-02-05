@@ -83,6 +83,11 @@ class Bridge118 {
                     || player.levelBlock.add(0.0, -2.0, 0.0).levelBlock is BlockSlab
         }
 
+        //获取玩家的真实延迟
+        fun Player.getRealPing(): Int {
+            return this.ping
+        }
+
     }
 
 }
