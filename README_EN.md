@@ -62,10 +62,13 @@ And It needs Library plugin
 Then let's run the server. You can ser a folder was created in`plugins/` named `NoCheatPlus`.
 Here we pay attention to the main config `ncpconfig.yml`.
 ~~~yaml
-#NoCheatPlus AntiCheat Config
+# NoCheatPlus AntiCheat Config
 config-version:
   notify: false
   version: 1000
+  
+lang: en
+  
 logging:
   active: true
   auto-delete-days: 1
