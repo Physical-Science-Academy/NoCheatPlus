@@ -145,3 +145,6 @@ Port: 10878
 ## Notice
 
 Plugin are still in development. Don't use on formal server.
+
+## Contact us
+Discord: https://discord.gg/bCQ8pEgk4t
