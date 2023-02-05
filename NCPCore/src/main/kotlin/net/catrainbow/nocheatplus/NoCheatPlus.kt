@@ -144,7 +144,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
         else {
             val now = NCPTimeTool.nowTime
             val end = NCPTimeTool.stringToTime(this.getNCPBanRecord().getStringList(player.name)[1])
-            if (NCPTimeTool.canUnBan(now, end)) {
+            if (NCPTimeTool.canUnban(now, end)) {
                 val config = this.getNCPBanRecord()
                 config.remove(player.name)
                 config.save(true)

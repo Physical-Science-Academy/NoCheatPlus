@@ -36,6 +36,8 @@ checks:
         fall_damage: true
         void_to_void: true
       actions: "cancel vl>50&&log vl>30 break=10&&warn vl>150 message=fly_short&&kick vl>200&&ban repeat=3 time=3,0,0"
+    speed:
+      active: true
     morepackets:
       active: true
       actions: "cancel vl>5&&kick vl>15&&ban repeat=3 time=3,0,0"
