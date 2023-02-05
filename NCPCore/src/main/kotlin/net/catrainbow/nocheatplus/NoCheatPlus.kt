@@ -35,9 +35,7 @@ import net.catrainbow.nocheatplus.logging.NCPLoggerCom
 import net.catrainbow.nocheatplus.permission.NCPPermissionCom
 import net.catrainbow.nocheatplus.players.PlayerData
 import net.catrainbow.nocheatplus.utilities.NCPTimeTool
-import net.catrainbow.nocheatplus.utilities.i18n.I18N
 import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
-import java.io.File
 
 /**
  * NoCheatPlus 主类
@@ -58,17 +56,10 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     }
 
     override fun onEnable() {
-        // Registers and saves language files
-        File(dataFolder.absolutePath).walkTopDown().forEach { saveResource("lang/${it.name}") }
-
-        // Load components manager
+        this.saveResource("translations.properties")
         this.logger.info(getString("ncp.loading", PLUGIN_VERSION))
         this.ncpComManager = NCPComManager()
         this.ncpComManager.onEnabled()
-
-        // Sets the language from the config
-        I18N.updateLanguage(getNCPConfig().getString("language", "zh"))
-
         this.server.pluginManager.registerEvents(NCPListener(), this)
         if (ConfigData.config_version_notify) {
             this.logger.info(getString("ncp.currentConfigVersion", ConfigData.config_version_version))
