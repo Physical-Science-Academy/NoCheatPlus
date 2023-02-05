@@ -14,7 +14,7 @@
             <artifactId>WaterDog</artifactId>
             <version>1.0.0</version>
             <scope>system</scope>
-            <systemPath>${basedir}/lib/waterdog.jar</systemPath>
+            <systemPath>C:/Users/dell/Desktop/proxy.jar</systemPath>
         </dependency>
     </dependencies>
     <build>
