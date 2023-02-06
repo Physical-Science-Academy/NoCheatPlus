@@ -35,10 +35,13 @@ checks:
       setback_policy:
         fall_damage: true
         void_to_void: true
-      actions: "cancel vl>50&&log vl>30 break=10&&warn vl>150 message=fly_short&&kick vl>200&&ban repeat=3 time=3,0,0"
+      actions: "cancel vl>20&&log vl>30 break=60&&warn vl>90 message=fly_short&&kick vl>100&&ban repeat=3 time=3,0,0"
     morepackets:
       active: true
       actions: "cancel vl>5&&kick vl>15&&ban repeat=3 time=3,0,0"
+    creativefly:
+      active: true
+      actions: "cancel vl>20&&kick vl>50"
 
 string:
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"

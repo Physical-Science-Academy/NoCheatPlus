@@ -69,6 +69,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         val data = pData.movingData
         if (!data.isSafeSpawn() || !data.isLive()) return
         if (data.getRespawnTick() > 0) return
+        if (player.riding != null) return
         if (ConfigData.check_survival_fly_set_back_void_to_void && data.isVoidHurt()) return
         val packet = event.packet
         if (packet is WrapperInputPacket) this.checkPlayerFly(
@@ -180,6 +181,9 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                         player.setback(data.getLastNormalGround(), this.typeName)
                     }
                 } else {
+
+                    if (now - data.getLastToggleGlide() < 500) lagGhostBlock = true
+
                     val distAir = this.vDistAir(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                     if (distAir[0] > distAir[1]) {
                         pData.addViolationToBuffer(
@@ -312,7 +316,13 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             }
             if (!data.getPacketTracker()!!.isLive()) data.getPacketTracker()!!.run()
         }
-        if (lagGhostBlock) pData.getViolationData(typeName).setCancel()
+
+        //检测到幽灵方块,产生拉回但不增加violation
+        if (lagGhostBlock) {
+            pData.getViolationData(typeName).setCancel()
+            //强制的拉回
+            player.teleport(data.getLastNormalGround())
+        }
 
         if (debug) {
             val builder = StringBuilder("empty")

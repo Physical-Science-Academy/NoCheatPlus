@@ -64,6 +64,7 @@ class MovingData : ICheckData {
     private var safeSpawn = false
     private var voidHurt = false
     private var lastChangeSwimAction = System.currentTimeMillis()
+    private var lastChangeGlideAction = System.currentTimeMillis()
     private var lastGlideBooster = System.currentTimeMillis()
 
     /**
@@ -449,6 +450,14 @@ class MovingData : ICheckData {
 
     fun onGlideBooster() {
         this.lastGlideBooster = System.currentTimeMillis()
+    }
+
+    fun loseGlide() {
+        this.lastChangeGlideAction = System.currentTimeMillis()
+    }
+
+    fun getLastToggleGlide(): Long {
+        return this.lastChangeGlideAction
     }
 
     fun getLastGlideBooster(): Long {

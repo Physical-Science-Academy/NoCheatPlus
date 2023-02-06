@@ -29,6 +29,7 @@ import cn.nukkit.network.protocol.PlayerAuthInputPacket
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.checks.moving.player.CreativeFly
 import net.catrainbow.nocheatplus.checks.moving.player.MorePackets
 import net.catrainbow.nocheatplus.checks.moving.player.SurvivalFly
 import net.catrainbow.nocheatplus.compat.Bridge118
@@ -69,6 +70,9 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
                     PlayerActionPacket.ACTION_START_SWIMMING, PlayerActionPacket.ACTION_STOP_SWIMMING -> {
                         NoCheatPlus.instance.getPlayerProvider(player).movingData.loseSwim()
                     }
+                    PlayerActionPacket.ACTION_START_GLIDE, PlayerActionPacket.ACTION_STOP_GLIDE -> {
+                        NoCheatPlus.instance.getPlayerProvider(player).movingData.loseGlide()
+                    }
                 }
             }
         } else if (event is PlayerRespawnEvent) {
@@ -106,8 +110,7 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
             if (event.entity is Player) {
                 val player = event.entity as Player
                 //额外速度计算
-                if (event.oldItem.id == Item.FIREWORKS)
-                    NoCheatPlus.instance.getPlayerProvider(player).movingData.onGlideBooster()
+                if (event.oldItem.id == Item.FIREWORKS) NoCheatPlus.instance.getPlayerProvider(player).movingData.onGlideBooster()
             }
         }
     }
@@ -115,6 +118,7 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
     init {
         this.addCheck(SurvivalFly())
         this.addCheck(MorePackets())
+        this.addCheck(CreativeFly())
     }
 
 }
