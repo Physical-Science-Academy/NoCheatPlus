@@ -20,24 +20,19 @@ You are supported to contribute, and give us a star to support our development.
 - Light、International、Open Source
 
 ## 🎉Progress
-- [ ] SurvivalFly (On Going)
-- [ ] Elytra
-- [ ] AirJymp
+- [80％] SurvivalFly (On Going)
 - [ ] Speed
-- [ ] Invalid Movement
 - [ ] NoFall
-- [ ] HighJump
 - [ ] Velocity
 - [ ] Phase
 - [ ] BadPacket
 - [ ] Client
-- [ ] Packet
+- [√] MorePacket
 - [ ] Scaffold
 - [ ] KillAura
 - [ ] Reach
 - [ ] AutoClicker
 - [ ] HitBox
-- [ ] WrongAttack
 - [ ] HelperTool
 
 ## Installation
