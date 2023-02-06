@@ -22,6 +22,7 @@ import cn.nukkit.event.player.PlayerGameModeChangeEvent
 import cn.nukkit.event.player.PlayerRespawnEvent
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.network.protocol.MovePlayerPacket
+import cn.nukkit.network.protocol.PlayerActionPacket
 import cn.nukkit.network.protocol.PlayerAuthInputPacket
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
@@ -61,6 +62,12 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
                 if (NoCheatPlus.instance.getPlayerProvider(player).movingData.getPacketTracker() == null) return
                 val tracker = NoCheatPlus.instance.getPlayerProvider(player).movingData.getPacketTracker()!!
                 tracker.onPacketReceive(event.packet)
+            } else if (event.packet is PlayerActionPacket) {
+                when ((event.packet as PlayerActionPacket).action) {
+                    PlayerActionPacket.ACTION_START_SWIMMING, PlayerActionPacket.ACTION_STOP_SWIMMING -> {
+                        NoCheatPlus.instance.getPlayerProvider(player).movingData.loseSwim()
+                    }
+                }
             }
         } else if (event is PlayerRespawnEvent) {
             val player = event.player

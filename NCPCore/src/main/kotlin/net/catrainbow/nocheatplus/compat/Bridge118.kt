@@ -94,6 +94,11 @@ class Bridge118 {
             return this.ping
         }
 
+        //重写位置方块判断
+        fun Location.isInLiquid(): Boolean {
+            return LocUtil.isLiquid(this.levelBlock)
+        }
+
     }
 
 }

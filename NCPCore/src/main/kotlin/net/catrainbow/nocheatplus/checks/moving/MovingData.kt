@@ -28,6 +28,7 @@ import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
 import net.catrainbow.nocheatplus.checks.moving.model.MoveTracker
 import net.catrainbow.nocheatplus.checks.moving.model.PacketTracker
 import net.catrainbow.nocheatplus.checks.moving.model.SpeedTracker
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInWeb
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onClimbedBlock
 import net.catrainbow.nocheatplus.components.data.ICheckData
@@ -62,6 +63,7 @@ class MovingData : ICheckData {
     private var packetTracker: PacketTracker? = null
     private var safeSpawn = false
     private var voidHurt = false
+    private var lastChangeSwimAction = System.currentTimeMillis()
 
     /**
      * Current Moving Data
@@ -83,6 +85,8 @@ class MovingData : ICheckData {
     private var stairTick = 0
     private var webTick = 0
     private var ladderTick = 0
+    private var swimTick = 0
+    private var loseSwimTick = 0
     private var acc = 0.0
     private var sinceLastYChange = 0
     private var live = true
@@ -110,8 +114,8 @@ class MovingData : ICheckData {
      */
     fun handleMovingData(player: Player, from: Location, to: Location, data: DistanceData) {
         //保证进服出生在虚空不会被误判
-        if (!safeSpawn) if (player.onGround) this.safeSpawn = true
-        if (voidHurt) if (player.onGround) this.voidHurt = false
+        if (!safeSpawn) if (player.onGround || player.isInLiquid()) this.safeSpawn = true
+        if (voidHurt) if (player.onGround || player.isInLiquid()) this.voidHurt = false
 
         if (player.gamemode == 1) this.normalGround = player.location
         if (this.knockBackHurtTick < 100) this.knockBackHurtTick++
@@ -175,7 +179,7 @@ class MovingData : ICheckData {
         if (this.onGround) fullAirTick = 0
         if (this.respawnTick > 0) this.respawnTick--
         if (this.onGround) this.groundTick++ else this.groundTick = 0
-        if (LocUtil.isLiquid(LocUtil.getUnderBlock(player)) || LocUtil.isLiquid(player.levelBlock)) this.liquidTick++ else if (this.liquidTick in 1..200) this.liquidTick-- else this.liquidTick =
+        if (player.isInLiquid()) this.liquidTick++ else if (this.liquidTick in 1..200) this.liquidTick-- else this.liquidTick =
             0
         if (LocUtil.isIce(LocUtil.getUnderBlock(player))) this.iceTick++
         else if (this.iceTick in 1..200) this.iceTick-- else this.iceTick = 0
@@ -187,10 +191,20 @@ class MovingData : ICheckData {
         else if (this.webTick in 1..200) this.webTick-- else this.webTick = 0
         if (player.onClimbedBlock()) this.ladderTick++
         else if (this.ladderTick in 1..200) this.ladderTick-- else this.ladderTick = 0
+        if (player.isSwimming) {
+            this.swimTick++
+            this.loseSwimTick = 0
+        } else if (this.swimTick in 1..200) {
+            this.swimTick--
+            this.loseSwimTick++
+        } else this.swimTick = 0
+        if (loseSwimTick > 5) {
+            loseSwimTick = 0
+            this.swimTick = 0
+        }
         if (groundTick > 5) {
             this.liquidTick = 0
-            this.webTick = 0
-            this.ladderTick = 0
+            this.loseSwimTick = 0
         }
     }
 
@@ -401,6 +415,22 @@ class MovingData : ICheckData {
 
     fun getWebTick(): Int {
         return this.webTick
+    }
+
+    fun getSwimTick(): Int {
+        return this.swimTick
+    }
+
+    fun getLoseSwimTick(): Int {
+        return this.loseSwimTick
+    }
+
+    fun loseSwim() {
+        this.lastChangeSwimAction = System.currentTimeMillis()
+    }
+
+    fun getLastToggleSwim(): Long {
+        return this.lastChangeSwimAction
     }
 
     fun getLadderTick(): Int {
