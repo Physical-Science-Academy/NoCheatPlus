@@ -64,6 +64,7 @@ class MovingData : ICheckData {
     private var safeSpawn = false
     private var voidHurt = false
     private var lastChangeSwimAction = System.currentTimeMillis()
+    private var lastGlideBooster = System.currentTimeMillis()
 
     /**
      * Current Moving Data
@@ -87,6 +88,7 @@ class MovingData : ICheckData {
     private var ladderTick = 0
     private var swimTick = 0
     private var loseSwimTick = 0
+    private var loseLiquidTick = 0
     private var acc = 0.0
     private var sinceLastYChange = 0
     private var live = true
@@ -179,8 +181,13 @@ class MovingData : ICheckData {
         if (this.onGround) fullAirTick = 0
         if (this.respawnTick > 0) this.respawnTick--
         if (this.onGround) this.groundTick++ else this.groundTick = 0
-        if (player.isInLiquid()) this.liquidTick++ else if (this.liquidTick in 1..200) this.liquidTick-- else this.liquidTick =
-            0
+        if (player.isInLiquid()) {
+            this.liquidTick++
+            this.loseLiquidTick = 0
+        } else if (this.liquidTick in 1..200) {
+            this.liquidTick--
+            this.loseLiquidTick++
+        } else this.liquidTick = 0
         if (LocUtil.isIce(LocUtil.getUnderBlock(player))) this.iceTick++
         else if (this.iceTick in 1..200) this.iceTick-- else this.iceTick = 0
         if (LocUtil.getUnderBlock(player) is BlockSlab) this.slabTick++ else if (this.slabTick in 1..200) this.slabTick-- else this.slabTick =
@@ -202,9 +209,12 @@ class MovingData : ICheckData {
             loseSwimTick = 0
             this.swimTick = 0
         }
-        if (groundTick > 5) {
+        if (loseSwimTick < 0) loseSwimTick = 0
+        if (loseLiquidTick < 0) loseLiquidTick = 0
+        if (groundTick > 10) {
             this.liquidTick = 0
             this.loseSwimTick = 0
+            this.loseLiquidTick = 0
         }
     }
 
@@ -431,6 +441,18 @@ class MovingData : ICheckData {
 
     fun getLastToggleSwim(): Long {
         return this.lastChangeSwimAction
+    }
+
+    fun getLoseLiquidTick(): Int {
+        return this.loseLiquidTick
+    }
+
+    fun onGlideBooster() {
+        this.lastGlideBooster = System.currentTimeMillis()
+    }
+
+    fun getLastGlideBooster(): Long {
+        return this.lastGlideBooster
     }
 
     fun getLadderTick(): Int {

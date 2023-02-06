@@ -99,6 +99,11 @@ class Bridge118 {
             return LocUtil.isLiquid(this.levelBlock)
         }
 
+        fun Location.onGround(): Boolean {
+            return !LocUtil.isLiquid(this.levelBlock) && this.levelBlock.id != Block.AIR
+                    && !this.levelBlock.canPassThrough()
+        }
+
     }
 
 }

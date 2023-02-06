@@ -17,10 +17,12 @@ import cn.nukkit.Player
 import cn.nukkit.event.Event
 import cn.nukkit.event.block.BlockPlaceEvent
 import cn.nukkit.event.entity.EntityDamageEvent
+import cn.nukkit.event.entity.EntityInventoryChangeEvent
 import cn.nukkit.event.player.PlayerDeathEvent
 import cn.nukkit.event.player.PlayerGameModeChangeEvent
 import cn.nukkit.event.player.PlayerRespawnEvent
 import cn.nukkit.event.server.DataPacketReceiveEvent
+import cn.nukkit.item.Item
 import cn.nukkit.network.protocol.MovePlayerPacket
 import cn.nukkit.network.protocol.PlayerActionPacket
 import cn.nukkit.network.protocol.PlayerAuthInputPacket
@@ -100,6 +102,13 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
             if (NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.getPlayerProvider(player).movingData.setLastNormalGround(
                 player.location
             )
+        } else if (event is EntityInventoryChangeEvent) {
+            if (event.entity is Player) {
+                val player = event.entity as Player
+                //额外速度计算
+                if (event.oldItem.id == Item.FIREWORKS)
+                    NoCheatPlus.instance.getPlayerProvider(player).movingData.onGlideBooster()
+            }
         }
     }
 

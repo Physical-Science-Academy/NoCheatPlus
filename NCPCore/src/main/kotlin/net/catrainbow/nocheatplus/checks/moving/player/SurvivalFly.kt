@@ -18,9 +18,11 @@ import cn.nukkit.block.Block
 import cn.nukkit.block.BlockSlab
 import cn.nukkit.block.BlockStairs
 import cn.nukkit.block.BlockThin
+import cn.nukkit.entity.item.EntityFirework
 import cn.nukkit.event.entity.EntityDamageEvent
 import cn.nukkit.level.Location
 import cn.nukkit.math.BlockFace
+import cn.nukkit.math.Vector3
 import cn.nukkit.potion.Effect
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.ActionFactory
@@ -34,6 +36,7 @@ import net.catrainbow.nocheatplus.checks.moving.magic.Magic
 import net.catrainbow.nocheatplus.checks.moving.magic.MagicLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInLiquid
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onGround
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onIce
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onSlab
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onStair
@@ -148,7 +151,12 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         var revertBuffer = false
 
         if (data.getKnockBackTick() > 13) {
-            if (data.getLiquidTick() == 0) {
+            //检测鞘翅飞行的玩家
+            if (player.isGliding) {
+                val mathMotion = this.vDistGlideMotion(player, data)
+                val distGlide = this.getLimitedGlideMotion(now, player, mathMotion, data, pData)
+
+            } else if (data.getLiquidTick() == 0) {
                 if (data.getWebTick() > 10) {
                     val distWeb = this.vDistWeb(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                     if (distWeb[0] > distWeb[1]) {
@@ -218,6 +226,32 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                                 player.setback(data.getLastNormalGround(), this.typeName)
                                 pData.addViolationToBuffer(typeName, vLimitedH[0] - vLimitedH[1])
                             }
+                        } else if (this.tags.contains("ground_walk")) {
+                            //特殊检测
+                            var revert = false
+                            val underBB = LocUtil.getUnderBlock(player)
+                            if (player.levelBlock.id == Block.AIR && underBB.location.isInLiquid()) {
+                                if (!data.isJump() && this.tags.contains("same_at") && (data.getLoseLiquidTick() > 10 || data.getLoseLiquidTick() == 0)) revert =
+                                    true
+                                //限制水面飞行的高度
+                                val allowHeight = player.y - player.add(0.0, -1.0, 0.0).levelBlock.minY
+                                if (yDistance > 0.0) if (yDistance > allowHeight) revert = true
+                                else if (to.onGround() || from.onGround()) revert = false
+                                val absHeight = player.y - underBB.maxY
+                                //碰撞箱判断
+                                if (absHeight < 0.0) revert =
+                                    false else if (absHeight > 0.15 && !data.isJump() && (data.getLoseLiquidTick() > 10 || data.getLoseLiquidTick() == 0)) revert =
+                                    true
+                            }
+                            if (this.tags.contains("face_block") || this.tags.contains("friction_block")) revert = false
+                            if (!this.tags.contains("full_liquid")) revert = false
+                            if (revert) {
+                                //catches 100% hackers
+                                player.setback(data.getLastNormalGround(), this.typeName)
+                                pData.addViolationToBuffer(
+                                    this.typeName, (max(player.y, underBB.maxY) - min(player.y, underBB.maxY) * 5.0)
+                                )
+                            }
                         }
                     }
 
@@ -233,8 +267,6 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                         player.setback(data.getLastNormalGround(), this.typeName)
                         pData.addViolationToBuffer(typeName, (vDistLiquid[0] - vDistLiquid[1]) * 15)
                     }
-                } else if (LocUtil.isLiquid(player.levelBlock)) {
-
                 }
             }
         }
@@ -364,6 +396,10 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (player.getSide(leftDirection).levelBlock.id != 0 || player.getSide(rightDirection).levelBlock.id != 0) this.tags.add(
             "friction_block"
         )
+        if (towardB.getSide(BlockFace.DOWN).location.isInLiquid() && backB.getSide(BlockFace.DOWN).location.isInLiquid() && rightB.getSide(
+                BlockFace.DOWN
+            ).location.isInLiquid() && leftB.getSide(BlockFace.DOWN).location.isInLiquid()
+        ) this.tags.add("full_liquid")
 
         //重置目标点 并发送拉回操作
         var resetTo = false
@@ -456,7 +492,6 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                 }
             }
         }
-
         if (flying) {
             if (player.inAirTicks >= 30 && yDistance == 0.0) if (to.y - data.getLastNormalGround().y >= 1.57) {
                 resetTo = true
@@ -500,7 +535,6 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                 }
             }
         }
-
         //解决固定问题
         if (player.isSneaking && this.tags.contains("bunny_down")) resetTo = false
 
@@ -1468,12 +1502,13 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                     if (data.getSwimTick() > 20 && speed > baseSpeed) {
                         allowDistance = speed
                         limitDistance = baseSpeed
+                        if (yDistance < 0) limitDistance += Magic.WALK_SPEED
                     } else {
                         val motionY = abs(yDistance)
                         if (motionY != 0.0 || speed != 0.0) {
                             if (motionY > MagicLiquid.WALK_SPEED * 2.0 || speed > MagicLiquid.WALK_SPEED * 2.0) {
                                 allowDistance = max(motionY, speed)
-                                limitDistance = Magic.WALK_SPEED
+                                limitDistance = Magic.WALK_SPEED + 0.4
                             }
                         }
                     }
@@ -1490,6 +1525,68 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                 return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
             }
         } else vData.clearPreVL("liquid_move")
+
+        return doubleArrayOf(allowDistance, limitDistance)
+    }
+
+    /**
+     * 检测鞘翅飞行
+     *
+     * @param now
+     * @param player
+     * @param mathMotion
+     * @param data
+     * @param pData
+     *
+     * @return limited speed
+     */
+    private fun getLimitedGlideMotion(
+        now: Long,
+        player: Player,
+        mathMotion: Vector3,
+        data: MovingData,
+        pData: IPlayerData,
+    ): DoubleArray {
+        var allowDistance = 0.0
+        var limitDistance = 0.0
+
+        //误差分析: 平均值误差<0.01可忽略
+        //备注: 线性公式和实际速度的曲线的定积分随时间的增大而增大,待修复
+        val verticalSpeed = hypot(data.getMotionX(), data.getMotionZ())
+        val mathVerticalSpeed = hypot(mathMotion.getX(), mathMotion.getZ())
+
+        var passableMistake = false
+
+        if (verticalSpeed - mathVerticalSpeed < 0.02) passableMistake = true
+
+        val acc = data.getAcc()
+        val currentSpeed = data.getSpeed()
+
+        //忽略夹角计算
+        val predictTimeBase = abs(currentSpeed) / abs(acc)
+        val usedVelocity = now - data.getLastGlideBooster() < max(800L, round((predictTimeBase / 20) * 1000).toLong())
+
+        val cloneMotion = mathMotion.clone()
+        if (usedVelocity) {
+            val emptyMotion = Vector3(0.0, 0.0, 0.0)
+            for (firework in player.level.getChunkEntities(
+                player.floorX, player.floorZ
+            )) if (firework is EntityFirework) emptyMotion.add(firework.motionX, firework.motionY, firework.motionZ)
+            val motion2 = this.vLimitedHAddition(player, emptyMotion)
+
+            //计算新速度
+            if (!passableMistake) cloneMotion.add(motion2.getX(), motion2.getY(), motion2.getZ())
+        }
+
+        if (passableMistake) {
+            allowDistance = Double.MIN_VALUE
+            limitDistance = Double.MAX_VALUE
+            player.sendMessage("${data.getMotionY()} ${mathMotion.getY()}")
+        } else {
+            val cloneVerticalSpeed = hypot(cloneMotion.getX(), cloneMotion.getZ())
+            player.sendMessage("纠正 $verticalSpeed $cloneVerticalSpeed")
+        }
+
 
         return doubleArrayOf(allowDistance, limitDistance)
     }
@@ -1513,5 +1610,78 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         return if (yDistance > 0.0) from.isInLiquid() && to.isInLiquid()
         else from.isInLiquid() || to.isInLiquid()
     }
+
+    /**
+     * 鞘翅动力学,额外加速度
+     * 矢量求和运算
+     *
+     * @param player
+     * @param vector3 速度
+     *
+     * @return 求和
+     */
+    private fun vLimitedHAddition(player: Player, vector3: Vector3): Vector3 {
+        val direction = player.directionVector
+        val d0 = 1.5
+        val d1 = 0.1
+        val motionX = direction.getX() * d1 + (direction.getX() * d0 - vector3.getX()) * 0.5
+        val motionY = direction.getY() * d1 + (direction.getY() * d0 - vector3.getY()) * 0.5
+        val motionZ = direction.getZ() * d1 + (direction.getZ() * d0 - vector3.getZ()) * 0.5
+        return Vector3(motionX, motionY, motionZ)
+    }
+
+    /**
+     * 计算鞘翅飞行标准速度
+     *
+     * @param player
+     * @param data
+     *
+     * @return 结果
+     */
+    private fun vDistGlideMotion(player: Player, data: MovingData): Vector3 {
+
+        //玩家方向
+        val direction = player.directionVector
+
+        //初速度
+        var motionX = data.getLastMotionX()
+        var motionY = data.getLastMotionY()
+        var motionZ = data.getLastMotionZ()
+
+        //夹角
+        val mathPitchRadians = Math.toRadians(player.pitch)
+        val mathDirectionHyp = hypot(direction.getX(), direction.getZ())
+
+        val xzDist = hypot(motionX, motionZ)
+
+        //合速度
+        var speedV = cos(mathPitchRadians)
+        speedV = ((speedV * speedV) * min(1.0, direction.length() / 0.4))
+        motionY += -0.08 + speedV * 0.06
+
+        if (motionY < 0.0 && mathDirectionHyp > 0.0) {
+            val d2 = motionY * -0.1 * speedV
+            motionY += d2
+            motionX += direction.getX() * d2 / mathDirectionHyp
+            motionZ += direction.getZ() * d2 / mathDirectionHyp
+        }
+        if (mathPitchRadians < 0.0) {
+            val speed = xzDist * -sin(mathPitchRadians) * 0.04
+            motionY += speed * 3.2
+            motionX -= direction.getX() * speed / mathDirectionHyp
+            motionZ -= direction.getZ() * speed / mathDirectionHyp
+        }
+        if (mathDirectionHyp > 0.0) {
+            motionX += (direction.getX() / mathDirectionHyp * xzDist - motionX) * 0.1
+            motionZ += (direction.getZ() / mathDirectionHyp * xzDist * motionZ) * 0.1
+        }
+
+        motionX *= Magic.GLIDE_GRAVITY
+        motionY *= Magic.TINY_GRAVITY
+        motionZ *= Magic.GLIDE_GRAVITY
+
+        return Vector3(motionX, motionY, motionZ)
+    }
+
 
 }

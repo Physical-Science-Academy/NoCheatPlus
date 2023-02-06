@@ -118,6 +118,7 @@ object Magic {
 
     //重力
     const val TINY_GRAVITY = 0.9800000190734863
+    const val GLIDE_GRAVITY = 0.9900000095367432
 
     //蜘蛛网
     const val GROUND_COBWEB_MAX_SPEED = 0.032
