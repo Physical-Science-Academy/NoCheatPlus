@@ -155,7 +155,11 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             if (player.isGliding) {
                 val mathMotion = this.vDistGlideMotion(player, data)
                 val distGlide = this.getLimitedGlideMotion(now, player, mathMotion, data, pData)
-
+                if (distGlide[0] > distGlide[1]) {
+                    val violation = (distGlide[0] - distGlide[1]) * 10 * (player.inAirTicks / 20) * 1.2
+                    pData.addViolationToBuffer(this.typeName, violation)
+                    player.setback(data.getLastNormalGround(), this.typeName)
+                }
             } else if (data.getLiquidTick() == 0) {
                 if (data.getWebTick() > 10) {
                     val distWeb = this.vDistWeb(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
@@ -1549,6 +1553,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
     ): DoubleArray {
         var allowDistance = 0.0
         var limitDistance = 0.0
+        val vData = pData.getViolationData(this.typeName)
 
         //误差分析: 平均值误差<0.01可忽略
         //备注: 线性公式和实际速度的曲线的定积分随时间的增大而增大,待修复
@@ -1581,12 +1586,30 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (passableMistake) {
             allowDistance = Double.MIN_VALUE
             limitDistance = Double.MAX_VALUE
-            player.sendMessage("${data.getMotionY()} ${mathMotion.getY()}")
+            if (abs(data.getMotionY() - mathMotion.getY()) > 0.002) {
+                allowDistance = abs(data.getMotionY())
+                limitDistance = abs(mathMotion.getY())
+            }
         } else {
             val cloneVerticalSpeed = hypot(cloneMotion.getX(), cloneMotion.getZ())
-            player.sendMessage("纠正 $verticalSpeed $cloneVerticalSpeed")
+            //0.25的误差,可能出现绕过
+            if (verticalSpeed - cloneVerticalSpeed > 0.25) {
+                allowDistance = verticalSpeed - 0.20
+                limitDistance = cloneVerticalSpeed - 0.20
+            }
         }
 
+        if (allowDistance > limitDistance) {
+            if (vData.getPreVL("glide_motion") > 10) {
+                vData.clearPreVL("glide_motion")
+            } else {
+                vData.addPreVL("glide_motion")
+                return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
+            }
+        } else {
+            vData.clearPreVL("glide_motion")
+            return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
+        }
 
         return doubleArrayOf(allowDistance, limitDistance)
     }
