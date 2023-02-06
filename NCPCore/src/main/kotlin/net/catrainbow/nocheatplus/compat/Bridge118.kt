@@ -61,7 +61,7 @@ class Bridge118 {
                 0.0, -0.25, 0.0
             ).levelBlock.id == Block.COBWEB || player.add(0.0, 1.0, 0.0).levelBlock.id == Block.COBWEB || player.add(
                 0.0, 1.5, 0.0
-            ).levelBlock.id == Block.COBWEB
+            ).levelBlock.id == Block.COBWEB || player.add(0.0, 2.0, 0.0).levelBlock.id == Block.COBWEB
         }
 
         //重写核心梯子判断

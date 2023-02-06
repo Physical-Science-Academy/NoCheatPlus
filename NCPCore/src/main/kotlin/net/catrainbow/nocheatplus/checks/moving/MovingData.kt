@@ -75,6 +75,7 @@ class MovingData : ICheckData {
     private var loseSprintCount = 0
     private var sprint = false
     private var inAirTick = 0
+    private var groundTick = 0
     private var fullAirTick = 0
     private var liquidTick = 0
     private var iceTick = 0
@@ -173,18 +174,24 @@ class MovingData : ICheckData {
         if (this.loseSprintCount > 5) this.loseSprintCount = 0
         if (this.onGround) fullAirTick = 0
         if (this.respawnTick > 0) this.respawnTick--
-        if (LocUtil.isLiquid(LocUtil.getUnderBlock(player)) || LocUtil.isLiquid(player.levelBlock)) this.liquidTick++ else if (this.liquidTick in 1..50) this.liquidTick-- else this.liquidTick =
+        if (this.onGround) this.groundTick++ else this.groundTick = 0
+        if (LocUtil.isLiquid(LocUtil.getUnderBlock(player)) || LocUtil.isLiquid(player.levelBlock)) this.liquidTick++ else if (this.liquidTick in 1..200) this.liquidTick-- else this.liquidTick =
             0
         if (LocUtil.isIce(LocUtil.getUnderBlock(player))) this.iceTick++
-        else if (this.iceTick in 1..50) this.iceTick-- else this.iceTick = 0
-        if (LocUtil.getUnderBlock(player) is BlockSlab) this.slabTick++ else if (this.slabTick in 1..50) this.slabTick-- else this.slabTick =
+        else if (this.iceTick in 1..200) this.iceTick-- else this.iceTick = 0
+        if (LocUtil.getUnderBlock(player) is BlockSlab) this.slabTick++ else if (this.slabTick in 1..200) this.slabTick-- else this.slabTick =
             0
-        if (LocUtil.getUnderBlock(player) is BlockStairs) this.stairTick++ else if (this.stairTick in 1..50) this.stairTick-- else this.stairTick =
+        if (LocUtil.getUnderBlock(player) is BlockStairs) this.stairTick++ else if (this.stairTick in 1..200) this.stairTick-- else this.stairTick =
             0
         if (player.isInWeb()) this.webTick++
-        else if (this.webTick in 1..50) this.webTick-- else this.webTick = 0
+        else if (this.webTick in 1..200) this.webTick-- else this.webTick = 0
         if (player.onClimbedBlock()) this.ladderTick++
-        else if (this.ladderTick in 1..50) this.ladderTick-- else this.ladderTick = 0
+        else if (this.ladderTick in 1..200) this.ladderTick-- else this.ladderTick = 0
+        if (groundTick > 5) {
+            this.liquidTick = 0
+            this.webTick = 0
+            this.ladderTick = 0
+        }
     }
 
     fun getLiquidTick(): Int {

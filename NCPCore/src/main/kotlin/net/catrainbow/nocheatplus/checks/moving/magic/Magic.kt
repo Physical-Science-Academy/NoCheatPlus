@@ -47,12 +47,8 @@ object Magic {
         0.1995 / modSwim / WALK_SPEED,
         1.0 / modSwim
     )
-    const val modWeb = 0.105 / WALK_SPEED
-    const val modIce = 2.5
     const val modDownStream = 0.19 / (WALK_SPEED * modSwim)
     const val GLIDE_HORIZONTAL_GAIN_MAX = GRAVITY_MAX / 2.0
-    const val climbSpeedAscend = 0.119
-    const val climbSpeedDescend = 0.151
     const val GLIDE_DESCEND_PHASE_MIN = -GRAVITY_MAX - GRAVITY_SPAN
     const val GLIDE_DESCEND_GAIN_MAX_NEG = -GRAVITY_MAX
     const val GLIDE_DESCEND_GAIN_MAX_POS = GRAVITY_ODD / 1.95
@@ -128,6 +124,10 @@ object Magic {
     const val GROUND_COBWEB_MAX_MOTION_Y = 0.021
     const val GROUND_COBWEB_VERTICAL_SPEED_MIN = 0.0845
     const val GROUND_COBWEB_VERTICAL_SPEED_MAX = 0.085
+
+    //攀爬
+    const val LIMITED_CLIMB_SPEED = 0.20
+    const val CLIMB_SPEED_AVG = 0.12
 
     fun swimBaseSpeedV(): Double {
         return WALK_SPEED * modSwim + 0.02

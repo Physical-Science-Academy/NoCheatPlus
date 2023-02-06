@@ -155,7 +155,16 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                         player.setback(data.getLastNormalGround(), this.typeName)
                     }
                 } else if (data.getLadderTick() > 10) {
-
+                    val distLadder =
+                        this.vDistLadder(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
+                    //更新一些数据防止误判
+                    data.onJump()
+                    data.setLastNormalGround(player.location)
+                    if (distLadder[0] > distLadder[1]) {
+                        val violation = min(abs(distLadder[0] - distLadder[1] * 20), 5.0)
+                        pData.addViolationToBuffer(this.typeName, violation)
+                        player.setback(data.getLastNormalGround(), this.typeName)
+                    }
                 } else {
                     val distAir = this.vDistAir(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                     if (distAir[0] > distAir[1]) {
@@ -405,7 +414,12 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                 if (!this.tags.contains("effect_jump") && !this.tags.contains("stair_slab")) {
                     isBunnyHop = true
                 }
-                if (allowDistance > limitDistance) {
+                //特殊情况考虑吧
+                if (this.tags.size < 1 || data.getLadderTick() != 0) {
+                    allowDistance = Double.MIN_VALUE
+                    limitDistance = Double.MAX_VALUE
+                }
+                if (allowDistance > limitDistance && allowDistance - limitDistance >= 0.19) {
                     resetTo = true
                     if (ConfigData.logging_debug) player.sendMessage("BunnyHop LagBack $allowDistance/$limitDistance")
                 }
@@ -1288,6 +1302,74 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
      */
     private fun getFallDamage(player: Player): Double {
         return if (player.fallDistance > 3) player.fallDistance - 3.0 else 0.0
+    }
+
+    /**
+     * 检测攀爬物
+     *
+     * @param now
+     * @param player
+     * @param from
+     * @param to
+     * @param fromOnGround
+     * @param toOnGround
+     * @param yDistance
+     * @param data
+     * @param pData
+     *
+     * @return limited distance
+     */
+    private fun vDistLadder(
+        now: Long,
+        player: Player,
+        from: Location,
+        to: Location,
+        fromOnGround: Boolean,
+        toOnGround: Boolean,
+        yDistance: Double,
+        data: MovingData,
+        pData: IPlayerData,
+    ): DoubleArray {
+        var allowDistance = 0.0
+        var limitDistance = 0.0
+
+        if (data.isVoidHurt()) return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
+
+        val vData = pData.getViolationData(this.typeName)
+
+        val verticalSpeed = from.distanceSquared(to)
+        val motionY = abs(yDistance)
+
+        if (yDistance > 0.0 || yDistance < 0.0) {
+            if (fromOnGround && toOnGround) {
+                if (verticalSpeed < Magic.LIMITED_CLIMB_SPEED && motionY > Magic.LIMITED_CLIMB_SPEED * 1.05) {
+                    allowDistance = motionY
+                    limitDistance = Magic.LIMITED_CLIMB_SPEED
+                } else if (verticalSpeed > Magic.CLIMB_SPEED_AVG) {
+                    allowDistance = verticalSpeed
+                    limitDistance = Magic.CLIMB_SPEED_AVG
+                }
+            } else if (fromOnGround) {
+                if (verticalSpeed > Magic.LIMITED_CLIMB_SPEED || motionY > Magic.LIMITED_CLIMB_SPEED) {
+                    allowDistance = max(verticalSpeed, motionY)
+                    limitDistance = Magic.LIMITED_CLIMB_SPEED
+                }
+            } else {
+                if (ConfigData.logging_debug) player.sendMessage("Unknown Ladder Movement ${now - data.getLastJump()}")
+            }
+        }
+
+        if (allowDistance > limitDistance) {
+            if (vData.getPreVL("ladder_hack") > 2) {
+                vData.clearPreVL("ladder_hack")
+            } else {
+                vData.addPreVL("ladder_hack")
+                allowDistance = Double.MIN_VALUE
+                limitDistance = Double.MAX_VALUE
+            }
+        } else vData.clearPreVL("ladder_hack")
+
+        return doubleArrayOf(allowDistance, limitDistance)
     }
 
 }

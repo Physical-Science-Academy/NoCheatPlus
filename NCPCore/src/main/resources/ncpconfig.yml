@@ -10,7 +10,7 @@ lang: "en"
 logging:
   active: true
   auto-delete-days: 1
-  debug: true
+  debug: false
   prefix: "§c§lNCP §7>> §r"
   extended:
     command: true
