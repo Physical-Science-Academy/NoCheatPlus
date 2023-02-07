@@ -16,6 +16,7 @@ package net.catrainbow.nocheatplus.checks.inventory
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperEatFoodPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 
 /**
@@ -29,10 +30,8 @@ class InstantEat : Check("checks.inventory.instanteat", CheckType.INVENTORY_INST
         val player = event.player
         val data = NoCheatPlus.instance.getPlayerProvider(player).inventoryData
 
-        if (data.getLastEating() && !data.isEating()) {
-            val totalTick = data.getEatFoodTick()
-            player.sendMessage("instant eat $totalTick")
-            data.resetEatTick()
+        if (event.packet is WrapperEatFoodPacket) {
+            player.sendMessage("1")
         }
 
     }

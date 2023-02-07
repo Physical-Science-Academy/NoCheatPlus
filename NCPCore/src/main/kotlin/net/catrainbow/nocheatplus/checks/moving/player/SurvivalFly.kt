@@ -200,7 +200,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                         if (((fromOnGround && toOnGround) || data.isJump()) && !this.tags.contains("hunger")) {
                             val speed = data.getSpeed()
                             val totalTick = data.getFoodTracker()!!.getCount()
-
+                            val vData = pData.getViolationData(this.typeName)
                             //吃东西吃出不存在的情况,说明数据包有问题
                             if (totalTick != FoodData118.DEFAULT_EAT_TICK) this.tags.add("resend_pk")
 
@@ -212,24 +212,27 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                                 var revertFoodData = false
                                 if (!data.isJump()) {
                                     if (speed > Magic.CLIMB_SPEED_AVG) {
-                                        if (data.isFirstGagApple() || foodTick >= 2)
-                                            revertFoodData = true
+                                        if (data.isFirstGagApple() || foodTick >= 2) revertFoodData = true
                                         else data.setFirstGagApple(true)
-                                    } else data.setFirstGagApple(false)
+                                    }
                                 } else if (speed > Magic.BUNNY_TINY_JUMP_MAX) {
-                                    if (data.isFirstGagApple() || foodTick >= 2)
-                                        revertFoodData = true
+                                    if (data.isFirstGagApple() || foodTick >= 2) revertFoodData = true
                                     else data.setFirstGagApple(true)
                                 } else data.setFirstGagApple(false)
                                 if (revertFoodData) {
-                                    pData.addViolationToBuffer(
-                                        this.typeName,
-                                        min(abs(speed - Magic.CLIMB_SPEED_AVG) * 100, 1.5)
-                                    )
-                                    player.setback(data.getLastNormalGround(), this.typeName)
-                                    revertBuffer = true
-                                }
-                            } else data.setFirstGagApple(false)
+                                    if (vData.getPreVL("no_slow") > 5) {
+                                        vData.clearPreVL("no_slow")
+                                        pData.addViolationToBuffer(
+                                            this.typeName, min(abs(speed - Magic.CLIMB_SPEED_AVG) * 100, 2.5)
+                                        )
+                                        player.setback(data.getLastNormalGround(), this.typeName)
+                                        revertBuffer = true
+                                    } else vData.addPreVL("no_slow")
+                                } else vData.clearPreVL("no_slow")
+                            } else {
+                                data.setFirstGagApple(false)
+                                vData.clearPreVL("no_slow")
+                            }
 
                         }
                     }
