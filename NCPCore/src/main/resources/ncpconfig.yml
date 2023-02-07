@@ -57,5 +57,9 @@ string:
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
   policy:
-    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle"
+    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle,permission"
     - "nocheatplus.admin.helper:kick,ban,unban"
+  bypass:
+    # Custom bypass permission
+    MOVING_CREATIVE_FLY:
+      - "ncp.creativefly.bypass"

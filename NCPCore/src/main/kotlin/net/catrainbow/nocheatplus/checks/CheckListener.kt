@@ -31,7 +31,7 @@ open class CheckListener(protected val type: CheckType) : ITickListener {
     override fun onTick(event: Event) {
         for (listener in this.subListeners) listener.onTick(event)
         if (event is WrapperPacketEvent) for (check in NoCheatPlus.instance.getAllNCPCheck().values) if (NoCheatPlus.instance.getComManager()
-                .isUsedChecks(check.baseName)
+                .isUsedChecks(check.baseName) && !NoCheatPlus.instance.hasPermissionBypass(event.player, check.typeName)
         ) check.onCheck(event)
     }
 

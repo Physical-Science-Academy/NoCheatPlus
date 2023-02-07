@@ -195,8 +195,19 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     }
 
     override fun setPlayerCheck(player: Player) {
-        if (this.toggleNCP.containsKey(player.name))
-            this.toggleNCP.remove(player.name)
+        if (this.toggleNCP.containsKey(player.name)) this.toggleNCP.remove(player.name)
+    }
+
+    override fun hasPermissionBypass(player: Player, type: CheckType): Boolean {
+        return (this.getNCPComponent("NCP Permission") as NCPPermissionCom).canBypass(player, type)
+    }
+
+    override fun createBypassPermission(permission: String, type: CheckType) {
+        (this.getNCPComponent("NCP Permission") as NCPPermissionCom).createPermission(permission, type)
+    }
+
+    override fun removeBypassPermission(permission: String, type: CheckType) {
+        (this.getNCPComponent("NCP Permission") as NCPPermissionCom).removePermission(permission, type)
     }
 
 }

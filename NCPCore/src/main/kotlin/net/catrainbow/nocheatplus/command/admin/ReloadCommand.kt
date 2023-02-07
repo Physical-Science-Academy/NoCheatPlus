@@ -33,6 +33,8 @@ class ReloadCommand : NCPSubCommand("reload") {
     override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         sender.sendMessage("${ConfigData.logging_prefix}${getString("command.reload.reloading")}")
         (NoCheatPlus.instance.getNCPComponent("NCP Config") as NCPConfigCom).reload()
+        (NoCheatPlus.instance).getNCPComponent("NCP Permission").onDisabled()
+        (NoCheatPlus.instance).getNCPComponent("NCP Permission").onEnabled()
         sender.sendMessage("${ConfigData.logging_prefix}${getString("command.reload.success")}")
         return true
     }
