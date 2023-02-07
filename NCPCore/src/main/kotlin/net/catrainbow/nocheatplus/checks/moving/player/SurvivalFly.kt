@@ -220,7 +220,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                                     else data.setFirstGagApple(true)
                                 } else data.setFirstGagApple(false)
                                 if (revertFoodData) {
-                                    if (vData.getPreVL("no_slow") > 5) {
+                                    if (vData.getPreVL("no_slow") > 3) {
                                         vData.clearPreVL("no_slow")
                                         pData.addViolationToBuffer(
                                             this.typeName, min(abs(speed - Magic.CLIMB_SPEED_AVG) * 100, 2.5)
@@ -390,7 +390,9 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (!pData.getViolationData(typeName)
                 .isCheat() && fromOnGround && toOnGround
         ) data.updateNormalLoc(player.location)
-        pData.getViolationData(typeName).preVL(0.998)
+
+        val handleViolation = this.handleViolationData(data)
+        pData.getViolationData(typeName).preVL(handleViolation)
 
     }
 
@@ -1773,5 +1775,27 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         return Vector3(motionX, motionY, motionZ)
     }
 
+    /**
+     * Violation衰减
+     *
+     * @param data
+     *
+     * @return 比例
+     */
+    fun handleViolationData(data: MovingData): Double {
+
+        //默认值
+        var baseModify = 0.998
+
+        //特殊情况不同衰减
+        if (data.getIceTick() > 10)
+            baseModify = 0.982
+        else if (data.getWebTick() > 10)
+            baseModify = 0.999
+        else if (data.getLiquidTick() > 10)
+            baseModify = 0.978
+
+        return baseModify
+    }
 
 }

@@ -16,6 +16,8 @@ package net.catrainbow.nocheatplus.checks.inventory
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.compat.nukkit.EmptyFood
+import net.catrainbow.nocheatplus.compat.nukkit.FoodData118
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperEatFoodPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 
@@ -29,9 +31,32 @@ class InstantEat : Check("checks.inventory.instanteat", CheckType.INVENTORY_INST
     override fun onCheck(event: WrapperPacketEvent) {
         val player = event.player
         val data = NoCheatPlus.instance.getPlayerProvider(player).inventoryData
+        val pData = NoCheatPlus.instance.getPlayerProvider(player)
+
+        var cancel = false
+        var cancelSaturation = 0F
+        var cancelFoodLevel = 0
 
         if (event.packet is WrapperEatFoodPacket) {
-            player.sendMessage("1")
+            if (!(event.packet as WrapperEatFoodPacket).eat) data.setEating(true)
+            else {
+                data.setEating(false)
+                val totalTick = NoCheatPlus.instance.getPlayerProvider(player).movingData.getFoodTracker()!!.getCount()
+                if (totalTick < FoodData118.DEFAULT_EAT_TICK) {
+                    cancel = true
+                    cancelSaturation = (event.packet as WrapperEatFoodPacket).food.restoreSaturation
+                    cancelFoodLevel = (event.packet as WrapperEatFoodPacket).food.restoreFood
+                    if ((event.packet as WrapperEatFoodPacket).food is EmptyFood) cancel = false
+                }
+            }
+        }
+
+        if (cancel) {
+            pData.addViolationToBuffer(this.typeName, 1.2)
+            if (player.foodData.level - cancelFoodLevel > 0) {
+                val level = player.foodData.level
+                player.foodData.setLevel(level - cancelFoodLevel, cancelSaturation)
+            }
         }
 
     }
