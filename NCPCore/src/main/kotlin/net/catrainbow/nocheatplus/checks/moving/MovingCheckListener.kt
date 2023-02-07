@@ -63,7 +63,7 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
             val wrapper = WrapperPacketEvent()
             wrapper.player = player
             wrapper.packet = packet
-            player.dataPacket(wrapper)
+            dataPacket(wrapper)
         } else if (event is DataPacketReceiveEvent) {
             //开启权威移动数据包模式
             if (event.packet is PlayerAuthInputPacket && !Bridge118.server_auth_mode) Bridge118.server_auth_mode = true
@@ -99,7 +99,7 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
                                 packet.food = EmptyFood()
                                 packet.eat = false
                                 foodEvent.packet = packet
-                                event.player.dataPacket(foodEvent)
+                                dataPacket(foodEvent)
                             }
                         }
                     }
@@ -160,7 +160,7 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
             packet.food = event.food
             packet.eat = true
             foodEvent.packet = packet
-            event.player.dataPacket(foodEvent)
+            dataPacket(foodEvent)
         } else if (event is PlayerInteractEvent) {
             val player = event.player
             if (FoodData118.isFood(player.inventory.itemInHand.id))

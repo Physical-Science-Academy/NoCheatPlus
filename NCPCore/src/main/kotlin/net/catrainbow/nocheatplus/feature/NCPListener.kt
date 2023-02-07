@@ -35,6 +35,7 @@ import cn.nukkit.plugin.Plugin
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.checks.net.PacketVerify
 import net.catrainbow.nocheatplus.compat.BridgeWaterDog
 import net.catrainbow.nocheatplus.components.config.NCPBanConfig
 import net.catrainbow.nocheatplus.feature.chat.ChatTickListener
@@ -173,6 +174,9 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerJoins(event: PlayerJoinEvent) {
+        //to prevent the server from crashing
+        PacketVerify.popVerifyQueue(event.player.name)
+
         val data = PlayerData(event.player)
         PlayerData.allPlayersData[data.getPlayerName()] = data
         if (NoCheatPlus.instance.isPlayerBan(event.player)) {
@@ -215,6 +219,9 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerPacketReceive(event: DataPacketReceiveEvent) {
+        //验证数据包,防止服务器受损
+        PacketVerify.verifyPacket(event)
+
         for (listener in listeners) checkEvent(listener, event)
     }
 

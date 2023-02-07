@@ -22,6 +22,7 @@ enum class CheckType(private val parent: CheckType?) {
 
     ALL(null),
     STAFF(ALL),
+    UNKNOWN_PACKET(ALL),
     MOVING(ALL),
     MOVING_SURVIVAL_FLY(MOVING),
     MOVING_CREATIVE_FLY(MOVING),

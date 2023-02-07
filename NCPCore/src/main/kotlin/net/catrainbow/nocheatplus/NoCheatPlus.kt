@@ -23,6 +23,7 @@ import net.catrainbow.nocheatplus.actions.ActionFactory
 import net.catrainbow.nocheatplus.actions.ActionType
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.components.NoCheatPlusAPI
 import net.catrainbow.nocheatplus.components.config.NCPBanConfig
 import net.catrainbow.nocheatplus.components.config.NCPConfigCom
@@ -56,6 +57,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     private val toggleNCP: HashMap<String, Boolean> = HashMap()
     override fun onLoad() {
         instance = this
+        Bridge118.verifyVersionBridge()
     }
 
     override fun onEnable() {
