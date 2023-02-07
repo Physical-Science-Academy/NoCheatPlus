@@ -51,18 +51,6 @@ class PacketVerify {
             if (packet is LoginPacket) {
                 //fix the crash of PM1E
                 verifyQueue.add(player.name)
-                //Unknown LoginPacket
-                if (player.loginChainData.deviceOS == 1) {
-                    val model = player.loginChainData.deviceModel.split(" ")
-                    if (model.isNotEmpty()) if (model[0] != model[0].uppercase(Locale.getDefault())) {
-                        event.setCancelled()
-                    }
-                }
-                //EZ4H LoginPacket
-                if (unknown_client_model.contains(player.loginChainData.deviceOS.toString()) || unknown_client_model.contains(
-                        player.loginChainData.deviceModel
-                    )
-                ) event.setCancelled()
                 if (!event.isCancelled) playerLastUpdatePacket[player.name] = System.currentTimeMillis()
             } else if (packet is TextPacket) {
                 //Unknown TextPacket
@@ -85,13 +73,11 @@ class PacketVerify {
                 if (player.pitch > 90) NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
             } else if (packet is AnimatePacket) {
                 if (packet.action == AnimatePacket.Action.CRITICAL_HIT) {
-                    if (!playerAnimatePacketMap.containsKey(player.name))
-                        playerAnimatePacketMap[player.name] = 1
+                    if (!playerAnimatePacketMap.containsKey(player.name)) playerAnimatePacketMap[player.name] = 1
                     playerAnimatePacketMap[player.name] = playerAnimatePacketMap[player.name]!! + 1
 
                     //flood animate packets try to crash the server
-                    if (playerAnimatePacketMap[player.name]!! >= 50)
-                        event.setCancelled()
+                    if (playerAnimatePacketMap[player.name]!! >= 50) event.setCancelled()
                     NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
                 }
             }
@@ -100,6 +86,22 @@ class PacketVerify {
 
         fun popVerifyQueue(playerName: String) {
             val player = NoCheatPlus.instance.server.getPlayer(playerName)
+            //Unknown LoginPacket
+            if (player.loginChainData.deviceOS == 1) {
+                val model = player.loginChainData.deviceModel.split(" ")
+                if (model.isNotEmpty()) if (model[0] != model[0].uppercase(Locale.getDefault())) {
+                    NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
+                    return
+                }
+            }
+            //EZ4H LoginPacket
+            if (unknown_client_model.contains(player.loginChainData.deviceOS.toString()) || unknown_client_model.contains(
+                    player.loginChainData.deviceModel
+                )
+            ) {
+                NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
+                return
+            }
             if (Bridge118.version_bridge == VersionBridge.PM1E) {
                 //fix the crash of PM1E
                 if (verifyQueue.contains(playerName)) {
