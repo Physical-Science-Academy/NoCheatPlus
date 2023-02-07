@@ -49,10 +49,8 @@ class PacketVerify {
             val packet = event.packet
 
             if (packet is LoginPacket) {
-                if (Bridge118.version_bridge == VersionBridge.PM1E) {
-                    //fix the crash of PM1E
-                    verifyQueue.add(player.name)
-                }
+                //fix the crash of PM1E
+                verifyQueue.add(player.name)
                 //Unknown LoginPacket
                 if (player.loginChainData.deviceOS == 1) {
                     val model = player.loginChainData.deviceModel.split(" ")
@@ -78,8 +76,12 @@ class PacketVerify {
                     if (packet.type == TextPacket.TYPE_CHAT && (data.getSpeed() > 0.2 || data.getMotionY() > 0.5 || now - data.getLastJump() < 10) && isLive && onGround) event.setCancelled()
                 }
             } else if (packet is PlayerAuthInputPacket || packet is MovePlayerPacket) {
-                if (System.currentTimeMillis() - playerLastUpdatePacket[player.name]!! > round(((1 / 20) * 1000L).toDouble()))
+                if (!playerLastUpdatePacket.containsKey(player.name)) playerLastUpdatePacket[player.name] =
+                    System.currentTimeMillis()
+                if (System.currentTimeMillis() - playerLastUpdatePacket[player.name]!! > round(((1 / 20) * 1000L).toDouble())) {
                     playerLastUpdatePacket[player.name] = System.currentTimeMillis()
+                    playerAnimatePacketMap[player.name] = 0
+                }
                 if (player.pitch > 90) NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
             } else if (packet is AnimatePacket) {
                 if (packet.action == AnimatePacket.Action.CRITICAL_HIT) {
@@ -98,11 +100,14 @@ class PacketVerify {
 
         fun popVerifyQueue(playerName: String) {
             val player = NoCheatPlus.instance.server.getPlayer(playerName)
-            if (verifyQueue.contains(playerName)) {
-                if (NoCheatPlus.instance.hasPlayer(player)) for (item in player.inventory.contents.values) if (item.id == 358) player.inventory.remove(
-                    item
-                )
-                verifyQueue.remove(playerName)
+            if (Bridge118.version_bridge == VersionBridge.PM1E) {
+                //fix the crash of PM1E
+                if (verifyQueue.contains(playerName)) {
+                    if (NoCheatPlus.instance.hasPlayer(player)) for (item in player.inventory.contents.values) if (item.id == 358) player.inventory.remove(
+                        item
+                    )
+                    verifyQueue.remove(playerName)
+                }
             }
         }
 
