@@ -46,8 +46,11 @@ class CreativeFly : Check("checks.moving.creativefly", CheckType.MOVING_CREATIVE
         if (player.gamemode == 0 || player.gamemode == 2) return
         if (player.riding != null) return
         val provider = NoCheatPlus.instance.getPlayerProvider(player)
+        val data = provider.movingData
+        if (!data.isSafeSpawn() || !data.isLive()) return
+        if (data.getRespawnTick() > 0) return
         if (packet is WrapperInputPacket) this.checkPlayerFly(
-            player, packet.from, packet.to, provider.movingData, provider, System.currentTimeMillis()
+            player, packet.from, packet.to, data, provider, System.currentTimeMillis()
         )
     }
 

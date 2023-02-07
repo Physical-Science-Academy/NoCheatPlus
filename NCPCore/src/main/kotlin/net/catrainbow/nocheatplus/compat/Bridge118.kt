@@ -22,6 +22,7 @@ import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.ActionFactory
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 
 /**
  * 多核心适配和架桥
@@ -100,8 +101,11 @@ class Bridge118 {
         }
 
         fun Location.onGround(): Boolean {
-            return !LocUtil.isLiquid(this.levelBlock) && this.levelBlock.id != Block.AIR
-                    && !this.levelBlock.canPassThrough()
+            return !LocUtil.isLiquid(this.levelBlock) && this.levelBlock.id != Block.AIR && !this.levelBlock.canPassThrough()
+        }
+
+        fun Player.dataPacket(packet: WrapperPacketEvent) {
+            NoCheatPlus.instance.server.pluginManager.callEvent(packet)
         }
 
     }

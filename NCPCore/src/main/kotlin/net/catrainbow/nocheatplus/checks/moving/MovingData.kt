@@ -24,13 +24,11 @@ import cn.nukkit.math.Vector3
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
-import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
-import net.catrainbow.nocheatplus.checks.moving.model.MoveTracker
-import net.catrainbow.nocheatplus.checks.moving.model.PacketTracker
-import net.catrainbow.nocheatplus.checks.moving.model.SpeedTracker
+import net.catrainbow.nocheatplus.checks.moving.model.*
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInWeb
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onClimbedBlock
+import net.catrainbow.nocheatplus.compat.nukkit.FoodData118
 import net.catrainbow.nocheatplus.components.data.ICheckData
 import kotlin.math.abs
 
@@ -61,11 +59,15 @@ class MovingData : ICheckData {
     private var moveTracker: MoveTracker? = null
     private var speedTracker: SpeedTracker? = null
     private var packetTracker: PacketTracker? = null
+    private var foodTracker: EatPacketTracker? = null
     private var safeSpawn = false
     private var voidHurt = false
     private var lastChangeSwimAction = System.currentTimeMillis()
     private var lastChangeGlideAction = System.currentTimeMillis()
     private var lastGlideBooster = System.currentTimeMillis()
+    private var lastConsumeFood = System.currentTimeMillis()
+    private var beforeLastConsumeFood = System.currentTimeMillis()
+    private var firstGagApple = false
 
     /**
      * Current Moving Data
@@ -95,6 +97,8 @@ class MovingData : ICheckData {
     private var live = true
     private var respawnTick = 0
     private var knockBackHurtTick = 100
+    private var eatFood = false
+    private var eatFoodTick = 0
 
     //Timer Clock
     private var timeBalance = System.currentTimeMillis() - 5000L
@@ -151,6 +155,15 @@ class MovingData : ICheckData {
             this.packetTracker!!.kill()
         } else {
             this.packetTracker!!.onUpdate()
+        }
+
+        if (this.foodTracker == null) {
+            this.foodTracker = EatPacketTracker(this)
+            //重新启动一次追踪器使数据初始化
+            this.foodTracker!!.kill()
+            this.foodTracker!!.run()
+        } else {
+            this.foodTracker!!.onUpdate()
         }
 
         if (this.ghostBlockChecker.getName() == "NCP") {
@@ -217,6 +230,16 @@ class MovingData : ICheckData {
             this.loseSwimTick = 0
             this.loseLiquidTick = 0
         }
+        if (eatFood) {
+            this.eatFoodTick++
+        } else eatFoodTick = 0
+        if (this.eatFoodTick > FoodData118.DEFAULT_EAT_TICK) {
+            this.eatFood = false
+            this.eatFoodTick = 0
+            this.foodTracker!!.kill()
+        }
+        if (System.currentTimeMillis() - this.lastConsumeFood > 100 && this.firstGagApple)
+            this.firstGagApple = false
     }
 
     fun getLiquidTick(): Int {
@@ -456,8 +479,29 @@ class MovingData : ICheckData {
         this.lastChangeGlideAction = System.currentTimeMillis()
     }
 
-    fun getLastToggleGlide(): Long {
-        return this.lastChangeGlideAction
+    fun getToggleEatingTick(): Int {
+        return this.eatFoodTick
+    }
+
+    fun consumeFoodInteract() {
+        this.beforeLastConsumeFood = System.currentTimeMillis() - this.lastConsumeFood
+        this.lastConsumeFood = System.currentTimeMillis()
+    }
+
+    fun getBeforeLastConsumeFood(): Long {
+        return this.beforeLastConsumeFood
+    }
+
+    fun isFirstGagApple(): Boolean {
+        return this.firstGagApple
+    }
+
+    fun setFirstGagApple(boolean: Boolean) {
+        this.firstGagApple = boolean
+    }
+
+    fun getLastConsumeFood(): Long {
+        return this.lastConsumeFood
     }
 
     fun getLastGlideBooster(): Long {
@@ -470,6 +514,18 @@ class MovingData : ICheckData {
 
     fun getGroundTick(): Int {
         return this.groundTick
+    }
+
+    fun isEatFood(): Boolean {
+        return this.eatFood
+    }
+
+    fun setEatFood(boolean: Boolean) {
+        this.eatFood = boolean
+    }
+
+    fun getFoodTracker(): EatPacketTracker? {
+        return this.foodTracker
     }
 
 }

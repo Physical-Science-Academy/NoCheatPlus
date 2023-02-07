@@ -25,7 +25,9 @@ enum class CheckType(private val parent: CheckType?) {
     MOVING(ALL),
     MOVING_SURVIVAL_FLY(MOVING),
     MOVING_CREATIVE_FLY(MOVING),
-    MOVING_MORE_PACKETS(MOVING);
+    MOVING_MORE_PACKETS(MOVING),
+    INVENTORY(ALL),
+    INVENTORY_INSTANT_EAT(INVENTORY);
 
     fun isUsedCheck(): Boolean {
         return (parent != null && parent != ALL) || this == STAFF

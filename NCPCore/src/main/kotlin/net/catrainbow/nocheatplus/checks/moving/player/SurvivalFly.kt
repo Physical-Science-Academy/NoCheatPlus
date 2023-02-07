@@ -41,7 +41,9 @@ import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onIce
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onSlab
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onStair
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.setback
+import net.catrainbow.nocheatplus.compat.nukkit.FoodData118
 import net.catrainbow.nocheatplus.components.data.ConfigData
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperEatFoodPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPlaceBlockPacket
@@ -71,11 +73,13 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (data.getRespawnTick() > 0) return
         if (player.riding != null) return
         if (ConfigData.check_survival_fly_set_back_void_to_void && data.isVoidHurt()) return
-        val packet = event.packet
-        if (packet is WrapperInputPacket) this.checkPlayerFly(
-            player, packet.from, packet.to, data, pData, System.currentTimeMillis()
-        ) else if (packet is WrapperPlaceBlockPacket) this.updateGhostBlock(packet, data)
-
+        when (val packet = event.packet) {
+            is WrapperEatFoodPacket -> data.setEatFood(!packet.eat)
+            is WrapperInputPacket -> this.checkPlayerFly(
+                player, packet.from, packet.to, data, pData, System.currentTimeMillis()
+            )
+            is WrapperPlaceBlockPacket -> this.updateGhostBlock(packet, data)
+        }
         if (this.tags.contains("resend_pk")) event.setInvalid()
     }
 
@@ -151,6 +155,11 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
 
         var revertBuffer = false
 
+        //==========================
+        //Common Check
+        //all kinds of fly hack are there
+        //==========================
+
         if (data.getKnockBackTick() > 13) {
             //检测鞘翅飞行的玩家
             if (player.isGliding) {
@@ -162,6 +171,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                     player.setback(data.getLastNormalGround(), this.typeName)
                 }
             } else if (data.getLiquidTick() == 0) {
+                //web hack
                 if (data.getWebTick() > 10) {
                     val distWeb = this.vDistWeb(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                     if (distWeb[0] > distWeb[1]) {
@@ -170,6 +180,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                         player.setback(data.getLastNormalGround(), this.typeName)
                     }
                 } else if (data.getLadderTick() > 10) {
+                    //ladder hack
                     val distLadder =
                         this.vDistLadder(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                     //更新一些数据防止误判
@@ -181,8 +192,51 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                         player.setback(data.getLastNormalGround(), this.typeName)
                     }
                 } else {
+                    //====================================
+                    //Ground Check with actions
+                    //====================================
 
-                    if (now - data.getLastToggleGlide() < 500) lagGhostBlock = true
+                    if (data.isEatFood()) {
+                        if (((fromOnGround && toOnGround) || data.isJump()) && !this.tags.contains("hunger")) {
+                            val speed = data.getSpeed()
+                            val totalTick = data.getFoodTracker()!!.getCount()
+
+                            //吃东西吃出不存在的情况,说明数据包有问题
+                            if (totalTick != FoodData118.DEFAULT_EAT_TICK) this.tags.add("resend_pk")
+
+                            val timeBalance = now - data.getLastConsumeFood()
+                            val before = data.getBeforeLastConsumeFood()
+                            val foodTick = data.getToggleEatingTick()
+
+                            if ((timeBalance + before) / 2.0 == 0.0) {
+                                var revertFoodData = false
+                                if (!data.isJump()) {
+                                    if (speed > Magic.CLIMB_SPEED_AVG) {
+                                        if (data.isFirstGagApple() || foodTick >= 2)
+                                            revertFoodData = true
+                                        else data.setFirstGagApple(true)
+                                    } else data.setFirstGagApple(false)
+                                } else if (speed > Magic.BUNNY_TINY_JUMP_MAX) {
+                                    if (data.isFirstGagApple() || foodTick >= 2)
+                                        revertFoodData = true
+                                    else data.setFirstGagApple(true)
+                                } else data.setFirstGagApple(false)
+                                if (revertFoodData) {
+                                    pData.addViolationToBuffer(
+                                        this.typeName,
+                                        min(abs(speed - Magic.CLIMB_SPEED_AVG) * 100, 1.5)
+                                    )
+                                    player.setback(data.getLastNormalGround(), this.typeName)
+                                    revertBuffer = true
+                                }
+                            } else data.setFirstGagApple(false)
+
+                        }
+                    }
+
+                    //===================================
+                    //fly hack check players who loses ground
+                    //===================================
 
                     val distAir = this.vDistAir(now, player, from, to, fromOnGround, toOnGround, yDistance, data, pData)
                     if (distAir[0] > distAir[1]) {

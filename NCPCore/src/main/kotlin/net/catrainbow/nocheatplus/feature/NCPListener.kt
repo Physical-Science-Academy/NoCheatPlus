@@ -21,7 +21,9 @@ import cn.nukkit.event.block.BlockPlaceEvent
 import cn.nukkit.event.entity.EntityDamageEvent
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent
 import cn.nukkit.event.player.PlayerDeathEvent
+import cn.nukkit.event.player.PlayerEatFoodEvent
 import cn.nukkit.event.player.PlayerGameModeChangeEvent
+import cn.nukkit.event.player.PlayerInteractEvent
 import cn.nukkit.event.player.PlayerJoinEvent
 import cn.nukkit.event.player.PlayerJumpEvent
 import cn.nukkit.event.player.PlayerMoveEvent
@@ -144,6 +146,17 @@ class NCPListener : Listener {
             true,
             EventPriority.HIGHEST
         )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            PlayerEatFoodEvent::class.java,
+            { playerEatsFood(it) },
+            true,
+            EventPriority.HIGHEST
+        )
+        registerEvent(this, NoCheatPlus.instance, PlayerInteractEvent::class.java, {
+            playerInteracts(it)
+        }, true, EventPriority.HIGHEST)
         registerTickListener()
     }
 
@@ -171,8 +184,7 @@ class NCPListener : Listener {
         }
 
         //水狗模式,从WaterDog返回真实的延迟
-        if (event.player.address == "127.0.0.1" && !BridgeWaterDog.waterDog_ping)
-            BridgeWaterDog.waterDog_ping = true
+        if (event.player.address == "127.0.0.1" && !BridgeWaterDog.waterDog_ping) BridgeWaterDog.waterDog_ping = true
     }
 
     @EventHandler
@@ -228,6 +240,16 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerOnCommands(event: PlayerCommandPreprocessEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerEatsFood(event: PlayerEatFoodEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerInteracts(event: PlayerInteractEvent) {
         for (listener in listeners) checkEvent(listener, event)
     }
 

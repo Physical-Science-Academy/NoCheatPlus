@@ -27,7 +27,12 @@ protection:
         - "plugins"
         - "version"
         - "about"
+        - "ver"
 checks:
+  inventory:
+    instanteat:
+      active: true
+      actions: "cancel vl>5&&kick vl>20"
   moving:
     survivalfly:
       active: true
