@@ -468,4 +468,8 @@ class MovingData : ICheckData {
         return this.ladderTick
     }
 
+    fun getGroundTick(): Int {
+        return this.groundTick
+    }
+
 }

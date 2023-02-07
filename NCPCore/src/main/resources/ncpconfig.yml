@@ -41,7 +41,7 @@ checks:
       actions: "cancel vl>5&&kick vl>15&&ban repeat=3 time=3,0,0"
     creativefly:
       active: true
-      actions: "cancel vl>20&&kick vl>50"
+      actions: "cancel vl>20"
 
 string:
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
