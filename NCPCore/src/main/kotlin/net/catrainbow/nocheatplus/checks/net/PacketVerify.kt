@@ -51,7 +51,7 @@ class PacketVerify {
             if (packet is LoginPacket) {
                 //fix the crash of PM1E
                 verifyQueue.add(player.name)
-                if (!event.isCancelled) playerLastUpdatePacket[player.name] = System.currentTimeMillis()
+                //if (!event.isCancelled) playerLastUpdatePacket[player.name] = System.currentTimeMillis()
             } else if (packet is TextPacket) {
                 //Unknown TextPacket
                 if (packet.xboxUserId == "0") NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
@@ -87,6 +87,7 @@ class PacketVerify {
         fun popVerifyQueue(playerName: String) {
             val player = NoCheatPlus.instance.server.getPlayer(playerName)
             //Unknown LoginPacket
+            verifyQueue.add(player.name)
             if (player.loginChainData.deviceOS == 1) {
                 val model = player.loginChainData.deviceModel.split(" ")
                 if (model.isNotEmpty()) if (model[0] != model[0].uppercase(Locale.getDefault())) {

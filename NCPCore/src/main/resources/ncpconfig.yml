@@ -17,6 +17,7 @@ logging:
     violation: true
 actions:
   waring_delay: 10
+  kick_broadcast: "§c§lNCP §7>>@player has been kicked for @hack"
 protection:
   command:
     hide:

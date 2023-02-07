@@ -1782,7 +1782,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
      *
      * @return 比例
      */
-    fun handleViolationData(data: MovingData): Double {
+    private fun handleViolationData(data: MovingData): Double {
 
         //默认值
         var baseModify = 0.998

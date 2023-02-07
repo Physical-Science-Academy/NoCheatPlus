@@ -64,6 +64,7 @@ class ActionProcess(
                 val disconnectPacket = DisconnectPacket()
                 disconnectPacket.hideDisconnectionScreen = false
                 disconnectPacket.message = this.formatMessage(ConfigData.string_kick_message)
+                NoCheatPlus.instance.server.broadcastMessage(this.formatMessage(ConfigData.action_kick_broadcast))
                 player.dataPacket(disconnectPacket)
             }
 
@@ -74,6 +75,7 @@ class ActionProcess(
                 val disconnectPacket = DisconnectPacket()
                 disconnectPacket.hideDisconnectionScreen = false
                 disconnectPacket.message = this.formatMessage(ConfigData.string_kick_message)
+                NoCheatPlus.instance.server.broadcastMessage(this.formatMessage(ConfigData.action_kick_broadcast))
                 player.dataPacket(disconnectPacket)
             }
 
@@ -141,12 +143,14 @@ class ActionProcess(
                         this.doBan(data.banAction)
                     }
                 }
+                NoCheatPlus.instance.server.broadcastMessage(this.formatMessage(ConfigData.action_kick_broadcast))
                 player.dataPacket(disconnectPacket)
             }
 
             ActionType.BAN -> {
                 if (ACheckData.getBufferCount(player) >= data.banRepeat) {
                     if (data.enableBan) {
+                        NoCheatPlus.instance.server.broadcastMessage(this.formatMessage(ConfigData.action_kick_broadcast))
                         ACheckData.clear(player)
                         this.doBan(data.banAction)
                     } else return

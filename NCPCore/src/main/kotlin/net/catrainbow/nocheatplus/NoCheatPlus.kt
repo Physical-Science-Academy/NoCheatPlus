@@ -157,7 +157,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun kickPlayer(player: Player, type: CheckType) {
         val data = this.getPlayerProvider(player)
-        ActionFactory(player, data.getViolationData(CheckType.STAFF), ActionType.KICK).build().forceDoAction(0, 0, 0)
+        ActionFactory(player, data.getViolationData(type), ActionType.KICK).build().forceDoAction(0, 0, 0)
     }
 
     override fun banPlayer(player: Player, days: Int, hours: Int, minutes: Int) {

@@ -48,6 +48,7 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.logging_debug = config.getBoolean("logging.debug")
         ConfigData.logging_prefix = config.getString("logging.prefix")
         ConfigData.action_waring_delay = config.getInt("actions.waring_delay")
+        ConfigData.action_kick_broadcast = config.getString("kick_broadcast")
         ConfigData.protection_command_hide_active = config.getBoolean("protection.command.hide.active")
         ConfigData.protection_command_hide_message = config.getString("protection.command.hide.message")
         ConfigData.protection_command_commands = config.getStringList("protection.command.hide.commands") as ArrayList
