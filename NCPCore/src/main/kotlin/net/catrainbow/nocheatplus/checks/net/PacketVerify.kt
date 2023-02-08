@@ -71,7 +71,9 @@ class PacketVerify {
                     playerLastUpdatePacket[player.name] = System.currentTimeMillis()
                     playerAnimatePacketMap[player.name] = 0
                 }
-                if (player.pitch > 90) NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
+                if (player.pitch > 90 && NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.kickPlayer(
+                    player, CheckType.UNKNOWN_PACKET
+                )
             } else if (packet is AnimatePacket) {
                 if (packet.action == AnimatePacket.Action.CRITICAL_HIT) {
                     if (!playerAnimatePacketMap.containsKey(player.name)) playerAnimatePacketMap[player.name] = 1
