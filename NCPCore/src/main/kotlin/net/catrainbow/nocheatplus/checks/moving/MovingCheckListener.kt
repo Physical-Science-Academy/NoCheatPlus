@@ -35,6 +35,7 @@ import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.player.CreativeFly
 import net.catrainbow.nocheatplus.checks.moving.player.MorePackets
+import net.catrainbow.nocheatplus.checks.moving.player.NoFall
 import net.catrainbow.nocheatplus.checks.moving.player.SurvivalFly
 import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.dataPacket
@@ -173,6 +174,7 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
         this.addCheck(SurvivalFly())
         this.addCheck(MorePackets())
         this.addCheck(CreativeFly())
+        this.addCheck(NoFall())
     }
 
 }

@@ -37,6 +37,7 @@ class ActionCom : NCPComponent(), INCPComponent {
         this.loadAction("moving.survivalfly", CheckType.MOVING_SURVIVAL_FLY.name)
         this.loadAction("moving.morepackets", CheckType.MOVING_MORE_PACKETS.name)
         this.loadAction("moving.creativefly", CheckType.MOVING_CREATIVE_FLY.name)
+        this.loadAction("moving.nofall", CheckType.MOVING_NO_FALL.name)
         this.loadAction("inventory.instanteat", CheckType.INVENTORY_INSTANT_EAT.name)
     }
 

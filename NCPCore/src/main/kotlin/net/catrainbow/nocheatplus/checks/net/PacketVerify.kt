@@ -21,6 +21,7 @@ import cn.nukkit.network.protocol.PlayerAuthInputPacket
 import cn.nukkit.network.protocol.TextPacket
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
 import java.util.*
@@ -112,6 +113,9 @@ class PacketVerify {
                     verifyQueue.remove(playerName)
                 }
             }
+            //fix a disabler of NCP
+            val height = LocUtil.getPlayerHeight(player)
+            if (height >= 1) player.teleport(player.add(0.0, 0.3 - height, 0.0))
         }
 
     }

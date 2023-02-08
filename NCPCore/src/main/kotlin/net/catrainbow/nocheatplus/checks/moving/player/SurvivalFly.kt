@@ -220,7 +220,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                                     else data.setFirstGagApple(true)
                                 } else data.setFirstGagApple(false)
                                 if (revertFoodData) {
-                                    if (vData.getPreVL("no_slow") > 3) {
+                                    if (vData.getPreVL("no_slow") >= 3) {
                                         vData.clearPreVL("no_slow")
                                         pData.addViolationToBuffer(
                                             this.typeName, min(abs(speed - Magic.CLIMB_SPEED_AVG) * 100, 2.5)

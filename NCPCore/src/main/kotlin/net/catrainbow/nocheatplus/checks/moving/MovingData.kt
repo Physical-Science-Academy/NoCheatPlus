@@ -99,6 +99,7 @@ class MovingData : ICheckData {
     private var knockBackHurtTick = 100
     private var eatFood = false
     private var eatFoodTick = 0
+    private var fallDist = 0.0
 
     //Timer Clock
     private var timeBalance = System.currentTimeMillis() - 5000L
@@ -121,8 +122,10 @@ class MovingData : ICheckData {
      */
     fun handleMovingData(player: Player, from: Location, to: Location, data: DistanceData) {
         //保证进服出生在虚空不会被误判
-        if (!safeSpawn) if (player.onGround || player.isInLiquid()) this.safeSpawn = true
-        if (voidHurt) if (player.onGround || player.isInLiquid()) this.voidHurt = false
+        if (!safeSpawn) if (player.onGround || player.isInLiquid() || player.gamemode == 1 || player.gamemode == 3) this.safeSpawn =
+            true
+        if (voidHurt) if (player.onGround || player.isInLiquid() || player.gamemode == 1 || player.gamemode == 3) this.voidHurt =
+            false
 
         if (player.gamemode == 1) this.normalGround = player.location
         if (this.knockBackHurtTick < 100) this.knockBackHurtTick++
@@ -178,6 +181,7 @@ class MovingData : ICheckData {
         this.motionX = to.x - from.x
         this.motionY = to.y - from.y
         this.motionZ = to.z - from.z
+        this.fallDist = player.fallDistance.toDouble()
         this.inAirTick = player.inAirTicks
         if (this.motionY == 0.0 && this.sinceLastYChange < 50) this.sinceLastYChange++ else this.sinceLastYChange = 0
         this.speed = to.distance(from)
@@ -526,6 +530,10 @@ class MovingData : ICheckData {
 
     fun getFoodTracker(): EatPacketTracker? {
         return this.foodTracker
+    }
+
+    fun getFallDist(): Double {
+        return this.fallDist
     }
 
 }

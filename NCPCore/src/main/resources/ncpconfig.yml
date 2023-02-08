@@ -48,6 +48,15 @@ checks:
     creativefly:
       active: true
       actions: "cancel vl>20"
+    nofall:
+      active: true
+      dealdamage: true
+      skipallowflight: true
+      resetonviolation: false
+      resetonteleport: false
+      resetonvehicle: true
+      anticriticals: true
+      actions: "cancel vl>5&&log vl>10&&kick vl>20"
 
 string:
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
