@@ -28,6 +28,7 @@ import net.catrainbow.nocheatplus.checks.moving.model.*
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInWeb
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onClimbedBlock
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onGround
 import net.catrainbow.nocheatplus.compat.nukkit.FoodData118
 import net.catrainbow.nocheatplus.components.data.ICheckData
 import kotlin.math.abs
@@ -122,9 +123,10 @@ class MovingData : ICheckData {
      */
     fun handleMovingData(player: Player, from: Location, to: Location, data: DistanceData) {
         //保证进服出生在虚空不会被误判
-        if (!safeSpawn) if (player.onGround || player.isInLiquid() || player.gamemode == 1 || player.gamemode == 3) this.safeSpawn =
+        val serverOnGround = player.location.onGround()
+        if (!safeSpawn) if (this.lastSpeed != 0.0 || serverOnGround || player.onGround || player.isInLiquid() || player.gamemode == 1 || player.gamemode == 3) this.safeSpawn =
             true
-        if (voidHurt) if (player.onGround || player.isInLiquid() || player.gamemode == 1 || player.gamemode == 3) this.voidHurt =
+        if (voidHurt) if (this.lastSpeed != 0.0 || serverOnGround || player.onGround || player.isInLiquid() || player.gamemode == 1 || player.gamemode == 3) this.voidHurt =
             false
 
         if (player.gamemode == 1) this.normalGround = player.location
@@ -242,8 +244,7 @@ class MovingData : ICheckData {
             this.eatFoodTick = 0
             this.foodTracker!!.kill()
         }
-        if (System.currentTimeMillis() - this.lastConsumeFood > 100 && this.firstGagApple)
-            this.firstGagApple = false
+        if (System.currentTimeMillis() - this.lastConsumeFood > 100 && this.firstGagApple) this.firstGagApple = false
     }
 
     fun getLiquidTick(): Int {
