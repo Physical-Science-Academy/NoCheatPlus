@@ -15,6 +15,7 @@ package net.catrainbow.nocheatplus.checks.net
 
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.network.protocol.AnimatePacket
+import cn.nukkit.network.protocol.InventoryTransactionPacket
 import cn.nukkit.network.protocol.LoginPacket
 import cn.nukkit.network.protocol.MovePlayerPacket
 import cn.nukkit.network.protocol.PlayerAuthInputPacket
@@ -82,6 +83,15 @@ class PacketVerify {
                     //flood animate packets try to crash the server
                     if (playerAnimatePacketMap[player.name]!! >= 50) event.setCancelled()
                     NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
+                }
+            } else if (packet is InventoryTransactionPacket) {
+                if ((packet.transactionType == InventoryTransactionPacket.TYPE_USE_ITEM_ON_ENTITY || packet.transactionType == InventoryTransactionPacket.USE_ITEM_ON_ENTITY_ACTION_ATTACK) && packet.transactionType == 1 && NoCheatPlus.instance.hasPlayer(
+                        player
+                    )
+                ) {
+                    if (!NoCheatPlus.instance.getPlayerProvider(player).movingData.isLive()) NoCheatPlus.instance.kickPlayer(
+                        player, CheckType.UNKNOWN_PACKET
+                    )
                 }
             }
 
