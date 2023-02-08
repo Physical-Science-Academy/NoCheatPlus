@@ -85,6 +85,11 @@ class NoFall : Check("checks.moving.nofall", CheckType.MOVING_NO_FALL) {
         val fallDist = data.getFallDist()
         val maxD = this.getDamage(fallDist)
 
+        if (fromOnGround && toOnGround) {
+            if (maxD != 0) {
+                
+            }
+        }
 
     }
 
