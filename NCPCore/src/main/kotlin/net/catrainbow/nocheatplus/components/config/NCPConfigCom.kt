@@ -60,6 +60,12 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.check_survival_fly_set_back_void_to_void =
             config.getBoolean("checks.moving.survivalfly.setback_policy.void_to_void")
         ConfigData.check_survival_fly_strict_mode = config.getBoolean("checks.moving.survivalfly.strict_mode")
+        ConfigData.check_no_fall_deal_damage = config.getBoolean("checks.moving.nofall.dealdamage")
+        ConfigData.check_no_fall_skip_allow_flight = config.getBoolean("checks.moving.nofall.skipallowflight")
+        ConfigData.check_no_fall_reset_violation = config.getBoolean("checks.moving.nofall.resetonviolation")
+        ConfigData.check_no_fall_reset_on_teleport = config.getBoolean("checks.moving.nofall.resetonteleport")
+        ConfigData.check_no_fall_reset_vehicle = config.getBoolean("checks.moving.nofall.resetonvehicle")
+        ConfigData.check_no_fall_anti_critical = config.getBoolean("checks.moving.nofall.anticriticals")
     }
 
 }

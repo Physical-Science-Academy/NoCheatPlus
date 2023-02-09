@@ -29,6 +29,7 @@ import cn.nukkit.event.player.PlayerJumpEvent
 import cn.nukkit.event.player.PlayerMoveEvent
 import cn.nukkit.event.player.PlayerQuitEvent
 import cn.nukkit.event.player.PlayerRespawnEvent
+import cn.nukkit.event.player.PlayerTeleportEvent
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.network.protocol.DisconnectPacket
 import cn.nukkit.plugin.Plugin
@@ -252,6 +253,11 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerEatsFood(event: PlayerEatFoodEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerTeleports(event: PlayerTeleportEvent) {
         for (listener in listeners) checkEvent(listener, event)
     }
 

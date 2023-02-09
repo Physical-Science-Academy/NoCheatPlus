@@ -13,14 +13,18 @@
  */
 package net.catrainbow.nocheatplus.checks.moving.player
 
+import cn.nukkit.AdventureSettings
 import cn.nukkit.Player
+import cn.nukkit.event.entity.EntityDamageEvent
 import cn.nukkit.level.Location
+import cn.nukkit.potion.Effect
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.MovingData
 import net.catrainbow.nocheatplus.checks.moving.magic.Magic
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onGround
+import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import net.catrainbow.nocheatplus.players.IPlayerData
@@ -41,6 +45,7 @@ class NoFall : Check("checks.moving.nofall", CheckType.MOVING_NO_FALL) {
         if (!data.isSafeSpawn() || !data.isLive()) return
         if (data.getRespawnTick() > 0) return
         if (player.riding != null) return
+        if (player.isSleeping) return
         if (data.isVoidHurt()) return
         val packet = event.packet
         if (packet is WrapperInputPacket) {
@@ -49,8 +54,7 @@ class NoFall : Check("checks.moving.nofall", CheckType.MOVING_NO_FALL) {
                 val toOnGround = packet.to.add(0.0, -0.3, 0.0).onGround()
                 val now = System.currentTimeMillis()
                 this.handleOnGround(
-                    now, player, packet.from, packet.to, fromOnGround, toOnGround, data.getMotionY(), data,
-                    pData
+                    now, player, packet.from, packet.to, fromOnGround, toOnGround, data.getMotionY(), data, pData
                 )
             }
         }
@@ -84,13 +88,55 @@ class NoFall : Check("checks.moving.nofall", CheckType.MOVING_NO_FALL) {
         // Damage to be dealt
         val fallDist = data.getFallDist()
         val maxD = this.getDamage(fallDist)
-
-        if (fromOnGround && toOnGround) {
-            if (maxD != 0.0) {
-
-            }
+        val vData = pData.getViolationData(this.typeName)
+        if (from.distance(to) == 0.0) return
+        if (ConfigData.check_no_fall_skip_allow_flight && player.adventureSettings.get(AdventureSettings.Type.ALLOW_FLIGHT)) return
+        if ((ConfigData.check_no_fall_reset_vehicle && player.riding != null) || (ConfigData.check_no_fall_reset_on_teleport && now - data.getLastTeleport() < 800)) {
+            vData.preVL(0.0)
+            return
         }
 
+        if (fromOnGround && toOnGround && maxD > Magic.FALL_DAMAGE_MINIMUM) {
+            val deltaHealth = player.health - data.getLastHealth()
+
+            //如果生命值没有变化,则判为NoFall
+            if (deltaHealth == 0.0) {
+                val correction = this.getApplicableFallHeight(player, data)
+                if (correction > 0.0 || now - data.getLastJump() < 800 || yDistance < 0.0) {
+                    if (ConfigData.check_no_fall_deal_damage) this.dealFallDamage(player, data, maxD)
+                    if (ConfigData.check_no_fall_reset_violation) {
+                        vData.preVL(0.0)
+                        vData.setCancel()
+                    }
+                    vData.addVL(max(0.0, player.fallDistance - Magic.FALL_DAMAGE_DIST))
+                }
+            }
+
+            player.resetFallDistance()
+            vData.preVL(0.998)
+        }
+
+    }
+
+    /**
+     * 修正误差
+     *
+     * @param player
+     * @param data
+     *
+     * @return damage
+     */
+    private fun getApplicableFallHeight(player: Player, data: MovingData): Double {
+        val yDistance = max(data.getMotionY() - player.fallDistance, 0.0)
+
+        //兼容回弹不误判
+        //兼容Jump Boost的motion不误判
+        if (yDistance > 0.0 && player.hasEffect(Effect.JUMP_BOOST)) if (player.getEffect(Effect.JUMP_BOOST).amplifier > 0) {
+            val correction = if (data.getLastMotionY() > 0.0) max(yDistance - data.getLastMotionY(), 0.0)
+            else yDistance
+            if (correction > 0.0) return max(player.fallDistance - correction, 0.0)
+        }
+        return yDistance
     }
 
     /**
@@ -100,6 +146,23 @@ class NoFall : Check("checks.moving.nofall", CheckType.MOVING_NO_FALL) {
      */
     private fun getDamage(fallDistance: Double): Double {
         return max(fallDistance - Magic.FALL_DAMAGE_DIST, 0.0)
+    }
+
+    /**
+     * 回弹伤害
+     *
+     * @param player
+     * @param damage
+     * @param data
+     */
+    private fun dealFallDamage(player: Player, data: MovingData, damage: Double) {
+        val event = EntityDamageEvent(player, EntityDamageEvent.DamageCause.FALL, damage.toFloat())
+        NoCheatPlus.instance.server.pluginManager.callEvent(event)
+        if (event.isCancelled) {
+            //重置血量
+            data.setLastHealth(player.health)
+        }
+        player.resetFallDistance()
     }
 
 }

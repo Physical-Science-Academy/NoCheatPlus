@@ -40,6 +40,12 @@ class ConfigData : IConfigData {
         var check_survival_fly_set_back_fall_damage = false
         var check_survival_fly_set_back_void_to_void = false
         var check_survival_fly_strict_mode = false
+        var check_no_fall_deal_damage = true
+        var check_no_fall_skip_allow_flight = true
+        var check_no_fall_reset_violation = false
+        var check_no_fall_reset_on_teleport = false
+        var check_no_fall_reset_vehicle = true
+        var check_no_fall_anti_critical = true
     }
 
 }

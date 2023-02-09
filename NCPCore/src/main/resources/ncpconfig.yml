@@ -53,9 +53,8 @@ checks:
       dealdamage: true
       skipallowflight: true
       resetonviolation: false
-      resetonteleport: false
+      resetonteleport: true
       resetonvehicle: true
-      anticriticals: true
       actions: "cancel vl>5&&log vl>10&&kick vl>20"
 
 string:

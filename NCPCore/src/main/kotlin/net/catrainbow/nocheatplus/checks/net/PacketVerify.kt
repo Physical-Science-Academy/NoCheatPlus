@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.checks.net
 
 import cn.nukkit.event.server.DataPacketReceiveEvent
+import cn.nukkit.item.Item
 import cn.nukkit.network.protocol.AnimatePacket
 import cn.nukkit.network.protocol.InventoryTransactionPacket
 import cn.nukkit.network.protocol.LoginPacket
@@ -75,6 +76,15 @@ class PacketVerify {
                 if (player.pitch > 90 && NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.kickPlayer(
                     player, CheckType.UNKNOWN_PACKET
                 )
+                if (player.isGliding && NoCheatPlus.instance.hasPlayer(player)) {
+                    if (player.inventory.getArmorItem(1) != null) {
+                        if (player.inventory.getArmorItem(1).id != Item.ELYTRA) NoCheatPlus.instance.kickPlayer(
+                            player, CheckType.UNKNOWN_PACKET
+                        )
+                    } else NoCheatPlus.instance.kickPlayer(
+                        player, CheckType.UNKNOWN_PACKET
+                    )
+                }
             } else if (packet is AnimatePacket) {
                 if (packet.action == AnimatePacket.Action.CRITICAL_HIT) {
                     if (!playerAnimatePacketMap.containsKey(player.name)) playerAnimatePacketMap[player.name] = 1

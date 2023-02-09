@@ -23,6 +23,7 @@ import cn.nukkit.event.player.PlayerEatFoodEvent
 import cn.nukkit.event.player.PlayerGameModeChangeEvent
 import cn.nukkit.event.player.PlayerInteractEvent
 import cn.nukkit.event.player.PlayerRespawnEvent
+import cn.nukkit.event.player.PlayerTeleportEvent
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.item.Item
 import cn.nukkit.network.protocol.EntityEventPacket
@@ -167,6 +168,9 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
             if (FoodData118.isFood(player.inventory.itemInHand.id))
                 if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR || event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
                     NoCheatPlus.instance.getPlayerProvider(player).movingData.consumeFoodInteract()
+        } else if (event is PlayerTeleportEvent) {
+            val data = NoCheatPlus.instance.getPlayerProvider(event.player)
+            data.movingData.setTeleport()
         }
     }
 

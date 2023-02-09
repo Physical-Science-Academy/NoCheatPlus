@@ -68,7 +68,9 @@ class MovingData : ICheckData {
     private var lastGlideBooster = System.currentTimeMillis()
     private var lastConsumeFood = System.currentTimeMillis()
     private var beforeLastConsumeFood = System.currentTimeMillis()
+    private var lastTeleport = System.currentTimeMillis()
     private var firstGagApple = false
+    private var lastHealth = 0.0
 
     /**
      * Current Moving Data
@@ -245,6 +247,7 @@ class MovingData : ICheckData {
             this.foodTracker!!.kill()
         }
         if (System.currentTimeMillis() - this.lastConsumeFood > 100 && this.firstGagApple) this.firstGagApple = false
+        this.lastHealth = player.health.toDouble()
     }
 
     fun getLiquidTick(): Int {
@@ -529,8 +532,24 @@ class MovingData : ICheckData {
         this.eatFood = boolean
     }
 
+    fun getLastHealth(): Double {
+        return this.lastHealth
+    }
+
+    fun setLastHealth(health: Float) {
+        this.lastHealth = health.toDouble()
+    }
+
     fun getFoodTracker(): EatPacketTracker? {
         return this.foodTracker
+    }
+
+    fun getLastTeleport(): Long {
+        return this.lastTeleport
+    }
+
+    fun setTeleport() {
+        this.lastTeleport = System.currentTimeMillis()
     }
 
     fun getFallDist(): Double {
