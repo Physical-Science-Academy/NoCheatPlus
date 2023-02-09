@@ -56,6 +56,9 @@ checks:
       resetonteleport: true
       resetonvehicle: true
       actions: "cancel vl>5&&log vl>10&&kick vl>20"
+    vehicle:
+      active: true
+      actions: "cancel vl>10&&kick vl>50&&ban repeat=3 time=3,0,0"
 
 string:
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
