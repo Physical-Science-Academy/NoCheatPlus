@@ -35,6 +35,7 @@ import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.magic.Magic
 import net.catrainbow.nocheatplus.checks.moving.magic.MagicLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.getRealPing
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onGround
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onIce
@@ -351,8 +352,9 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                 val average = tracker.getAverage()
                 if (maxCount > this.countMaxMovementPacket(data) || shortCount > this.countMaxMovementPacket(data)) {
                     //产生先允许后拉回的延迟效果,以减少误判
-                    //此检测可能存在误判,待考证
-                    if (average > (this.countMaxMovementPacket(data) + 2)) {
+                    //此检测可能存在误判,待考证: 高延迟的时候会误判
+                    //真实延迟<100不检查
+                    if (average > (this.countMaxMovementPacket(data) + 2) && player.getRealPing() < 100) {
                         if (!data.isBalance()) {
                             //重置计算,避免反复拉回
                             tracker.resetSum()
@@ -386,6 +388,22 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             for (tag in this.tags) builder.append(" ").append(tag)
             player.sendPopup(builder.toString())
         }
+
+        //延迟增益
+        //一个粗模拟的数学模型,待优化
+        val lagBalance = abs(1000 - player.getRealPing())
+        val tpsBalance =
+            if (NoCheatPlus.instance.server.ticksPerSecond == 20.0F) 1.0 else (20 - NoCheatPlus.instance.server.ticksPerSecond) * lagBalance / 500.0
+        val playerCount = NoCheatPlus.instance.server.onlinePlayers.size
+        val angle = acos(data.getMotionY() * data.getSpeed())
+        val accBalance = max(0.0, Magic.TINY_GRAVITY - data.getAcc()) * angle
+        val delay = abs((1.0 - (playerCount / lagBalance)).pow(2.0) * tpsBalance * lagBalance)
+        val mathPing = abs(log(accBalance, delay))
+        if (mathPing > 90.0) {
+            if (debug) player.sendMessage("catch lag++ reset violations")
+            pData.getViolationData(this.typeName).setCancel()
+        }
+
 
         if (!pData.getViolationData(typeName)
                 .isCheat() && fromOnGround && toOnGround
@@ -1788,12 +1806,9 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         var baseModify = 0.998
 
         //特殊情况不同衰减
-        if (data.getIceTick() > 10)
-            baseModify = 0.982
-        else if (data.getWebTick() > 10)
-            baseModify = 0.999
-        else if (data.getLiquidTick() > 10)
-            baseModify = 0.978
+        if (data.getIceTick() > 10) baseModify = 0.982
+        else if (data.getWebTick() > 10) baseModify = 0.999
+        else if (data.getLiquidTick() > 10) baseModify = 0.978
 
         return baseModify
     }

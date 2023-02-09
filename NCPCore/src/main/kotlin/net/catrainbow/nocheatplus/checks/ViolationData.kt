@@ -84,6 +84,7 @@ class ViolationData(type: CheckType, private val player: Player) {
         }
         this.clearBuffer()
         this.executeAction()
+        this.willCancel = false
     }
 
     fun setLagBack(loc: Location) {
