@@ -74,6 +74,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (data.getRespawnTick() > 0) return
         if (player.riding != null) return
         if (ConfigData.check_survival_fly_set_back_void_to_void && data.isVoidHurt()) return
+        if (player.getRealPing() > ConfigData.check_survival_fly_latency_protection) return
         when (val packet = event.packet) {
             is WrapperEatFoodPacket -> data.setEatFood(!packet.eat)
             is WrapperInputPacket -> this.checkPlayerFly(
