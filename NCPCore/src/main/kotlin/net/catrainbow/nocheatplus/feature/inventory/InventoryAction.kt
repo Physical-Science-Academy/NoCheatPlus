@@ -20,9 +20,6 @@ package net.catrainbow.nocheatplus.feature.inventory
  */
 enum class InventoryAction {
 
-    OPEN,
-    CLOSED,
-    CLICK,
-    UNKNOWN;
+    OPEN, CLOSED, CLICK, UNKNOWN;
 
 }

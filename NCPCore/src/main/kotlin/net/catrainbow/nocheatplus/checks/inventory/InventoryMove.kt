@@ -36,10 +36,15 @@ class InventoryMove : Check("checks.inventory.move", CheckType.INVENTORY_MOVE) {
             val pData = vData.getViolationData(this.typeName)
             //检测背包状态
             if (!(event.packet as WrapperInputPacket).serverOnGround) return
+            if (!player.onGround) return
             if (player.riding != null) return
+            if (moveData.isJump()) return
+            if ((event.packet as WrapperInputPacket).to.y != (event.packet as WrapperInputPacket).from.y) return
 
             val speed = moveData.getSpeed()
-            if (data.getToggleInventory()) if (speed >= 0.2) {
+            val verticalSpeed =
+                (event.packet as WrapperInputPacket).from.distanceSquared((event.packet as WrapperInputPacket).to)
+            if (data.getToggleInventory() && data.getToggleInventoryTick() > 20) if (speed >= 0.25 && verticalSpeed > 0.23 && player.inAirTicks == 0) {
                 pData.addVL((speed - 0.2) * 10.0)
                 player.setback(moveData.getLastNormalGround(), this.typeName)
             }

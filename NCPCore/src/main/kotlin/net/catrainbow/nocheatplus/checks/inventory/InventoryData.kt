@@ -26,9 +26,12 @@ class InventoryData : ICheckData {
     private var eat = false
     private var lastEat = false
     private var toggleInventory = false
+    private var lastClicked = System.currentTimeMillis()
+    private var toggleInventoryTick = 0
 
     fun onUpdate() {
         if (eat) this.eatFoodTick++
+        if (this.toggleInventory) this.toggleInventoryTick++ else this.toggleInventoryTick = 0
 
         this.lastEat = eat
     }
@@ -59,6 +62,18 @@ class InventoryData : ICheckData {
 
     fun getToggleInventory(): Boolean {
         return this.toggleInventory
+    }
+
+    fun onClicked() {
+        this.lastClicked = System.currentTimeMillis()
+    }
+
+    fun getToggleInventoryTick(): Int {
+        return this.toggleInventoryTick
+    }
+
+    fun getLastClicked(): Long {
+        return this.lastClicked
     }
 
     fun getLastEating(): Boolean {

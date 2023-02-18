@@ -47,6 +47,7 @@ class ConfigData : IConfigData {
         var check_no_fall_reset_on_teleport = false
         var check_no_fall_reset_vehicle = true
         var check_no_fall_anti_critical = true
+        var check_inventory_fast_click_delay = 50L
     }
 
 }

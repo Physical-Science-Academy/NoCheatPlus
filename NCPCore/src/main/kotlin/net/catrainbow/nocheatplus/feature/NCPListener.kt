@@ -19,7 +19,9 @@ import cn.nukkit.event.EventPriority
 import cn.nukkit.event.Listener
 import cn.nukkit.event.block.BlockPlaceEvent
 import cn.nukkit.event.entity.EntityDamageEvent
-import cn.nukkit.event.inventory.InventoryEvent
+import cn.nukkit.event.inventory.InventoryClickEvent
+import cn.nukkit.event.inventory.InventoryCloseEvent
+import cn.nukkit.event.inventory.InventoryOpenEvent
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent
 import cn.nukkit.event.player.PlayerDeathEvent
 import cn.nukkit.event.player.PlayerEatFoodEvent
@@ -171,8 +173,24 @@ class NCPListener : Listener {
         registerEvent(
             this,
             NoCheatPlus.instance,
-            InventoryEvent::class.java,
+            InventoryOpenEvent::class.java,
             { playerTogglesInventory(it) },
+            true,
+            EventPriority.HIGHEST
+        )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            InventoryCloseEvent::class.java,
+            { playerClosesInventory(it) },
+            true,
+            EventPriority.HIGHEST
+        )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            InventoryClickEvent::class.java,
+            { playerClicksInventory(it) },
             true,
             EventPriority.HIGHEST
         )
@@ -275,7 +293,17 @@ class NCPListener : Listener {
     }
 
     @EventHandler
-    private fun playerTogglesInventory(event: InventoryEvent) {
+    private fun playerTogglesInventory(event: InventoryOpenEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerClosesInventory(event: InventoryCloseEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerClicksInventory(event: InventoryClickEvent) {
         for (listener in listeners) checkEvent(listener, event)
     }
 

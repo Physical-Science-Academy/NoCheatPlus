@@ -48,6 +48,7 @@ class InventoryListener : CheckListener(CheckType.INVENTORY) {
                 when (packet.type) {
                     InventoryAction.OPEN -> data.onOpen()
                     InventoryAction.CLOSED -> data.onClosed()
+                    InventoryAction.CLICK -> data.onClicked()
                     else -> data.onClosed()
                 }
             }
