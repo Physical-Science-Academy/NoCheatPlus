@@ -34,6 +34,12 @@ checks:
     instanteat:
       active: true
       actions: "cancel vl>5&&kick vl>20"
+    move:
+      active: true
+      actions: "cancel vl>0&&kick vl>3"
+    open:
+      active: true
+      actions: "cancel vl>0"
   moving:
     survivalfly:
       active: true

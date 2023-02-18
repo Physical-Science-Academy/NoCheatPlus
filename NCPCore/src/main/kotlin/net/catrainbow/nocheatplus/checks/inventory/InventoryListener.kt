@@ -13,11 +13,19 @@
  */
 package net.catrainbow.nocheatplus.checks.inventory
 
+import cn.nukkit.Player
 import cn.nukkit.event.Event
+import cn.nukkit.event.inventory.InventoryClickEvent
+import cn.nukkit.event.inventory.InventoryCloseEvent
+import cn.nukkit.event.inventory.InventoryEvent
+import cn.nukkit.event.inventory.InventoryOpenEvent
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.dataPacket
+import net.catrainbow.nocheatplus.feature.inventory.InventoryAction
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperEatFoodPacket
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperInventoryPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 
 /**
@@ -36,13 +44,49 @@ class InventoryListener : CheckListener(CheckType.INVENTORY) {
                 if (!data.isEating() && packet.eat) {
                     data.setEating(true)
                 } else data.setEating(false)
+            } else if (packet is WrapperInventoryPacket) {
+                when (packet.type) {
+                    InventoryAction.OPEN -> data.onOpen()
+                    InventoryAction.CLOSED -> data.onClosed()
+                    else -> data.onClosed()
+                }
             }
             data.onUpdate()
+        } else if (event is InventoryEvent) {
+            var player: Player? = null
+            val action = when (event) {
+                is InventoryClickEvent -> {
+                    player = event.player
+                    InventoryAction.CLICK
+                }
+                is InventoryOpenEvent -> {
+                    player = event.player
+                    InventoryAction.OPEN
+                }
+                is InventoryCloseEvent -> {
+                    player = event.player
+                    InventoryAction.CLOSED
+                }
+                else -> InventoryAction.UNKNOWN
+            }
+            if (player != null) {
+                val packet = WrapperInventoryPacket(player)
+                packet.player = player
+                packet.time = System.currentTimeMillis()
+                packet.type = action
+                val callEvent = WrapperPacketEvent()
+                callEvent.player = packet.player
+                callEvent.packet = packet
+                dataPacket(callEvent)
+            }
+
         }
     }
 
     init {
         this.addCheck(InstantEat())
+        this.addCheck(InventoryMove())
+        this.addCheck(Open())
     }
 
 }

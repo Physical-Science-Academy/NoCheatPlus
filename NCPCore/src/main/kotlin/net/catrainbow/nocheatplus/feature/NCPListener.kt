@@ -19,6 +19,7 @@ import cn.nukkit.event.EventPriority
 import cn.nukkit.event.Listener
 import cn.nukkit.event.block.BlockPlaceEvent
 import cn.nukkit.event.entity.EntityDamageEvent
+import cn.nukkit.event.inventory.InventoryEvent
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent
 import cn.nukkit.event.player.PlayerDeathEvent
 import cn.nukkit.event.player.PlayerEatFoodEvent
@@ -159,6 +160,22 @@ class NCPListener : Listener {
         registerEvent(this, NoCheatPlus.instance, PlayerInteractEvent::class.java, {
             playerInteracts(it)
         }, true, EventPriority.HIGHEST)
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            PlayerTeleportEvent::class.java,
+            { playerTeleports(it) },
+            true,
+            EventPriority.HIGHEST
+        )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            InventoryEvent::class.java,
+            { playerTogglesInventory(it) },
+            true,
+            EventPriority.HIGHEST
+        )
         registerTickListener()
     }
 
@@ -254,6 +271,11 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerEatsFood(event: PlayerEatFoodEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerTogglesInventory(event: InventoryEvent) {
         for (listener in listeners) checkEvent(listener, event)
     }
 

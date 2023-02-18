@@ -25,6 +25,7 @@ class InventoryData : ICheckData {
     private var eatFoodTick = 0
     private var eat = false
     private var lastEat = false
+    private var toggleInventory = false
 
     fun onUpdate() {
         if (eat) this.eatFoodTick++
@@ -46,6 +47,18 @@ class InventoryData : ICheckData {
 
     fun setEating(boolean: Boolean) {
         this.eat = boolean
+    }
+
+    fun onOpen() {
+        this.toggleInventory = true
+    }
+
+    fun onClosed() {
+        this.toggleInventory = false
+    }
+
+    fun getToggleInventory(): Boolean {
+        return this.toggleInventory
     }
 
     fun getLastEating(): Boolean {

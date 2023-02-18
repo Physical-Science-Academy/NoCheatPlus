@@ -40,6 +40,8 @@ class ActionCom : NCPComponent(), INCPComponent {
         this.loadAction("moving.nofall", CheckType.MOVING_NO_FALL.name)
         this.loadAction("moving.vehicle", CheckType.MOVING_VEHICLE.name)
         this.loadAction("inventory.instanteat", CheckType.INVENTORY_INSTANT_EAT.name)
+        this.loadAction("inventory.move", CheckType.INVENTORY_MOVE.name)
+        this.loadAction("inventory.open", CheckType.INVENTORY_OPEN.name)
     }
 
     private fun loadAction(path: String, type: String) {
