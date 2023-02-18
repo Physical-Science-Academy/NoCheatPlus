@@ -28,6 +28,8 @@
 - [20%] Speed
 - [√] FastEat
 - [50%] NoSlow 
+- [√] InventoryMove
+- [√] InventoryFastClick
 - [ ] NoFall
 - [ ] Velocity
 - [ ] Phase
@@ -101,6 +103,16 @@ checks:
     instanteat:
       active: true
       actions: "cancel vl>5&&kick vl>20"
+    move:
+      active: true
+      actions: "cancel vl>0&&kick vl>3"
+    open:
+      active: true
+      actions: "cancel vl>0"
+    fastclick:
+      active: true
+      delay: 50
+      actions: "cancel vl>5&&kick vl>20"
   moving:
     survivalfly:
       active: true
@@ -108,6 +120,7 @@ checks:
       setback_policy:
         fall_damage: true
         void_to_void: true
+        latency_protection: 120
       actions: "cancel vl>20&&log vl>30 break=60&&warn vl>90 message=fly_short&&kick vl>100&&ban repeat=3 time=3,0,0"
     morepackets:
       active: true
@@ -115,6 +128,17 @@ checks:
     creativefly:
       active: true
       actions: "cancel vl>20"
+    nofall:
+      active: true
+      dealdamage: true
+      skipallowflight: true
+      resetonviolation: false
+      resetonteleport: true
+      resetonvehicle: true
+      actions: "cancel vl>5&&log vl>10&&kick vl>20"
+    vehicle:
+      active: true
+      actions: "cancel vl>10&&kick vl>50&&ban repeat=3 time=3,0,0"
 
 string:
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
@@ -124,8 +148,12 @@ string:
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
   policy:
-    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle"
+    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle,permission"
     - "nocheatplus.admin.helper:kick,ban,unban"
+  bypass:
+    # Custom bypass permission
+    MOVING_CREATIVE_FLY:
+      - "ncp.creativefly.bypass"
 ~~~
 
 ### Custom Action System
