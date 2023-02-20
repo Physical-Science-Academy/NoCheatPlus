@@ -62,7 +62,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
     // Tags
     private val tags: ArrayList<String> = ArrayList()
 
-    //bunny jump
+    // Bunny jump
     private var bunnyHop = 0
 
     override fun onCheck(event: WrapperPacketEvent) {
@@ -117,7 +117,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         val toOnGround = to.add(0.0, -0.5, 0.0).levelBlock.id != 0 && LocUtil.getUnderBlock(player).id != 0
         var sprinting = false
 
-        //检测玩家疾跑状态改变时的运动情况
+        // Detects the movement of the player when the sprint state changes
         if (data.getLoseSprintCount() > 0) {
             if (toOnGround && (fromOnGround || yDistance < Magic.WALK_SPEED)) {
                 sprinting = data.getLoseSprintCount() < 3
@@ -134,7 +134,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         this.setNextFriction(from, to, data)
         data.getGhostBlockChecker().run()
 
-        //幽灵方块追踪器
+        // Ghost Cube Tracker
         var lagGhostBlock = false
         if (data.getGhostBlockChecker().isLive()) {
             val vDistGhost = this.vDistGhostBlock(data.getGhostBlockChecker())
@@ -148,7 +148,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
 
         if (player.foodData.level <= 6) this.tags.add("hunger")
 
-        //处理台阶和板砖的特判问题
+        // Dealing with steps and slabs of special awards
         val downB1 = player.add(0.0, -0.25, 0.0).levelBlock
         val downB2 = player.add(0.0, -1.0, 0.0).levelBlock
         if (downB1 is BlockStairs || downB1 is BlockSlab || downB2 is BlockStairs || downB2 is BlockSlab) this.tags.add(
@@ -283,7 +283,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                             pData.addViolationToBuffer(typeName, vDistVertical[0] - vDistVertical[1])
                         }
                     } else {
-                        //解决空中攀升问题
+                        // Solving air climbing problems
                         val hasMotion = this.tags.contains("ground_walk") && !this.tags.contains("same_at")
                         if (hasMotion && !revertBuffer) {
                             val vLimitedH = this.setAllowedHDist(
@@ -338,7 +338,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             }
         }
 
-        //滞空时长
+        // Lag time
         if (data.getFullAirTick() > 7) {
             data.setFullAirTick(0)
             pData.addViolationToBuffer(typeName, (data.getFullAirTick() * 1.3))
@@ -876,7 +876,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (data.getMovementTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
         if (now - data.getLastJump() <= 100) {
 
-            //冰块单独判断
+            // Ice is judged separately
             if (data.getIceTick() >= 2) {
                 this.tags.add("ice_ground")
                 allowDistance = 0.0
@@ -884,14 +884,14 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                 if (data.getSpeedTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
                 if (!data.getSpeedTracker()!!.isLive()) {
                     allowDistance = data.getSpeedTracker()!!.getMaxSpeed()
-                    //重新使追踪器跳动,进行下一次追踪
+                    // Rerun the tracker for the next tracking
                     data.getSpeedTracker()!!.run()
-                    //头顶跳加速单独考虑
+                    // Overhead jump acceleration is considered separately
                     val headB1 = player.add(0.0, 1.75, 0.0).levelBlock
                     val headB2 = player.add(0.0, 2.0, 0.0).levelBlock
                     limitDistance = if (headB1.id == 0 && headB2.id == 0) Magic.BUNNY_ICE_GROUND_DEFAULT
                     else Magic.BUNNY_ICE_GROUND_DEFAULT + Magic.BUNNY_UP_BLOCK_ADDITION
-                    //处理缓慢情况
+                    // Slow processing situation
                     if (this.tags.contains("hunger")) limitDistance = Double.MAX_VALUE
                 }
                 if (allowDistance > limitDistance) if (ConfigData.logging_debug) player.sendMessage("ice bunny $allowDistance/$limitDistance")

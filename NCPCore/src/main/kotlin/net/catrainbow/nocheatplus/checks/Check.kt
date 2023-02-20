@@ -28,9 +28,9 @@ abstract class Check(override val baseName: String, override val typeName: Check
     NCPComponent() {
 
     /**
-     * 入口方法
+     * Entry Method
      *
-     * 检测将从这里进行
+     * Testing will be done from here
      * @link WrapperPacketEvent
      */
     override fun onCheck(event: WrapperPacketEvent) {

@@ -19,9 +19,9 @@ import cn.nukkit.math.Vector3
 import kotlin.properties.Delegates
 
 /**
- * 玩家输入数据包
+ * Player input data package
  *
- * 每tick检测一次
+ * Detected once per tick
  */
 class WrapperInputPacket(player: Player) : WrapperPacket(player) {
 

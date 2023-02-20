@@ -28,7 +28,7 @@ import java.util.*
  */
 object NCPTimeTool {
 
-    fun canUnBan(nowTime: LocalDateTime, newTime: LocalDateTime?): Boolean {
+    fun canUnban(nowTime: LocalDateTime, newTime: LocalDateTime?): Boolean {
         return nowTime.isAfter(newTime)
     }
 

@@ -43,19 +43,24 @@ class NCPTickTask : Task() {
         val wrapperInputPacket = WrapperInputPacket(player)
         wrapperInputPacket.clientOnGround = player.onGround
         wrapperInputPacket.serverOnGround = LocUtil.getUnderBlock(player).id != 0
+
         if (!NoCheatPlus.instance.hasPlayer(player)) return
+
         val data = NoCheatPlus.instance.getPlayerProvider(player)
+
         wrapperInputPacket.from = data.from
         wrapperInputPacket.to = player.location
         wrapperInputPacket.position = Position.fromObject(wrapperInputPacket.to)
         wrapperInputPacket.motion =
             Vector3(data.movingData.getMotionX(), data.movingData.getMotionY(), data.movingData.getMotionZ())
         wrapperInputPacket.speed = data.movingData.getSpeed()
+
         val yaw = abs(wrapperInputPacket.to.yaw - wrapperInputPacket.from.yaw)
         val pitch = abs(wrapperInputPacket.to.pitch - wrapperInputPacket.from.pitch)
         wrapperInputPacket.rotation = Vector3(pitch, yaw, pitch)
         wrapperInputPacket.inputMode = player.loginChainData.deviceOS
         wrapperInputPacket.clientPlayMode = player.gamemode
+
         val event = WrapperPacketEvent()
         event.player = player
         event.packet = wrapperInputPacket
