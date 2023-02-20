@@ -24,12 +24,12 @@ import cn.nukkit.math.Vector3
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
-import net.catrainbow.nocheatplus.checks.moving.model.DistanceData
-import net.catrainbow.nocheatplus.checks.moving.model.MoveTracker
-import net.catrainbow.nocheatplus.checks.moving.model.PacketTracker
-import net.catrainbow.nocheatplus.checks.moving.model.SpeedTracker
+import net.catrainbow.nocheatplus.checks.moving.model.*
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInWeb
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onClimbedBlock
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onGround
+import net.catrainbow.nocheatplus.compat.nukkit.FoodData118
 import net.catrainbow.nocheatplus.components.data.ICheckData
 import kotlin.math.abs
 
@@ -60,8 +60,17 @@ class MovingData : ICheckData {
     private var moveTracker: MoveTracker? = null
     private var speedTracker: SpeedTracker? = null
     private var packetTracker: PacketTracker? = null
+    private var foodTracker: EatPacketTracker? = null
     private var safeSpawn = false
     private var voidHurt = false
+    private var lastChangeSwimAction = System.currentTimeMillis()
+    private var lastChangeGlideAction = System.currentTimeMillis()
+    private var lastGlideBooster = System.currentTimeMillis()
+    private var lastConsumeFood = System.currentTimeMillis()
+    private var beforeLastConsumeFood = System.currentTimeMillis()
+    private var lastTeleport = System.currentTimeMillis()
+    private var firstGagApple = false
+    private var lastHealth = 0.0
 
     /**
      * Current Moving Data
@@ -75,6 +84,7 @@ class MovingData : ICheckData {
     private var loseSprintCount = 0
     private var sprint = false
     private var inAirTick = 0
+    private var groundTick = 0
     private var fullAirTick = 0
     private var liquidTick = 0
     private var iceTick = 0
@@ -82,11 +92,17 @@ class MovingData : ICheckData {
     private var stairTick = 0
     private var webTick = 0
     private var ladderTick = 0
+    private var swimTick = 0
+    private var loseSwimTick = 0
+    private var loseLiquidTick = 0
     private var acc = 0.0
     private var sinceLastYChange = 0
     private var live = true
     private var respawnTick = 0
     private var knockBackHurtTick = 100
+    private var eatFood = false
+    private var eatFoodTick = 0
+    private var fallDist = 0.0
 
     //Timer Clock
     private var timeBalance = System.currentTimeMillis() - 5000L
@@ -109,8 +125,11 @@ class MovingData : ICheckData {
      */
     fun handleMovingData(player: Player, from: Location, to: Location, data: DistanceData) {
         //保证进服出生在虚空不会被误判
-        if (!safeSpawn) if (player.onGround) this.safeSpawn = true
-        if (voidHurt) if (player.onGround) this.voidHurt = false
+        val serverOnGround = player.location.onGround()
+        if (!safeSpawn) if (this.lastSpeed != 0.0 || serverOnGround || player.onGround || player.isInLiquid() || player.gamemode == 1 || player.gamemode == 3) this.safeSpawn =
+            true
+        if (voidHurt) if (this.lastSpeed != 0.0 || serverOnGround || player.onGround || player.isInLiquid() || player.gamemode == 1 || player.gamemode == 3) this.voidHurt =
+            false
 
         if (player.gamemode == 1) this.normalGround = player.location
         if (this.knockBackHurtTick < 100) this.knockBackHurtTick++
@@ -145,6 +164,15 @@ class MovingData : ICheckData {
             this.packetTracker!!.onUpdate()
         }
 
+        if (this.foodTracker == null) {
+            this.foodTracker = EatPacketTracker(this)
+            //重新启动一次追踪器使数据初始化
+            this.foodTracker!!.kill()
+            this.foodTracker!!.run()
+        } else {
+            this.foodTracker!!.onUpdate()
+        }
+
         if (this.ghostBlockChecker.getName() == "NCP") {
             this.ghostBlockChecker = GhostBlockChecker(player.name, Vector3(0.0, 0.0, 0.0), 0, 0)
         }
@@ -157,6 +185,7 @@ class MovingData : ICheckData {
         this.motionX = to.x - from.x
         this.motionY = to.y - from.y
         this.motionZ = to.z - from.z
+        this.fallDist = player.fallDistance.toDouble()
         this.inAirTick = player.inAirTicks
         if (this.motionY == 0.0 && this.sinceLastYChange < 50) this.sinceLastYChange++ else this.sinceLastYChange = 0
         this.speed = to.distance(from)
@@ -173,18 +202,52 @@ class MovingData : ICheckData {
         if (this.loseSprintCount > 5) this.loseSprintCount = 0
         if (this.onGround) fullAirTick = 0
         if (this.respawnTick > 0) this.respawnTick--
-        if (LocUtil.isLiquid(LocUtil.getUnderBlock(player)) || LocUtil.isLiquid(player.levelBlock)) this.liquidTick++ else if (this.liquidTick in 1..50) this.liquidTick-- else this.liquidTick =
-            0
+        if (this.onGround) this.groundTick++ else this.groundTick = 0
+        if (player.isInLiquid()) {
+            this.liquidTick++
+            this.loseLiquidTick = 0
+        } else if (this.liquidTick in 1..200) {
+            this.liquidTick--
+            this.loseLiquidTick++
+        } else this.liquidTick = 0
         if (LocUtil.isIce(LocUtil.getUnderBlock(player))) this.iceTick++
-        else if (this.iceTick in 1..50) this.iceTick-- else this.iceTick = 0
-        if (LocUtil.getUnderBlock(player) is BlockSlab) this.slabTick++ else if (this.slabTick in 1..50) this.slabTick-- else this.slabTick =
+        else if (this.iceTick in 1..200) this.iceTick-- else this.iceTick = 0
+        if (LocUtil.getUnderBlock(player) is BlockSlab) this.slabTick++ else if (this.slabTick in 1..200) this.slabTick-- else this.slabTick =
             0
-        if (LocUtil.getUnderBlock(player) is BlockStairs) this.stairTick++ else if (this.stairTick in 1..50) this.stairTick-- else this.stairTick =
+        if (LocUtil.getUnderBlock(player) is BlockStairs) this.stairTick++ else if (this.stairTick in 1..200) this.stairTick-- else this.stairTick =
             0
         if (player.isInWeb()) this.webTick++
-        else if (this.webTick in 1..50) this.webTick-- else this.webTick = 0
+        else if (this.webTick in 1..200) this.webTick-- else this.webTick = 0
         if (player.onClimbedBlock()) this.ladderTick++
-        else if (this.ladderTick in 1..50) this.ladderTick-- else this.ladderTick = 0
+        else if (this.ladderTick in 1..200) this.ladderTick-- else this.ladderTick = 0
+        if (player.isSwimming) {
+            this.swimTick++
+            this.loseSwimTick = 0
+        } else if (this.swimTick in 1..200) {
+            this.swimTick--
+            this.loseSwimTick++
+        } else this.swimTick = 0
+        if (loseSwimTick > 5) {
+            loseSwimTick = 0
+            this.swimTick = 0
+        }
+        if (loseSwimTick < 0) loseSwimTick = 0
+        if (loseLiquidTick < 0) loseLiquidTick = 0
+        if (groundTick > 10) {
+            this.liquidTick = 0
+            this.loseSwimTick = 0
+            this.loseLiquidTick = 0
+        }
+        if (eatFood) {
+            this.eatFoodTick++
+        } else eatFoodTick = 0
+        if (this.eatFoodTick > FoodData118.DEFAULT_EAT_TICK) {
+            this.eatFood = false
+            this.eatFoodTick = 0
+            this.foodTracker!!.kill()
+        }
+        if (System.currentTimeMillis() - this.lastConsumeFood > 100 && this.firstGagApple) this.firstGagApple = false
+        this.lastHealth = player.health.toDouble()
     }
 
     fun getLiquidTick(): Int {
@@ -396,8 +459,101 @@ class MovingData : ICheckData {
         return this.webTick
     }
 
+    fun getSwimTick(): Int {
+        return this.swimTick
+    }
+
+    fun getLoseSwimTick(): Int {
+        return this.loseSwimTick
+    }
+
+    fun loseSwim() {
+        this.lastChangeSwimAction = System.currentTimeMillis()
+    }
+
+    fun getLastToggleSwim(): Long {
+        return this.lastChangeSwimAction
+    }
+
+    fun getLoseLiquidTick(): Int {
+        return this.loseLiquidTick
+    }
+
+    fun onGlideBooster() {
+        this.lastGlideBooster = System.currentTimeMillis()
+    }
+
+    fun loseGlide() {
+        this.lastChangeGlideAction = System.currentTimeMillis()
+    }
+
+    fun getToggleEatingTick(): Int {
+        return this.eatFoodTick
+    }
+
+    fun consumeFoodInteract() {
+        this.beforeLastConsumeFood = System.currentTimeMillis() - this.lastConsumeFood
+        this.lastConsumeFood = System.currentTimeMillis()
+    }
+
+    fun getBeforeLastConsumeFood(): Long {
+        return this.beforeLastConsumeFood
+    }
+
+    fun isFirstGagApple(): Boolean {
+        return this.firstGagApple
+    }
+
+    fun setFirstGagApple(boolean: Boolean) {
+        this.firstGagApple = boolean
+    }
+
+    fun getLastConsumeFood(): Long {
+        return this.lastConsumeFood
+    }
+
+    fun getLastGlideBooster(): Long {
+        return this.lastGlideBooster
+    }
+
     fun getLadderTick(): Int {
         return this.ladderTick
+    }
+
+    fun getGroundTick(): Int {
+        return this.groundTick
+    }
+
+    fun isEatFood(): Boolean {
+        return this.eatFood
+    }
+
+    fun setEatFood(boolean: Boolean) {
+        this.eatFood = boolean
+    }
+
+    fun getLastHealth(): Double {
+        return this.lastHealth
+    }
+
+    fun setLastHealth(health: Float) {
+        this.lastHealth = health.toDouble()
+    }
+
+    fun getFoodTracker(): EatPacketTracker? {
+        return this.foodTracker
+    }
+
+    fun getLastTeleport(): Long {
+        return this.lastTeleport
+    }
+
+    fun setTeleport() {
+        this.lastTeleport = System.currentTimeMillis()
+    }
+
+    fun getFallDist(): Double {
+        return this.fallDist
     }
 
 }

@@ -18,7 +18,11 @@ import cn.nukkit.block.BlockSlab
 import cn.nukkit.block.BlockStairs
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInLiquid
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInWeb
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onClimbedBlock
 import kotlin.math.abs
+import kotlin.math.max
 
 /**
  * 运动跟踪器
@@ -54,6 +58,10 @@ class MoveTracker(player: Player) {
                 this.isLive = false
             } else if (subBlock is BlockSlab || subBlock is BlockStairs) {
                 this.maxHeight = player.y - subBlock.maxY
+                this.distanceXZ = player.distance(this.useLocation)
+                this.isLive = false
+            } else if (player.onClimbedBlock() || player.isInWeb() || player.isInLiquid()) {
+                this.maxHeight = abs(max(player.y - player.levelBlock.minY, 0.0))
                 this.distanceXZ = player.distance(this.useLocation)
                 this.isLive = false
             }

@@ -29,6 +29,7 @@ class ConfigData : IConfigData {
         var logging_command = false
         var logging_violation = false
         var action_waring_delay = 10
+        var action_kick_broadcast = "§c§lNCP §7>>@player has been kicked for @hack"
         var protection_command_hide_active = true
         var protection_command_hide_message = "§c§lNCP §7>> §rYou do not have permission to run this command."
         var protection_command_commands: ArrayList<String> = ArrayList()
@@ -38,7 +39,15 @@ class ConfigData : IConfigData {
             "§c§lNCP §7>> §rYou are banned by NCP for §c@days,@hours,@minutes§r because of using @hack @nextEndTime: @end"
         var check_survival_fly_set_back_fall_damage = false
         var check_survival_fly_set_back_void_to_void = false
+        var check_survival_fly_latency_protection = 120
         var check_survival_fly_strict_mode = false
+        var check_no_fall_deal_damage = true
+        var check_no_fall_skip_allow_flight = true
+        var check_no_fall_reset_violation = false
+        var check_no_fall_reset_on_teleport = false
+        var check_no_fall_reset_vehicle = true
+        var check_no_fall_anti_critical = true
+        var check_inventory_fast_click_delay = 50L
     }
 
 }

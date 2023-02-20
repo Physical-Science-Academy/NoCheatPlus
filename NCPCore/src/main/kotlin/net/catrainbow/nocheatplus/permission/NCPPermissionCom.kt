@@ -15,6 +15,7 @@ package net.catrainbow.nocheatplus.permission
 
 import cn.nukkit.Player
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.components.registry.INCPComponent
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
 
@@ -27,6 +28,7 @@ class NCPPermissionCom : NCPComponent(), INCPComponent {
 
     // Permission map
     private val permissionAllow: HashMap<String, ArrayList<String>> = HashMap()
+    private val bypassPermission: HashMap<String, ArrayList<String>> = HashMap()
 
     override fun onEnabled() {
         this.getRegisterCom().setName("NCP Permission")
@@ -40,16 +42,57 @@ class NCPPermissionCom : NCPComponent(), INCPComponent {
                 permissionAllow[command]!!.add(permission)
             }
         }
+        for (type in CheckType.values()) {
+            if (NoCheatPlus.instance.getNCPConfig().exists("permission.bypass.${type.name}")) {
+                bypassPermission[type.name] = this.getBypassPermissionList(type)
+            }
+        }
     }
 
+    override fun onDisabled() {
+        this.permissionAllow.clear()
+        this.bypassPermission.clear()
+    }
     fun hasPermission(player: Player, command: String): Boolean {
         if (!permissionAllow.containsKey(command)) return true
         for (permission in permissionAllow[command]!!) if (player.hasPermission(permission)) return true
         return false
     }
 
+    fun canBypass(player: Player, type: CheckType): Boolean {
+        if (!bypassPermission.containsKey(type.name)) return false
+        for (permission in bypassPermission[type.name]!!) if (player.hasPermission(permission)) return true
+        return false
+    }
+
+    fun createPermission(permission: String, type: CheckType) {
+        val config = NoCheatPlus.instance.getNCPConfig()
+        val path = "permission.bypass.${type.name}"
+        val list = if (config.exists(path)) config.getStringList(path) else ArrayList<String>()
+        if (list.contains(permission)) return
+        list.add(permission)
+        config.set(path, list)
+        config.save(true)
+    }
+
+    fun removePermission(permission: String, type: CheckType) {
+        val config = NoCheatPlus.instance.getNCPConfig()
+        val path = "permission.bypass.${type.name}"
+        if (config.exists(path)) {
+            val list = config.getStringList(path)
+            if (!list.contains(permission)) return
+            list.remove(permission)
+            config.set(path, list)
+            config.save(true)
+        }
+    }
+
     private fun getPermissionList(): ArrayList<String> {
         return NoCheatPlus.instance.getNCPConfig().getStringList("permission.policy") as ArrayList<String>
+    }
+
+    private fun getBypassPermissionList(type: CheckType): ArrayList<String> {
+        return NoCheatPlus.instance.getNCPConfig().getStringList("permission.bypass.${type.name}") as ArrayList<String>
     }
 
 }

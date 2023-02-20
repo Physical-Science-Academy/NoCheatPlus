@@ -23,6 +23,7 @@ import net.catrainbow.nocheatplus.actions.ActionFactory
 import net.catrainbow.nocheatplus.actions.ActionType
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.components.NoCheatPlusAPI
 import net.catrainbow.nocheatplus.components.config.NCPBanConfig
 import net.catrainbow.nocheatplus.components.config.NCPConfigCom
@@ -56,6 +57,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     private val toggleNCP: HashMap<String, Boolean> = HashMap()
     override fun onLoad() {
         instance = this
+        Bridge118.verifyVersionBridge()
     }
 
     override fun onEnable() {
@@ -155,7 +157,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun kickPlayer(player: Player, type: CheckType) {
         val data = this.getPlayerProvider(player)
-        ActionFactory(player, data.getViolationData(CheckType.STAFF), ActionType.KICK).build().forceDoAction(0, 0, 0)
+        ActionFactory(player, data.getViolationData(type), ActionType.KICK).build().forceDoAction(0, 0, 0)
     }
 
     override fun banPlayer(player: Player, days: Int, hours: Int, minutes: Int) {
@@ -193,8 +195,19 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     }
 
     override fun setPlayerCheck(player: Player) {
-        if (this.toggleNCP.containsKey(player.name))
-            this.toggleNCP.remove(player.name)
+        if (this.toggleNCP.containsKey(player.name)) this.toggleNCP.remove(player.name)
+    }
+
+    override fun hasPermissionBypass(player: Player, type: CheckType): Boolean {
+        return (this.getNCPComponent("NCP Permission") as NCPPermissionCom).canBypass(player, type)
+    }
+
+    override fun createBypassPermission(permission: String, type: CheckType) {
+        (this.getNCPComponent("NCP Permission") as NCPPermissionCom).createPermission(permission, type)
+    }
+
+    override fun removeBypassPermission(permission: String, type: CheckType) {
+        (this.getNCPComponent("NCP Permission") as NCPPermissionCom).removePermission(permission, type)
     }
 
 }

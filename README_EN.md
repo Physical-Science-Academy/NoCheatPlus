@@ -9,41 +9,45 @@
 <br>
 <p align="center"><img src="ncp-logo.png" height="128"/></p>
 <br>
-An advanced AntiCheat worked on Nukkit/PetteriM1EditionNukkit/PowerNukkit. Learning from
-a well-known anticheat NoCheatPlus from Bukkit(Spigot). We are in order to
-fix the bugs in Nukkit and prevent players from cheating.
 
-You are supported to contribute, and give us a star to support our development.
+- An advanced AntiCheat worked on Nukkit/PetteriM1EditionNukkit/PowerNukkit.
+- Learning from a well-known anti-cheat NoCheatPlus from Bukkit(Spigot).
+- We are in order to fix the bugs in Nukkit and prevent players from cheating.
+
+- You are supported to contribute, and give us a star to support our development.
 
 ## Feature
 - Gigh-Performance、Low Occupancy、High Efficiency
 - Light、International、Open Source
+- Protect your server, and prevent it from crashing
+- prevent players from cheating on your server
 
 ## 🎉Progress
-- [ ] SurvivalFly (On Going)
-- [ ] Elytra
-- [ ] AirJymp
-- [ ] Speed
-- [ ] Invalid Movement
+- [95％] SurvivalFly
+- [√] CreativeFly
+- [20%] Speed
+- [√] FastEat
+- [50%] NoSlow 
+- [√] InventoryMove
+- [√] InventoryFastClick
 - [ ] NoFall
-- [ ] HighJump
 - [ ] Velocity
 - [ ] Phase
-- [ ] BadPacket
-- [ ] Client
-- [ ] Packet
+- [√] Crasher
+- [√] Client
+- [√] MorePacket
 - [ ] Scaffold
 - [ ] KillAura
 - [ ] Reach
 - [ ] AutoClicker
 - [ ] HitBox
-- [ ] WrongAttack
-- [ ] HelperTool
+- [ ] Helper Tool GUI
 
 ## Installation
-Java CI: https://ci.lanink.cn/job/NoCheatPlus
-Download the latest `NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar` on [CI](https://ci.lanink.cn/job/NoCheatPlus/)，and put it in your folder `plugins/`.
-And It needs Library plugin
+- Java CI: https://ci.lanink.cn/job/NoCheatPlus
+- Download the latest `NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar` on [CI](https://ci.lanink.cn/job/NoCheatPlus/)
+- and put it in your folder `plugins/`.
+- And It needs Library plugin
  
 - `KotlinLib`
 
@@ -59,23 +63,30 @@ And It needs Library plugin
 
 ## Config
 
-Then let's run the server. You can ser a folder was created in`plugins/` named `NoCheatPlus`.
-Here we pay attention to the main config `ncpconfig.yml`.
+- Then let's run the server. 
+- You can ser a folder was created in`plugins/` named `NoCheatPlus`.
+- Here we pay attention to the main config `ncpconfig.yml`.
 ~~~yaml
-#NoCheatPlus AntiCheat Config
+# NoCheatPlus AntiCheat Config
 config-version:
   notify: false
   version: 1000
+
+# Currently "en" and "zh" are supported languages
+# You are able to create your own language in the "lang" config directory
+lang: "en"
+
 logging:
   active: true
   auto-delete-days: 1
-  debug: true
+  debug: false
   prefix: "§c§lNCP §7>> §r"
   extended:
     command: true
     violation: true
 actions:
   waring_delay: 10
+  kick_broadcast: "§c§lNCP §7>>@player has been kicked for @hack"
 protection:
   command:
     hide:
@@ -86,7 +97,22 @@ protection:
         - "plugins"
         - "version"
         - "about"
+        - "ver"
 checks:
+  inventory:
+    instanteat:
+      active: true
+      actions: "cancel vl>5&&kick vl>20"
+    move:
+      active: true
+      actions: "cancel vl>0&&kick vl>3"
+    open:
+      active: true
+      actions: "cancel vl>0"
+    fastclick:
+      active: true
+      delay: 50
+      actions: "cancel vl>5&&kick vl>20"
   moving:
     survivalfly:
       active: true
@@ -94,10 +120,25 @@ checks:
       setback_policy:
         fall_damage: true
         void_to_void: true
-      actions: "cancel vl>50&&log vl>30 break=10&&warn vl>150 message=fly_short&&kick vl>200&&ban repeat=3 time=3,0,0"
+        latency_protection: 120
+      actions: "cancel vl>20&&log vl>30 break=60&&warn vl>90 message=fly_short&&kick vl>100&&ban repeat=3 time=3,0,0"
     morepackets:
       active: true
       actions: "cancel vl>5&&kick vl>15&&ban repeat=3 time=3,0,0"
+    creativefly:
+      active: true
+      actions: "cancel vl>20"
+    nofall:
+      active: true
+      dealdamage: true
+      skipallowflight: true
+      resetonviolation: false
+      resetonteleport: true
+      resetonvehicle: true
+      actions: "cancel vl>5&&log vl>10&&kick vl>20"
+    vehicle:
+      active: true
+      actions: "cancel vl>10&&kick vl>50&&ban repeat=3 time=3,0,0"
 
 string:
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
@@ -107,44 +148,48 @@ string:
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
   policy:
-    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle"
+    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle,permission"
     - "nocheatplus.admin.helper:kick,ban,unban"
+  bypass:
+    # Custom bypass permission
+    MOVING_CREATIVE_FLY:
+      - "ncp.creativefly.bypass"
 ~~~
 
 ### Custom Action System
-There is an actions setting in each detection item, and the format of the penalty operation is given below: 
-Penalty Type Object A[ Relation] Object B Other parameters 
-The penalty types supported by connecting multiple penalty operations with &&
-are as follows:
+- There is an actions setting in each detection item, and the format of the penalty operation is given below: 
+- Penalty Type Object A[ Relation] Object B Other parameters 
+- The penalty types supported by connecting multiple penalty operations with &&
+- are as follows:
 - `cancel` Lag back a player
 - `log` Record the invalid action in NCP Logger，parameter `break The Cooling Time`
 - `warn` Send a warning message to player，parameter `message The message you sent`
 - `kick` Kick a player from server
 - `ban` Ban a player from server，parameter `repeat Fault Tolerance Times`,`time Duration Of Ban`
-If no parameter is set, the plug-in will use NCP default value
-to add warning message, which needs to be added in string.
+- If no parameter is set, the plug-in will use NCP default value
+- to add warning message, which needs to be added in string.
 
 ### NCP Commands Permission
-Set it in permission.policy, and the format is:
+- Set it in permission.policy, and the format is:
 - `Permission: Command Table' 
-commands are connected by commas. 
-If there is no record of a command in NCP, all players can use it by default.
-For example, the version is not specified in nocheatplus.admin.all and nocheatplus.admin.helper of the case.
+- commands are connected by commas(,). 
+- If there is no record of a command in NCP, all players can use it by default.
+- For example, the version is not specified in nocheatplus.admin.all and nocheatplus.admin.helper of the case.
 
 ## Video Showing
-[1] https://b23.tv/3xIrYPQ
+- https://b23.tv/3xIrYPQ
 
 ## Development
 
-Our open API: NCP-API
+- Our open API: NCP-API
 
 ## Test Server
-Address: axe.0mc.me
-Port: 10878
+- Address: axe.0mc.me
+- Port: 10878
 
 ## Notice
 
-Plugin are still in development. Don't use on formal server.
+- Plugin are still in development. Don't use on formal server.
 
 ## Contact us
-Discord: https://discord.gg/bCQ8pEgk4t
+- Discord: https://discord.gg/bCQ8pEgk4t

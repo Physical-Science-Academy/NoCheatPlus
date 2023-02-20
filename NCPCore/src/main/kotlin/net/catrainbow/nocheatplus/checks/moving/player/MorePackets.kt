@@ -17,6 +17,7 @@ import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.getRealPing
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.setback
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import kotlin.math.max
 
@@ -39,6 +40,9 @@ class MorePackets : Check("checks.moving.morepackets", CheckType.MOVING_MORE_PAC
                 max(0.0, (1000 - player.getRealPing() - (20 - NoCheatPlus.instance.server.ticksPerSecond) * 10) / 500.0)
             if (violation > 0.0) {
                 pData.addViolationToBuffer(this.typeName, violation)
+                player.setback(
+                    NoCheatPlus.instance.getPlayerProvider(player).movingData.getLastNormalGround(), this.typeName
+                )
             }
         }
 

@@ -36,6 +36,13 @@ class ActionCom : NCPComponent(), INCPComponent {
         //注册Action
         this.loadAction("moving.survivalfly", CheckType.MOVING_SURVIVAL_FLY.name)
         this.loadAction("moving.morepackets", CheckType.MOVING_MORE_PACKETS.name)
+        this.loadAction("moving.creativefly", CheckType.MOVING_CREATIVE_FLY.name)
+        this.loadAction("moving.nofall", CheckType.MOVING_NO_FALL.name)
+        this.loadAction("moving.vehicle", CheckType.MOVING_VEHICLE.name)
+        this.loadAction("inventory.instanteat", CheckType.INVENTORY_INSTANT_EAT.name)
+        this.loadAction("inventory.move", CheckType.INVENTORY_MOVE.name)
+        this.loadAction("inventory.open", CheckType.INVENTORY_OPEN.name)
+        this.loadAction("inventory.fastclick", CheckType.INVENTORY_FAST_CLICK.name)
     }
 
     private fun loadAction(path: String, type: String) {
@@ -54,8 +61,7 @@ class ActionCom : NCPComponent(), INCPComponent {
                     actionData.enableLog = true
                     actionData.logAction = LogAction()
                     actionData.log = subCommand[1].split(">")[1].toDouble()
-                    if (subCommand.size >= 3)
-                        actionData.logAction.breakDelay = subCommand[2].split("=")[1].toInt()
+                    if (subCommand.size >= 3) actionData.logAction.breakDelay = subCommand[2].split("=")[1].toInt()
                     else actionData.logAction.breakDelay = 10
                 }
                 "warn" -> {

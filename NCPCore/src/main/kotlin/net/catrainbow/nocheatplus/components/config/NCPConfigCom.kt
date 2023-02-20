@@ -48,6 +48,7 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.logging_debug = config.getBoolean("logging.debug")
         ConfigData.logging_prefix = config.getString("logging.prefix")
         ConfigData.action_waring_delay = config.getInt("actions.waring_delay")
+        ConfigData.action_kick_broadcast = config.getString("actions.kick_broadcast")
         ConfigData.protection_command_hide_active = config.getBoolean("protection.command.hide.active")
         ConfigData.protection_command_hide_message = config.getString("protection.command.hide.message")
         ConfigData.protection_command_commands = config.getStringList("protection.command.hide.commands") as ArrayList
@@ -58,7 +59,16 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
             config.getBoolean("checks.moving.survivalfly.setback_policy.fall_damage")
         ConfigData.check_survival_fly_set_back_void_to_void =
             config.getBoolean("checks.moving.survivalfly.setback_policy.void_to_void")
+        ConfigData.check_survival_fly_latency_protection =
+            config.getInt("checks.moving.survivalfly.setback_policy.latency_protection")
         ConfigData.check_survival_fly_strict_mode = config.getBoolean("checks.moving.survivalfly.strict_mode")
+        ConfigData.check_no_fall_deal_damage = config.getBoolean("checks.moving.nofall.dealdamage")
+        ConfigData.check_no_fall_skip_allow_flight = config.getBoolean("checks.moving.nofall.skipallowflight")
+        ConfigData.check_no_fall_reset_violation = config.getBoolean("checks.moving.nofall.resetonviolation")
+        ConfigData.check_no_fall_reset_on_teleport = config.getBoolean("checks.moving.nofall.resetonteleport")
+        ConfigData.check_no_fall_reset_vehicle = config.getBoolean("checks.moving.nofall.resetonvehicle")
+        ConfigData.check_no_fall_anti_critical = config.getBoolean("checks.moving.nofall.anticriticals")
+        ConfigData.check_inventory_fast_click_delay = config.getLong("checks.inventory.fastclick.delay")
     }
 
 }

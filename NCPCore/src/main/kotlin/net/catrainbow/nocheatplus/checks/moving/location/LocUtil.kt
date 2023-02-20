@@ -48,6 +48,7 @@ class LocUtil {
             list.add(player.level.getBlock(Location(player.x - 1, player.y - 1, player.z + 1, player.level)))
             list.add(player.level.getBlock(Location(player.x - 1, player.y - 1, player.z - 1, player.level)))
             var minBlock: Block = b1
+            //性能问题
             for (block in list) {
                 val minX = block.floorX - 0.35
                 val maxX = block.floorX + 0.35

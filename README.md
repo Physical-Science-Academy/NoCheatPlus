@@ -9,42 +9,45 @@
 <br>
 <p align="center"><img src="ncp-logo.png" height="128"/></p>
 <br>
-基岩版Nukkit服务器及其衍生核心PM1E/PowerNukkitX开发的先进反作弊。架构和设计学习Java版
-知名反作弊NoCheatPlus。其目的是修复和阻止我的世界基岩版中的漏洞和作弊
-行为。
 
-非常欢迎和支持你来贡献代码，以给社区贡献，star本项目以关注我们
+- 基岩版Nukkit服务器及其衍生核心PM1E/PowerNukkitX开发的先进反作弊。
+- 架构和设计学习Java版知名反作弊NoCheatPlus。
+- 其目的是修复和阻止我的世界基岩版中的漏洞和作弊行为。
+
+- 非常欢迎和支持你来贡献代码，以给社区贡献，star本项目以关注我们
 
 ## 特点
 - 高性能、低占用、高效率
 - 易使用、多语言、社区开源
+- 保护你的服务器,防止崩服
+- 阻止玩家在你的服务器上面作弊
 
 ## 🎉重构进度
-- [ ] 飞行检测 (进行中)
-- [ ] 鞘翅飞行检测
-- [ ] 空中跳跃检测
-- [ ] 加速检测
-- [ ] 非法移动方式检测
+- [95％] 生存飞行检测
+- [√] 创造飞行检测
+- [20%] 加速检测
+- [√] 秒吃检测
+- [50%] 无减速检测
+- [√] 背包行走
+- [√] 自动拿箱
 - [ ] 无摔落伤害检测
-- [ ] 高跳检测
 - [ ] 无击退检测
 - [ ] 穿墙检测
-- [ ] 异常数据包检测
-- [ ] 非法客户端检测
-- [ ] 发包数量检测
+- [√] 防崩服
+- [√] 非法客户端检测
+- [√] 发包数量检测
 - [ ] 自动搭路检测
 - [ ] 杀戮光环检测
 - [ ] 攻击距离检测
 - [ ] 连点器检测
 - [ ] 范围伤害检测
-- [ ] 非法攻击方式检测
 - [ ] 协管面板
-- [ ] 记录高危玩家行动
 
 ## 安装
-Java CI: https://ci.lanink.cn/job/NoCheatPlus
-在仓库[CI](https://ci.lanink.cn/job/NoCheatPlus/)里下载最新版本 `NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar` ，将其放入服务器的 `plugins/` 文件夹内。
-在使用插件之前，您必须安装以下依赖
+- Java CI: https://ci.lanink.cn/job/NoCheatPlus
+在仓库[CI](https://ci.lanink.cn/job/NoCheatPlus/)里下载最新版本 `NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar`
+- 将其放入服务器的 `plugins/` 文件夹内。
+- 在使用插件之前，您必须安装以下依赖
  
 - `KotlinLib`
 
@@ -63,20 +66,26 @@ Java CI: https://ci.lanink.cn/job/NoCheatPlus
 接下来启动服务器。之后，你会看到`plugins/`下生成了一个名为`NoCheatPlus`的目录。
 让我们首先打开其中的配置文件 `ncpconfig.yml` 。
 ~~~yaml
-#NoCheatPlus AntiCheat Config
+# NoCheatPlus AntiCheat Config
 config-version:
   notify: false
   version: 1000
+
+# Currently "en" and "zh" are supported languages
+# You are able to create your own language in the "lang" config directory
+lang: "en"
+
 logging:
   active: true
   auto-delete-days: 1
-  debug: true
+  debug: false
   prefix: "§c§lNCP §7>> §r"
   extended:
     command: true
     violation: true
 actions:
   waring_delay: 10
+  kick_broadcast: "§c§lNCP §7>>@player has been kicked for @hack"
 protection:
   command:
     hide:
@@ -87,7 +96,22 @@ protection:
         - "plugins"
         - "version"
         - "about"
+        - "ver"
 checks:
+  inventory:
+    instanteat:
+      active: true
+      actions: "cancel vl>5&&kick vl>20"
+    move:
+      active: true
+      actions: "cancel vl>0&&kick vl>3"
+    open:
+      active: true
+      actions: "cancel vl>0"
+    fastclick:
+      active: true
+      delay: 50
+      actions: "cancel vl>5&&kick vl>20"
   moving:
     survivalfly:
       active: true
@@ -95,10 +119,25 @@ checks:
       setback_policy:
         fall_damage: true
         void_to_void: true
-      actions: "cancel vl>50&&log vl>30 break=10&&warn vl>150 message=fly_short&&kick vl>200&&ban repeat=3 time=3,0,0"
+        latency_protection: 120
+      actions: "cancel vl>20&&log vl>30 break=60&&warn vl>90 message=fly_short&&kick vl>100&&ban repeat=3 time=3,0,0"
     morepackets:
       active: true
       actions: "cancel vl>5&&kick vl>15&&ban repeat=3 time=3,0,0"
+    creativefly:
+      active: true
+      actions: "cancel vl>20"
+    nofall:
+      active: true
+      dealdamage: true
+      skipallowflight: true
+      resetonviolation: false
+      resetonteleport: true
+      resetonvehicle: true
+      actions: "cancel vl>5&&log vl>10&&kick vl>20"
+    vehicle:
+      active: true
+      actions: "cancel vl>10&&kick vl>50&&ban repeat=3 time=3,0,0"
 
 string:
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
@@ -108,44 +147,48 @@ string:
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
   policy:
-    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle"
+    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle,permission"
     - "nocheatplus.admin.helper:kick,ban,unban"
+  bypass:
+    # Custom bypass permission
+    MOVING_CREATIVE_FLY:
+      - "ncp.creativefly.bypass"
 ~~~
 
 ### 自定义处罚系统说明
 在每个检测项目中有一个actions的设定，下面给出处罚操作的格式:
-处罚类型 对象A[关系式]对象B 其他参数
-多个处罚操作之间用与&&进行连接
-支持的处罚类型如下:
+- 处罚类型 对象A[关系式]对象B 其他参数
+- 多个处罚操作之间用与&&进行连接
+- 支持的处罚类型如下:
 - `cancel` 产生一个拉回操作，回滚当前tick的运动
 - `log` 向NCP日志中记录玩家作弊行为，参数`break 冷却秒数`
 - `warn` 向玩家发送一个警告消息，参数`message 消息内容`
 - `kick` 将玩家踢出服务器
 - `ban` 将玩家从服务器封禁，参数`repeat 容错次数`,`time 封禁时间`
-若不设置参数，插件将使用NCP默认值
+- 若不设置参数，插件将使用NCP默认值
 添加警告消息需要在string中加入
 
 ### NCP命令权限管理
 在permission.policy中进行设置，格式为:
 - `权限:命令表`
 命令之间用逗号连接
-若命令在NCP中没有一条记录，那么默认所有玩家都可以使用它
-例如version在事例的nocheatplus.admin.all和nocheatplus.admin.helper中都没规定
+- 若命令在NCP中没有一条记录，那么默认所有玩家都可以使用它
+- 例如version在事例的nocheatplus.admin.all和nocheatplus.admin.helper中都没规定
 
 ## 视频教程
 [1] https://b23.tv/3xIrYPQ
 
 ## 开发
 
-公开的API在: NCP-API中
+- 公开的API在: NCP-API中
 
 ## 官方测试服
-服务器地址: axe.0mc.me
-服务器端口: 10878
+- 服务器地址: axe.0mc.me
+- 服务器端口: 10878
 
 ## 注意
 
-项目目前正处于重构状态，在正式服上慎用
+- 项目目前正处于重构状态，在正式服上慎用
 
 ## 联系我们
-Discord频道: https://discord.gg/bCQ8pEgk4t
+- Discord频道: https://discord.gg/bCQ8pEgk4t

@@ -19,20 +19,27 @@ import cn.nukkit.event.EventPriority
 import cn.nukkit.event.Listener
 import cn.nukkit.event.block.BlockPlaceEvent
 import cn.nukkit.event.entity.EntityDamageEvent
+import cn.nukkit.event.inventory.InventoryClickEvent
+import cn.nukkit.event.inventory.InventoryCloseEvent
+import cn.nukkit.event.inventory.InventoryOpenEvent
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent
 import cn.nukkit.event.player.PlayerDeathEvent
+import cn.nukkit.event.player.PlayerEatFoodEvent
 import cn.nukkit.event.player.PlayerGameModeChangeEvent
+import cn.nukkit.event.player.PlayerInteractEvent
 import cn.nukkit.event.player.PlayerJoinEvent
 import cn.nukkit.event.player.PlayerJumpEvent
 import cn.nukkit.event.player.PlayerMoveEvent
 import cn.nukkit.event.player.PlayerQuitEvent
 import cn.nukkit.event.player.PlayerRespawnEvent
+import cn.nukkit.event.player.PlayerTeleportEvent
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.network.protocol.DisconnectPacket
 import cn.nukkit.plugin.Plugin
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.checks.net.PacketVerify
 import net.catrainbow.nocheatplus.compat.BridgeWaterDog
 import net.catrainbow.nocheatplus.components.config.NCPBanConfig
 import net.catrainbow.nocheatplus.feature.chat.ChatTickListener
@@ -144,6 +151,49 @@ class NCPListener : Listener {
             true,
             EventPriority.HIGHEST
         )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            PlayerEatFoodEvent::class.java,
+            { playerEatsFood(it) },
+            true,
+            EventPriority.HIGHEST
+        )
+        registerEvent(this, NoCheatPlus.instance, PlayerInteractEvent::class.java, {
+            playerInteracts(it)
+        }, true, EventPriority.HIGHEST)
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            PlayerTeleportEvent::class.java,
+            { playerTeleports(it) },
+            true,
+            EventPriority.HIGHEST
+        )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            InventoryOpenEvent::class.java,
+            { playerTogglesInventory(it) },
+            true,
+            EventPriority.HIGHEST
+        )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            InventoryCloseEvent::class.java,
+            { playerClosesInventory(it) },
+            true,
+            EventPriority.HIGHEST
+        )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            InventoryClickEvent::class.java,
+            { playerClicksInventory(it) },
+            true,
+            EventPriority.HIGHEST
+        )
         registerTickListener()
     }
 
@@ -160,6 +210,9 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerJoins(event: PlayerJoinEvent) {
+        //to prevent the server from crashing
+        PacketVerify.popVerifyQueue(event.player.name)
+
         val data = PlayerData(event.player)
         PlayerData.allPlayersData[data.getPlayerName()] = data
         if (NoCheatPlus.instance.isPlayerBan(event.player)) {
@@ -169,10 +222,10 @@ class NCPListener : Listener {
                 (NoCheatPlus.instance.getNCPComponent("NCP AutoBan") as NCPBanConfig).formatMessage(event.player)
             event.player.dataPacket(disconnectPacket)
         }
-
+        //关闭核心自带反作弊
+        event.player.setCheckMovement(false)
         //水狗模式,从WaterDog返回真实的延迟
-        if (event.player.address == "127.0.0.1" && !BridgeWaterDog.waterDog_ping)
-            BridgeWaterDog.waterDog_ping = true
+        if (event.player.address == "127.0.0.1" && !BridgeWaterDog.waterDog_ping) BridgeWaterDog.waterDog_ping = true
     }
 
     @EventHandler
@@ -203,6 +256,9 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerPacketReceive(event: DataPacketReceiveEvent) {
+        //验证数据包,防止服务器受损
+        PacketVerify.verifyPacket(event)
+
         for (listener in listeners) checkEvent(listener, event)
     }
 
@@ -228,6 +284,36 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerOnCommands(event: PlayerCommandPreprocessEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerEatsFood(event: PlayerEatFoodEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerTogglesInventory(event: InventoryOpenEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerClosesInventory(event: InventoryCloseEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerClicksInventory(event: InventoryClickEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerTeleports(event: PlayerTeleportEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerInteracts(event: PlayerInteractEvent) {
         for (listener in listeners) checkEvent(listener, event)
     }
 

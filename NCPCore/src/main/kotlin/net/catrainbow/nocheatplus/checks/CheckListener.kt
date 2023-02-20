@@ -15,6 +15,7 @@ package net.catrainbow.nocheatplus.checks
 
 import cn.nukkit.event.Event
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.checks.inventory.InventoryListener
 import net.catrainbow.nocheatplus.checks.moving.MovingCheckListener
 import net.catrainbow.nocheatplus.feature.ITickListener
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
@@ -30,7 +31,7 @@ open class CheckListener(protected val type: CheckType) : ITickListener {
     override fun onTick(event: Event) {
         for (listener in this.subListeners) listener.onTick(event)
         if (event is WrapperPacketEvent) for (check in NoCheatPlus.instance.getAllNCPCheck().values) if (NoCheatPlus.instance.getComManager()
-                .isUsedChecks(check.baseName)
+                .isUsedChecks(check.baseName) && !NoCheatPlus.instance.hasPermissionBypass(event.player, check.typeName)
         ) check.onCheck(event)
     }
 
@@ -40,7 +41,9 @@ open class CheckListener(protected val type: CheckType) : ITickListener {
     }
 
     override fun onEnabled() {
+        //注意优先级
         this.subListeners.add(MovingCheckListener())
+        this.subListeners.add(InventoryListener())
     }
 
     override fun onDisabled() {
