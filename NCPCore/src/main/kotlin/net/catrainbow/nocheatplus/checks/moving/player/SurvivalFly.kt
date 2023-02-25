@@ -346,7 +346,19 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         }
 
         //未知的运动方式,判定为错误的数据包
-        if (this.tags.size == 0) this.tags.add("resend_pk")
+        if (this.tags.size == 0) {
+            if (!data.isJump() && !LocUtil.getUnderBlock(player).levelBlock.location.isInLiquid()) {
+                if (yDistance == 0.0) {
+                    pData.getViolationData(this.typeName).addPreVL("unknown_movement")
+                    if (pData.getViolationData(this.typeName).getPreVL("unknown_movement") > 10) {
+                        this.tags.add(
+                            "resend_pk"
+                        )
+                        pData.getViolationData(this.typeName).clearPreVL("unknown_movement")
+                    }
+                } else pData.getViolationData(this.typeName).clearPreVL("unknown_movement")
+            } else pData.getViolationData(this.typeName).clearPreVL("unknown_movement")
+        } else pData.getViolationData(this.typeName).clearPreVL("unknown_movement")
 
         if (data.getPacketTracker() != null) {
             val tracker = data.getPacketTracker()!!
@@ -1790,7 +1802,6 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             motionX += (direction.getX() / mathDirectionHyp * xzDist - motionX) * 0.1
             motionZ += (direction.getZ() / mathDirectionHyp * xzDist * motionZ) * 0.1
         }
-
         motionX *= Magic.GLIDE_GRAVITY
         motionY *= Magic.TINY_GRAVITY
         motionZ *= Magic.GLIDE_GRAVITY
