@@ -345,6 +345,9 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             pData.getViolationData(typeName).setLagBack(data.getLastNormalGround())
         }
 
+        //未知的运动方式,判定为错误的数据包
+        if (this.tags.size == 0) this.tags.add("resend_pk")
+
         if (data.getPacketTracker() != null) {
             val tracker = data.getPacketTracker()!!
             val shortCount = tracker.getCount()
@@ -1549,6 +1552,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
 
         if (liquidWorkaround(from, to) && data.getLiquidTick() > 30) {
             val speed = data.getSpeed()
+            this.tags.add("liquid")
 
             if (!player.isSwimming && data.getSwimTick() == 0) {
                 if (now - data.getLastToggleSwim() < 800) return doubleArrayOf(Double.MIN_VALUE, Double.MAX_VALUE)
