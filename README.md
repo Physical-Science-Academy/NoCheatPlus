@@ -4,6 +4,8 @@
   <a title="English" href="/README_EN.md">English</a>
 </div>
 
+[![Java CI](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven-publish.yml/badge.svg?branch=main)](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven-publish.yml)
+[![Discord](https://img.shields.io/discord/710480168598372354?style=plastic)](https://discord.gg/bCQ8pEgk4t)
 [![forthebadge](https://forthebadge.com/images/badges/uses-git.svg)](https://forthebadge.com)
 # NoCheatPlus
 <br>
