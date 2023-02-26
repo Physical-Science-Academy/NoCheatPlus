@@ -16,7 +16,7 @@ package net.catrainbow.nocheatplus.feature.wrapper
 import cn.nukkit.Player
 
 /**
- * 二次处理数据包
+ * Secondary processing of data packets
  *
  * @author Catrainbow
  */

@@ -20,8 +20,10 @@ import net.catrainbow.nocheatplus.actions.types.BanAction
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.ViolationData
 import net.catrainbow.nocheatplus.checks.access.ACheckData
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.dataPacket
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperActionPacket
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperDisconnectPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperSetBackPacket
 import net.catrainbow.nocheatplus.utilities.NCPTimeTool
@@ -61,15 +63,26 @@ class ActionProcess(
         when (this.actionType) {
 
             ActionType.KICK -> {
-                val disconnectPacket = DisconnectPacket()
-                disconnectPacket.hideDisconnectionScreen = false
-                disconnectPacket.message = this.formatMessage(ConfigData.string_kick_message)
-                if (NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.server.broadcastMessage(
-                    this.formatMessage(
-                        ConfigData.action_kick_broadcast
+
+                val packet = WrapperDisconnectPacket(player)
+                packet.type = this.actionType
+                packet.player = player
+                packet.reason = checkType
+                val event = WrapperPacketEvent()
+                event.player = packet.player
+                event.packet = packet
+                dataPacket(event)
+                if (!(event.packet as WrapperDisconnectPacket).isCancelled()) {
+                    val disconnectPacket = DisconnectPacket()
+                    disconnectPacket.hideDisconnectionScreen = false
+                    disconnectPacket.message = this.formatMessage(ConfigData.string_kick_message)
+                    if (NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.server.broadcastMessage(
+                        this.formatMessage(
+                            ConfigData.action_kick_broadcast
+                        )
                     )
-                )
-                player.dataPacket(disconnectPacket)
+                    player.dataPacket(disconnectPacket)
+                }
             }
 
             ActionType.BAN -> {
@@ -141,22 +154,33 @@ class ActionProcess(
 
             ActionType.KICK -> {
                 if (this.violationData.getVL() < data.kick || !data.enableKick) return
-                ACheckData.plus(this.getPlayer())
-                val disconnectPacket = DisconnectPacket()
-                disconnectPacket.hideDisconnectionScreen = false
-                disconnectPacket.message = this.formatMessage(ConfigData.string_kick_message)
-                if (ACheckData.getBufferCount(player) >= data.banRepeat) {
-                    if (data.enableBan) {
-                        ACheckData.clear(player)
-                        this.doBan(data.banAction)
+
+                val packet = WrapperDisconnectPacket(player)
+                packet.type = this.actionType
+                packet.player = player
+                packet.reason = checkType
+                val event = WrapperPacketEvent()
+                event.player = packet.player
+                event.packet = packet
+                dataPacket(event)
+                if (!(event.packet as WrapperDisconnectPacket).isCancelled()) {
+                    ACheckData.plus(this.getPlayer())
+                    val disconnectPacket = DisconnectPacket()
+                    disconnectPacket.hideDisconnectionScreen = false
+                    disconnectPacket.message = this.formatMessage(ConfigData.string_kick_message)
+                    if (ACheckData.getBufferCount(player) >= data.banRepeat) {
+                        if (data.enableBan) {
+                            ACheckData.clear(player)
+                            this.doBan(data.banAction)
+                        }
                     }
-                }
-                if (NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.server.broadcastMessage(
-                    this.formatMessage(
-                        ConfigData.action_kick_broadcast
+                    if (NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.server.broadcastMessage(
+                        this.formatMessage(
+                            ConfigData.action_kick_broadcast
+                        )
                     )
-                )
-                player.dataPacket(disconnectPacket)
+                    player.dataPacket(disconnectPacket)
+                }
             }
 
             ActionType.BAN -> {

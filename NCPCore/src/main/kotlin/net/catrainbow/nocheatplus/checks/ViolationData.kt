@@ -23,6 +23,7 @@ import net.catrainbow.nocheatplus.actions.ActionType
 import net.catrainbow.nocheatplus.checks.moving.location.setback.SetBackEntry
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import java.util.Vector
+import kotlin.math.max
 
 /**
  * Violation Level 数据
@@ -57,12 +58,19 @@ class ViolationData(type: CheckType, private val player: Player) {
     }
 
     fun addVL(vl: Double) {
-        this.addedVL += vl
+        this.addedVL += max(0.0, vl)
+    }
+
+    private fun clearBufferPublic() {
+        this.willCancel = false
+        this.addedVL = 0.0
     }
 
     fun clear() {
-        this.willCancel = false
-        this.addedVL = 0.0
+        this.vl = 0.0
+        this.clearBufferPublic()
+        this.clearBuffer()
+        this.preLogger.clear()
     }
 
     fun setCancel() {
