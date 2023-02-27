@@ -62,6 +62,7 @@
 - `/ncp unban` 解封一名玩家
 - `/ncp kick` 踢出一名玩家
 - `/ncp toggle` 开关检测项目
+- `/ncp permission` 管理绕过检查的权限
 
 ## 配置
 

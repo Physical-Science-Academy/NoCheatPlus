@@ -62,6 +62,7 @@
 - `/ncp unban` unban a player
 - `/ncp kick` kick a player
 - `/ncp toggle` Switch detection
+- `/ncp permission` manage permissions.
 
 ## Config
 
