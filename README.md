@@ -178,12 +178,50 @@ permission:
 - 若命令在NCP中没有一条记录，那么默认所有玩家都可以使用它
 - 例如version在事例的nocheatplus.admin.all和nocheatplus.admin.helper中都没规定
 
+### NCP自定义绕过权限
+在permission下bypass中添加，格式为:
+- `作弊类型:权限(List)`
+拥有权限的玩家不会受到该项检测
+
+可用作弊类型:
+- `MOVING_SURVIVAL_FLY`
+- `MOVING_CREATIVE_FLY`
+- `MOVING_VEHICLE`
+- `MOVING_SPEED`
+- `MOVING_MORE_PACKETS`
+- `MOVING_NO_FALL`
+- `INVENTORY_INSTANT_EAT`
+- `INVENTORY_OPEN`
+- `INVENTORY_FAST_CLICK`
+- `INVENTORY_MOVE`
+
 ## 视频教程
 [1] https://b23.tv/3xIrYPQ
 
-## 开发
+## 开发者接口
 
-- 公开的API在: NCP-API中
+- NCP提供丰富的API，可以实现大量自定义功能。API可以在NoCheatPlusAPI中查看
+- 实例化方式 `NoCheatPlusAPI api = NoCheatPlus.instance;`
+| 方法名 | 介绍 |
+|:----|:-----------|
+| getNCPProvider() | 获取NCP主类 |
+| getComManager() | 获得NCP模块管理器 |
+| getAllComponents() | 获得所有的NCP模块 |
+| getAllPlayerData() | 获得所有的NCP玩家数据 |
+| addComponents(components: NCPComponent) | 注册NCP模块 |
+| hasPlayer(player: Player) | 判断玩家是否在NCP中生成了数据 |
+| getPlayerProvider(player: Player) | 获得玩家数据 |
+| getNCPLogger() | 获得NCP日志记录器 |
+| getNCPConfig() | 获得NCP主配置文件 |
+| getNCPBanRecord() | 获得NCP封禁记录文件 |
+| isPlayerBan(player: Player) | 判断玩家是否被NCP封禁 |
+| kickPlayer(player: Player, type: CheckType) | 让NCP踢出一个玩家 |
+| banPlayer(player: Player, days: Int) | 让NCP封禁一个玩家 |
+| hasPermission(player: Player, command: String) | 玩家是否拥有使用NCP某命令的权限 |
+| hasPermissionBypass(player: Player, type: CheckType) | 玩家是否有权限绕过某检查 |
+| createBypassPermission(permission: String, type: CheckType) | 创建一个绕过某检测的权限 |
+| removeBypassPermission(permission: String, type: CheckType) | 删除一个绕过某检测的权限 |
+| clearAllViolations(player: Player) | 清除玩家所有Violation Level |
 
 ## 官方测试服
 - 服务器地址: axe.0mc.me
@@ -191,7 +229,7 @@ permission:
 
 ## 注意
 
-- 项目目前正处于重构状态，在正式服上慎用
+- 插件仍然在开发状态，有问题请发送issue！
 
 ## 联系我们
 - Discord频道: https://discord.gg/bCQ8pEgk4t
