@@ -5,8 +5,12 @@
 </div>
 
 [![Java CI](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven-publish.yml/badge.svg?branch=main)](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven-publish.yml)
+[![English](https://img.shields.io/badge/English-100%25-green?style=flat-square)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/README_EN.md)
+[![简体中文](https://img.shields.io/badge/简体中文-100%25-green?style=flat-square)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/README.md)
 [![Discord](https://img.shields.io/discord/795119986716704768?style=plastic)](https://discord.gg/bCQ8pEgk4t)
 [![forthebadge](https://forthebadge.com/images/badges/uses-git.svg)](https://forthebadge.com)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg?style=flat-square)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/LICENSE)
+
 # NoCheatPlus
 <br>
 <p align="center"><img src="ncp-logo.png" height="128"/></p>
@@ -23,6 +27,32 @@
 - Light、International、Open Source
 - Protect your server, and prevent it from crashing
 - prevent players from cheating on your server
+
+## Links
+---------
+
+###### Download
+* [Jenkins (current)](https://ci.lanink.cn/job/NoCheatPlus/)
+* [NukkitX/CloudBurst (stable)](https://cloudburstmc.org/resources/nocheatplus.820/)
+* [MCBBS (stable)](https://www.mcbbs.net/forum.php?mod=viewthread&tid=1430379)
+* [MINEBBS (stable)](https://www.minebbs.com/resources/nocheatplus.5551/)
+
+###### Supports
+* [Issues/Tickets](https://github.com/Physical-Science-Academy/NoCheatPlus/issues)
+
+###### Developers
+* [License (GPLv3)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/LICENSE)
+* [Contribute](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/CONTRIBUTING.md)
+
+###### Nukkit Support
+* [Nukkit](https://github.com/Nukkit/Nukkit)
+* [NukkitX](https://github.com/CloudburstMC/Nukkit)
+* [PM1E](https://github.com/PetteriM1/NukkitPetteriM1Edition)
+* [PNX](https://github.com/PowerNukkitX/PowerNukkitX)
+* [EaseCation-Nukkit](https://github.com/EaseCation/Nukkit)
+
+###### Related Plugins
+* [NCPPlugin](https://cloudburstmc.org/resources/ncpplugin.896/)
 
 ## 🎉Progress
 - [95％] SurvivalFly
