@@ -179,12 +179,51 @@ permission:
 - If there is no record of a command in NCP, all players can use it by default.
 - For example, the version is not specified in nocheatplus.admin.all and nocheatplus.admin.helper of the case.
 
+### NCP Custom Bypass Permission
+Add them in permission.bypass，and the format is:
+- `CheckType:Permissions(List)`
+The player who has these permissions will bypass the check.
+
+Availabe CheckType:
+- `MOVING_SURVIVAL_FLY`
+- `MOVING_CREATIVE_FLY`
+- `MOVING_VEHICLE`
+- `MOVING_SPEED`
+- `MOVING_MORE_PACKETS`
+- `MOVING_NO_FALL`
+- `INVENTORY_INSTANT_EAT`
+- `INVENTORY_OPEN`
+- `INVENTORY_FAST_CLICK`
+- `INVENTORY_MOVE`
+
 ## Video Showing
 - https://b23.tv/3xIrYPQ
 
 ## Development
 
-- Our open API: NCP-API
+- NCP provides much API，to achieve many functions。see the api in NoCheatPlusAPI
+- Usage `NoCheatPlusAPI api = NoCheatPlus.instance;`
+### 
+| Method | Description |
+|:------------|:----------------|
+| getNCPProvider() | get main class of NCP |
+| getComManager() | get component manager of NCP |
+| getAllComponents() | get all modules of NCP |
+| getAllPlayerData() | get all player data in NCP |
+| addComponents(components: NCPComponent) | register a NCP Module |
+| hasPlayer(player: Player) | judge a player's data is existed |
+| getPlayerProvider(player: Player) | get a player's data in NCP |
+| getNCPLogger() | get NCP Logget |
+| getNCPConfig() | get config file of NCP |
+| getNCPBanRecord() | get ban config of NCP |
+| isPlayerBan(player: Player) | judge a player if he is banned by NCP |
+| kickPlayer(player: Player, type: CheckType) | kick a player by NCP |
+| banPlayer(player: Player, days: Int) | ban a player by NCP |
+| hasPermission(player: Player, command: String) | judge a player if he is allowed to use this NCP's command |
+| hasPermissionBypass(player: Player, type: CheckType) | judge a playet if he is allowed to bypass this check |
+| createBypassPermission(permission: String, type: CheckType) | created a permission to bypass the check |
+| removeBypassPermission(permission: String, type: CheckType) | delete a permission which can bypass some checks |
+| clearAllViolations(player: Player) | clear all Violation Levels of a player |
 
 ## Test Server
 - Address: axe.0mc.me
@@ -192,7 +231,7 @@ permission:
 
 ## Notice
 
-- Plugin are still in development. Don't use on formal server.
+- Plugin are still in development. Report through Issue if you need!
 
 ## Contact us
 - Discord: https://discord.gg/bCQ8pEgk4t
