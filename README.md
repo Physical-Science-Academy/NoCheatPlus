@@ -202,8 +202,9 @@ permission:
 
 - NCP提供丰富的API，可以实现大量自定义功能。API可以在NoCheatPlusAPI中查看
 - 实例化方式 `NoCheatPlusAPI api = NoCheatPlus.instance;`
+### 
 | 方法名 | 介绍 |
-|:----|:-----------|
+|:------------|:----------------|
 | getNCPProvider() | 获取NCP主类 |
 | getComManager() | 获得NCP模块管理器 |
 | getAllComponents() | 获得所有的NCP模块 |
