@@ -53,6 +53,7 @@
 
 ###### 相关插件
 * [NCPPlugin](https://cloudburstmc.org/resources/ncpplugin.896/)
+* [ECCompatNCP](https://github.com/Physical-Science-Academy/NoCheatPlus/tree/main/NCPCompatEC)
 
 ## 🎉重构进度
 - [95％] 生存飞行检测
@@ -71,7 +72,7 @@
 - [ ] 自动搭路检测
 - [ ] 杀戮光环检测
 - [ ] 攻击距离检测
-- [ ] 连点器检测
+- [√] 连点器检测
 - [ ] 范围伤害检测
 - [ ] 协管面板
 
@@ -131,6 +132,13 @@ protection:
         - "about"
         - "ver"
 checks:
+  fight:
+    speed:
+      active: true
+      maxspeed: 25
+      dealvariance: 0.1
+      cancelDamage: true
+      actions: "cancel vl>5&&kick vl>20"
   inventory:
     instanteat:
       active: true
@@ -154,6 +162,8 @@ checks:
         void_to_void: true
         latency_protection: 120
       actions: "cancel vl>20&&log vl>30 break=60&&warn vl>90 message=fly_short&&kick vl>100&&ban repeat=3 time=3,0,0"
+    speed:
+      active: true
     morepackets:
       active: true
       actions: "cancel vl>5&&kick vl>15&&ban repeat=3 time=3,0,0"
@@ -224,6 +234,7 @@ permission:
 - `INVENTORY_OPEN`
 - `INVENTORY_FAST_CLICK`
 - `INVENTORY_MOVE`
+- `FIGHT_SPEED`
 
 ## 视频教程
 [1] https://b23.tv/3xIrYPQ
