@@ -20,6 +20,7 @@ import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.ActionProcess
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.ViolationData
+import net.catrainbow.nocheatplus.checks.fight.FightData
 import net.catrainbow.nocheatplus.checks.inventory.InventoryData
 import net.catrainbow.nocheatplus.checks.moving.MovingData
 import net.catrainbow.nocheatplus.checks.moving.location.setback.SetbackStorage
@@ -40,6 +41,7 @@ open class PlayerData(player: Player) : IPlayerData {
     var from: Location = player.location
     val movingData: MovingData = MovingData()
     val inventoryData: InventoryData = InventoryData()
+    val fightData: FightData = FightData()
 
     //Violation LevelData
     private val violations: HashMap<String, ViolationData> = HashMap()

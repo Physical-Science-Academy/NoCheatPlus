@@ -48,6 +48,9 @@ class ConfigData : IConfigData {
         var check_no_fall_reset_vehicle = true
         var check_no_fall_anti_critical = true
         var check_inventory_fast_click_delay = 50L
+        var check_fight_max_speed = 25
+        var check_fight_deal_variance = 0.1
+        var check_fight_cancel_damage = true
     }
 
 }

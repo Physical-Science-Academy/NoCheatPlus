@@ -16,6 +16,7 @@ package net.catrainbow.nocheatplus.checks
 import cn.nukkit.Player
 import cn.nukkit.level.Position
 import cn.nukkit.math.Vector3
+import cn.nukkit.network.protocol.NetworkStackLatencyPacket
 import cn.nukkit.scheduler.Task
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
@@ -64,6 +65,9 @@ class NCPTickTask : Task() {
         val event = WrapperPacketEvent()
         event.player = player
         event.packet = wrapperInputPacket
+        val pong = NetworkStackLatencyPacket()
+        pong.timestamp = System.currentTimeMillis()
+        player.dataPacket(pong)
         NoCheatPlus.instance.server.pluginManager.callEvent(event)
     }
 
