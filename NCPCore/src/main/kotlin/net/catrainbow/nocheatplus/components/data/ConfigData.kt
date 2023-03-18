@@ -51,6 +51,8 @@ class ConfigData : IConfigData {
         var check_fight_max_speed = 25
         var check_fight_deal_variance = 0.1
         var check_fight_cancel_damage = true
+        var check_fast_break_max = 35
+        var check_fast_break_min = 0
     }
 
 }

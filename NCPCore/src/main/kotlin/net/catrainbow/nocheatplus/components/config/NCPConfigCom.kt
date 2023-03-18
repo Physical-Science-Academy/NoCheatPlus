@@ -72,6 +72,8 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.check_fight_max_speed = config.getInt("checks.fight.speed.maxspeed")
         ConfigData.check_fight_deal_variance = config.getDouble("checks.fight.speed.dealvariance")
         ConfigData.check_fight_cancel_damage = config.getBoolean("checks.fight.speed.cancelDamage")
+        ConfigData.check_fast_break_max = config.getInt("checks.blockbreak.fastbreak.max")
+        ConfigData.check_fast_break_min = config.getInt("checks.blockbreak.fastbreak.min")
     }
 
 }

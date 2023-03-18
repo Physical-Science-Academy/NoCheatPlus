@@ -24,6 +24,7 @@ import net.catrainbow.nocheatplus.feature.wrapper.WrapperBreakBlockPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import kotlin.math.abs
 import kotlin.math.ceil
+import kotlin.math.max
 
 /**
  * 快速挖掘
@@ -54,10 +55,17 @@ class FastBreak : Check("checks.blockbreak.fastbreak", CheckType.BLOCK_BREAK_FAS
                 }
             }
             val balanceTime = (event.packet as WrapperBreakBlockPacket).breakTicks
-            val diff = abs(balanceTime - expectedTicks)
+            //平衡重复行为,精确检测挖掘时间
+            val sumUsedTicks = max(0, (event.packet as WrapperBreakBlockPacket).usedTicks - 12)
+            val effectiveBooster = if (sumUsedTicks > 0) max(
+                0.0, (abs(balanceTime - expectedTicks) - ConfigData.check_fast_break_max) / sumUsedTicks
+            )
+            else 0.0
+            val ignorantTicks = effectiveBooster * 12
+            val diff = max(0.0, abs(balanceTime - expectedTicks) - ignorantTicks)
 
             if (ConfigData.logging_debug) {
-                player.sendMessage("NCP BlockBreak Check $diff")
+                player.sendMessage("NCP BlockBreak Check $diff ${(event.packet as WrapperBreakBlockPacket).usedTicks}")
             }
 
             pData.getViolationData(this.typeName).preVL(0.998)
