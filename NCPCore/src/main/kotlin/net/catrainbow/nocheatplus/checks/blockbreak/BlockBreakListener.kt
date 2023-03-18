@@ -16,6 +16,8 @@ package net.catrainbow.nocheatplus.checks.blockbreak
 import cn.nukkit.event.Event
 import cn.nukkit.event.block.BlockBreakEvent
 import cn.nukkit.event.player.PlayerInteractEvent
+import cn.nukkit.event.server.DataPacketReceiveEvent
+import cn.nukkit.network.protocol.PlayerActionPacket
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
@@ -43,6 +45,18 @@ class BlockBreakListener : CheckListener(CheckType.BLOCK_BREAK) {
             val action = event.action
             if (action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
                 data.blockBreakData.onTicked()
+            }
+        } else if (event is DataPacketReceiveEvent) {
+            val packet = event.packet
+            if (packet is PlayerActionPacket) {
+                when (packet.action) {
+                    PlayerActionPacket.ACTION_START_BREAK, PlayerActionPacket.ACTION_CONTINUE_BREAK, PlayerActionPacket.ACTION_CONTINUE_DESTROY_BLOCK, PlayerActionPacket.ACTION_PREDICT_DESTROY_BLOCK -> {
+                        NoCheatPlus.instance.getPlayerProvider(event.player).blockBreakData.setBreakingStatus(true)
+                    }
+                    PlayerActionPacket.ACTION_STOP_BREAK, PlayerActionPacket.ACTION_ABORT_BREAK -> {
+                        NoCheatPlus.instance.getPlayerProvider(event.player).blockBreakData.setBreakingStatus(false)
+                    }
+                }
             }
         }
     }

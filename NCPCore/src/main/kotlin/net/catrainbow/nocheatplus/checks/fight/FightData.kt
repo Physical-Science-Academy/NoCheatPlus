@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.checks.fight
 
 import net.catrainbow.nocheatplus.components.data.ICheckData
+import kotlin.math.max
 import kotlin.math.pow
 
 
@@ -29,17 +30,19 @@ class FightData : ICheckData {
     private var lastClickPerSecond = 0
     private var clickPerSecondList = ArrayList<Double>()
     private var clickPerSecondVariance = 1.0
-    private var clickPerSecondInteract = 0
+    private var clickPerSecondInteract = 1
 
     var speedShortTermTick = 0
     var attackSoundBoost = System.currentTimeMillis() - 1000L
     var lastDamageBoost = System.currentTimeMillis() - 1000L
+    var lastInteractBoost = ArrayList<Long>()
     var lastDealDamage = false
 
     fun onUpdate() {
         swingQueue.removeIf { l: Long -> l < System.currentTimeMillis() - 1000 }
+        lastInteractBoost.removeIf { l: Long -> l < System.currentTimeMillis() - 1000 }
         this.lastClickPerSecond = clickPerSecond
-        this.clickPerSecond = swingQueue.size * this.clickPerSecondInteract
+        this.clickPerSecond = max(0, swingQueue.size * this.clickPerSecondInteract - lastInteractBoost.size * 8)
         this.clickPerSecondList.add(this.getClickPerSecond())
         var sumClickPerSecond = 0.0
         clickPerSecondList.forEach {

@@ -16,10 +16,10 @@ package net.catrainbow.nocheatplus.checks.fight
 import cn.nukkit.Player
 import cn.nukkit.event.Event
 import cn.nukkit.event.entity.EntityDamageByEntityEvent
+import cn.nukkit.event.player.PlayerInteractEvent
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.network.protocol.AnimatePacket
 import cn.nukkit.network.protocol.LevelSoundEventPacket
-import cn.nukkit.network.protocol.PlayerActionPacket
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
@@ -35,6 +35,12 @@ class FightListener : CheckListener(CheckType.FIGHT) {
     override fun onTick(event: Event) {
         if (event is DataPacketReceiveEvent) {
             val packet = event.packet
+            if (packet is LevelSoundEventPacket) {
+                if (packet.sound == LevelSoundEventPacket.SOUND_HIT) {
+                    NoCheatPlus.instance.getPlayerProvider(event.player).fightData.lastInteractBoost.add(System.currentTimeMillis())
+                    return
+                }
+            }
             var handle = false
             if ((packet is LevelSoundEventPacket && (packet.sound == LevelSoundEventPacket.SOUND_ATTACK || packet.sound == LevelSoundEventPacket.SOUND_ATTACK_STRONG || packet.sound == LevelSoundEventPacket.SOUND_ATTACK_NODAMAGE)) || (packet is AnimatePacket && packet.action == AnimatePacket.Action.SWING_ARM)) {
                 handle = true
@@ -46,16 +52,6 @@ class FightListener : CheckListener(CheckType.FIGHT) {
                 ) handle = false
             }
             if (handle) this.handleNormalSwing(event.player)
-            if (packet is PlayerActionPacket) {
-                when (packet.action) {
-                    PlayerActionPacket.ACTION_START_BREAK, PlayerActionPacket.ACTION_CONTINUE_BREAK, PlayerActionPacket.ACTION_CONTINUE_DESTROY_BLOCK -> {
-                        NoCheatPlus.instance.getPlayerProvider(event.player).blockBreakData.setBreakingStatus(true)
-                    }
-                    PlayerActionPacket.ACTION_STOP_BREAK, PlayerActionPacket.ACTION_ABORT_BREAK -> {
-                        NoCheatPlus.instance.getPlayerProvider(event.player).blockBreakData.setBreakingStatus(false)
-                    }
-                }
-            }
         } else if (event is WrapperPacketEvent) {
             val player = event.player
             val data = NoCheatPlus.instance.getPlayerProvider(player)
@@ -73,6 +69,11 @@ class FightListener : CheckListener(CheckType.FIGHT) {
                 }
                 if (!event.isCancelled) NoCheatPlus.instance.getPlayerProvider(player).fightData.lastDamageBoost =
                     System.currentTimeMillis()
+            }
+        } else if (event is PlayerInteractEvent) {
+            if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
+                val player = event.player
+                NoCheatPlus.instance.getPlayerProvider(player).fightData.lastInteractBoost.add(System.currentTimeMillis())
             }
         }
     }

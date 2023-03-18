@@ -75,7 +75,7 @@ class FastBreak : Check("checks.blockbreak.fastbreak", CheckType.BLOCK_BREAK_FAS
                 player.sendMessage("NCP BlockBreak Check $diff ${(event.packet as WrapperBreakBlockPacket).usedTicks}")
             }
 
-            pData.getViolationData(this.typeName).preVL(0.998)
+            pData.getViolationData(this.typeName).preVL(0.05)
         }
     }
 
