@@ -32,6 +32,7 @@ class Speed : Check("checks.fight.speed", CheckType.FIGHT_SPEED) {
 
     override fun onCheck(event: WrapperPacketEvent) {
         val player = event.player
+        if (player.gamemode == 1) return
         val packet = event.packet
         val pData = NoCheatPlus.instance.getPlayerProvider(player)
         val data = pData.fightData
