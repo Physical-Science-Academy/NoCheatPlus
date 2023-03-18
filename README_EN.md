@@ -4,7 +4,13 @@
   <a title="中文" href="/README.md">中文</a>
 </div>
 
+[![Java CI](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven-publish.yml/badge.svg?branch=main)](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven-publish.yml)
+[![English](https://img.shields.io/badge/English-100%25-green?style=flat-square)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/README_EN.md)
+[![简体中文](https://img.shields.io/badge/简体中文-100%25-green?style=flat-square)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/README.md)
+[![Discord](https://img.shields.io/discord/795119986716704768?style=plastic)](https://discord.gg/bCQ8pEgk4t)
 [![forthebadge](https://forthebadge.com/images/badges/uses-git.svg)](https://forthebadge.com)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg?style=flat-square)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/LICENSE)
+
 # NoCheatPlus
 <br>
 <p align="center"><img src="ncp-logo.png" height="128"/></p>
@@ -21,6 +27,32 @@
 - Light、International、Open Source
 - Protect your server, and prevent it from crashing
 - prevent players from cheating on your server
+
+## Links
+---------
+
+###### Download
+* [Jenkins (current)](https://ci.lanink.cn/job/NoCheatPlus/)
+* [NukkitX/CloudBurst (stable)](https://cloudburstmc.org/resources/nocheatplus.820/)
+* [MCBBS (stable)](https://www.mcbbs.net/forum.php?mod=viewthread&tid=1430379)
+* [MINEBBS (stable)](https://www.minebbs.com/resources/nocheatplus.5551/)
+
+###### Supports
+* [Issues/Tickets](https://github.com/Physical-Science-Academy/NoCheatPlus/issues)
+
+###### Developers
+* [License (GPLv3)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/LICENSE)
+* [Contribute](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/CONTRIBUTING.md)
+
+###### Nukkit Support
+* [Nukkit](https://github.com/Nukkit/Nukkit)
+* [NukkitX](https://github.com/CloudburstMC/Nukkit)
+* [PM1E](https://github.com/PetteriM1/NukkitPetteriM1Edition)
+* [PNX](https://github.com/PowerNukkitX/PowerNukkitX)
+* [EaseCation-Nukkit](https://github.com/EaseCation/Nukkit)
+
+###### Related Plugins
+* [NCPPlugin](https://cloudburstmc.org/resources/ncpplugin.896/)
 
 ## 🎉Progress
 - [95％] SurvivalFly
@@ -60,6 +92,7 @@
 - `/ncp unban` unban a player
 - `/ncp kick` kick a player
 - `/ncp toggle` Switch detection
+- `/ncp permission` manage permissions.
 
 ## Config
 
@@ -176,12 +209,51 @@ permission:
 - If there is no record of a command in NCP, all players can use it by default.
 - For example, the version is not specified in nocheatplus.admin.all and nocheatplus.admin.helper of the case.
 
+### NCP Custom Bypass Permission
+Add them in permission.bypass，and the format is:
+- `CheckType:Permissions(List)`
+The player who has these permissions will bypass the check.
+
+Availabe CheckType:
+- `MOVING_SURVIVAL_FLY`
+- `MOVING_CREATIVE_FLY`
+- `MOVING_VEHICLE`
+- `MOVING_SPEED`
+- `MOVING_MORE_PACKETS`
+- `MOVING_NO_FALL`
+- `INVENTORY_INSTANT_EAT`
+- `INVENTORY_OPEN`
+- `INVENTORY_FAST_CLICK`
+- `INVENTORY_MOVE`
+
 ## Video Showing
 - https://b23.tv/3xIrYPQ
 
 ## Development
 
-- Our open API: NCP-API
+- NCP provides much API，to achieve many functions。see the api in NoCheatPlusAPI
+- Usage `NoCheatPlusAPI api = NoCheatPlus.instance;`
+### 
+| Method | Description |
+|:------------|:----------------|
+| getNCPProvider() | get main class of NCP |
+| getComManager() | get component manager of NCP |
+| getAllComponents() | get all modules of NCP |
+| getAllPlayerData() | get all player data in NCP |
+| addComponents(components: NCPComponent) | register a NCP Module |
+| hasPlayer(player: Player) | judge a player's data is existed |
+| getPlayerProvider(player: Player) | get a player's data in NCP |
+| getNCPLogger() | get NCP Logget |
+| getNCPConfig() | get config file of NCP |
+| getNCPBanRecord() | get ban config of NCP |
+| isPlayerBan(player: Player) | judge a player if he is banned by NCP |
+| kickPlayer(player: Player, type: CheckType) | kick a player by NCP |
+| banPlayer(player: Player, days: Int) | ban a player by NCP |
+| hasPermission(player: Player, command: String) | judge a player if he is allowed to use this NCP's command |
+| hasPermissionBypass(player: Player, type: CheckType) | judge a playet if he is allowed to bypass this check |
+| createBypassPermission(permission: String, type: CheckType) | created a permission to bypass the check |
+| removeBypassPermission(permission: String, type: CheckType) | delete a permission which can bypass some checks |
+| clearAllViolations(player: Player) | clear all Violation Levels of a player |
 
 ## Test Server
 - Address: axe.0mc.me
@@ -189,7 +261,7 @@ permission:
 
 ## Notice
 
-- Plugin are still in development. Don't use on formal server.
+- Plugin are still in development. Report through Issue if you need!
 
 ## Contact us
 - Discord: https://discord.gg/bCQ8pEgk4t

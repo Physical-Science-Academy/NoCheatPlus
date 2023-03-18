@@ -30,6 +30,19 @@ protection:
         - "about"
         - "ver"
 checks:
+  blockbreak:
+    fastbreak:
+      active: true
+      max: 35
+      min: 0
+      actions: "cancel vl>5"
+  fight:
+    speed:
+      active: true
+      maxspeed: 25
+      dealvariance: 0.1
+      cancelDamage: true
+      actions: "cancel vl>5&&kick vl>20"
   inventory:
     instanteat:
       active: true

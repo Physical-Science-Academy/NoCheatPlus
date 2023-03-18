@@ -64,7 +64,10 @@ class VehicleCheck : Check("checks.moving.vehicle", CheckType.MOVING_VEHICLE) {
         pData: IPlayerData,
         now: Long,
     ) {
-
+        var speed = to.distance(from)
+        val maxSpeed = data.getSpeedTracker()!!.getMaxSpeed()
+        if (speed < maxSpeed) speed = maxSpeed
+        //the max speed is 0.52 and lag for 3 times
     }
 
 }

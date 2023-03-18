@@ -1,0 +1,8 @@
+name: "ECCompatNCP"
+version: "1.0.0"
+main: net.catrainbow.nocheatplus.easecation.ECNCPCompat
+description: "模拟和实现EaseCation服务器CPS检测机制"
+api: [ "1.0.0" ]
+
+depend:
+  - NoCheatPlus

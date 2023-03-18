@@ -11,18 +11,19 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.catrainbow.nocheatplus.feature.wrapper
-
-import cn.nukkit.Player
+package net.catrainbow.nocheatplus.easecation;
 
 /**
- * Secondary processing of data packets
+ * 数据记录
  *
  * @author Catrainbow
  */
-open class WrapperPacket(var player: Player) {
+public class RecordData {
 
-    val protocol_version: String = player.loginChainData.gameVersion
-    val client_version: String = player.loginChainData.gameVersion
+    int tick = 0;
+    double cpsRecord1 = 0;
+    double cpsRecord5 = 0;
+    double cpsRecord10 = 0;
+    double cpsRecord15 = 0;
 
 }

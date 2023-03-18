@@ -17,6 +17,7 @@ import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.item.Item
 import cn.nukkit.network.protocol.AnimatePacket
 import cn.nukkit.network.protocol.InventoryTransactionPacket
+import cn.nukkit.network.protocol.LevelSoundEventPacket
 import cn.nukkit.network.protocol.LoginPacket
 import cn.nukkit.network.protocol.MovePlayerPacket
 import cn.nukkit.network.protocol.PlayerAuthInputPacket
@@ -46,6 +47,8 @@ class PacketVerify {
         private val unknown_client_model = arrayOf(
             "EZ4H", "Horion", "Zephyer", "MoonLight"
         )
+        private val playerLastUpdateSound: HashMap<String, Long> = HashMap()
+        private val playerLastUpdateAnimate: HashMap<String, Long> = HashMap()
 
         fun verifyPacket(event: DataPacketReceiveEvent) {
             val player = event.player
@@ -67,11 +70,20 @@ class PacketVerify {
                     if (packet.type == TextPacket.TYPE_CHAT && (data.getSpeed() > 0.2 || data.getMotionY() > 0.5 || now - data.getLastJump() < 10) && isLive && onGround) event.setCancelled()
                 }
             } else if (packet is PlayerAuthInputPacket || packet is MovePlayerPacket) {
+                if (!NoCheatPlus.instance.hasPlayer(player)) return
+                val data = NoCheatPlus.instance.getPlayerProvider(player).fightData
                 if (!playerLastUpdatePacket.containsKey(player.name)) playerLastUpdatePacket[player.name] =
                     System.currentTimeMillis()
                 if (System.currentTimeMillis() - playerLastUpdatePacket[player.name]!! > round(((1 / 20) * 1000L).toDouble())) {
                     playerLastUpdatePacket[player.name] = System.currentTimeMillis()
                     playerAnimatePacketMap[player.name] = 0
+                }
+                if (this.playerLastUpdateAnimate.containsKey(player.name)) {
+                    if (System.currentTimeMillis() - data.lastDamageBoost < 1000) {
+                        if (System.currentTimeMillis() - playerLastUpdateAnimate[player.name]!! > 1800) NoCheatPlus.instance.kickPlayer(
+                            player, CheckType.UNKNOWN_PACKET
+                        )
+                    }
                 }
                 if (player.pitch > 90 && NoCheatPlus.instance.hasPlayer(player)) NoCheatPlus.instance.kickPlayer(
                     player, CheckType.UNKNOWN_PACKET
@@ -93,6 +105,18 @@ class PacketVerify {
                     //flood animate packets try to crash the server
                     if (playerAnimatePacketMap[player.name]!! >= 50) event.setCancelled()
                     NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
+                } else if (packet.action == AnimatePacket.Action.SWING_ARM) {
+                    this.playerLastUpdateAnimate[player.name] = System.currentTimeMillis()
+                    val data = NoCheatPlus.instance.getPlayerProvider(player).fightData
+                    if (data.getClickPerSecond() >= 5 && System.currentTimeMillis() - data.lastDamageBoost < 1000) {
+                        if (playerLastUpdateSound.containsKey(player.name)) {
+                            if (System.currentTimeMillis() - playerLastUpdateSound[player.name]!! > 1800) NoCheatPlus.instance.kickPlayer(
+                                player, CheckType.UNKNOWN_PACKET
+                            )
+                        } else NoCheatPlus.instance.kickPlayer(
+                            player, CheckType.UNKNOWN_PACKET
+                        )
+                    }
                 }
             } else if (packet is InventoryTransactionPacket) {
                 if ((packet.transactionType == InventoryTransactionPacket.TYPE_USE_ITEM_ON_ENTITY || packet.transactionType == InventoryTransactionPacket.USE_ITEM_ON_ENTITY_ACTION_ATTACK) && packet.transactionType == 1 && NoCheatPlus.instance.hasPlayer(
@@ -102,6 +126,11 @@ class PacketVerify {
                     if (!NoCheatPlus.instance.getPlayerProvider(player).movingData.isLive()) NoCheatPlus.instance.kickPlayer(
                         player, CheckType.UNKNOWN_PACKET
                     )
+                }
+            } else if (packet is LevelSoundEventPacket) {
+                val sound = packet.sound
+                if (sound == LevelSoundEventPacket.SOUND_BREAK || sound == LevelSoundEventPacket.SOUND_PLACE || sound == LevelSoundEventPacket.SOUND_ATTACK || sound == LevelSoundEventPacket.SOUND_ATTACK_NODAMAGE || sound == LevelSoundEventPacket.SOUND_ATTACK_STRONG || sound == LevelSoundEventPacket.SOUND_EAT) {
+                    playerLastUpdateSound[player.name] = System.currentTimeMillis()
                 }
             }
 
