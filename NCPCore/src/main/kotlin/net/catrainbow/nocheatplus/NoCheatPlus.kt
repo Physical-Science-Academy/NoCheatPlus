@@ -134,7 +134,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     }
 
     override fun getNCPConfig(): Config {
-        return (this.getNCPComponent("NCP Config") as NCPConfigCom).getNCPConfig()
+        return (this.getNCPComponent("NCP Config") as NCPConfigCom).getConfig()
     }
 
     override fun getNCPBanRecord(): Config {
