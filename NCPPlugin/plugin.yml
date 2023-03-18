@@ -1,0 +1,8 @@
+name: "NCPPlugin"
+version: "1.0.0"
+main: net.catrainbow.nocheatplus.plugin.NCPPlugin
+description: A plugin that allow your NCP can only kick players by sending message
+api: [ "1.0.0" ]
+
+depend:
+  - NoCheatPlus

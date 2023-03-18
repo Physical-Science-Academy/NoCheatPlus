@@ -210,4 +210,11 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
         (this.getNCPComponent("NCP Permission") as NCPPermissionCom).removePermission(permission, type)
     }
 
+    override fun clearAllViolations(player: Player) {
+        val data = this.getPlayerProvider(player)
+        for (type in CheckType.values())
+            if (type.isUsedCheck())
+                data.getViolationData(type).clear()
+    }
+
 }

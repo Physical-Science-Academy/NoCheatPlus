@@ -45,12 +45,7 @@ class Speed : Check("checks.moving.speed", CheckType.MOVING_SPEED) {
             this.checkPlayerSpeed(data)
     }
 
-    fun checkPlayerSpeed(data: MovingData) {
-        if (data.getSpeedTracker() == null) {
-            NoCheatPlus.instance.logger.info("Null")
-            return
-        }
-        NoCheatPlus.instance.logger.info("Max Speed: ${data.getSpeedTracker()!!.getMaxSpeed()}")
-        NoCheatPlus.instance.logger.info("Is Live: ${data.getSpeedTracker()!!.isLive()}")
+    private fun checkPlayerSpeed(data: MovingData) {
+
     }
 }

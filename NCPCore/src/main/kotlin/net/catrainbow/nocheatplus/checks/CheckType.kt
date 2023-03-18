@@ -20,16 +20,21 @@ package net.catrainbow.nocheatplus.checks
  */
 enum class CheckType(private val parent: CheckType?) {
 
-    ALL(null), STAFF(ALL), UNKNOWN_PACKET(ALL), MOVING(ALL), MOVING_SURVIVAL_FLY(MOVING), MOVING_CREATIVE_FLY(MOVING), MOVING_VEHICLE(
+    ALL(null), STAFF(ALL), UNKNOWN_PACKET(ALL), MOVING(ALL), MOVING_SURVIVAL_FLY(MOVING), MOVING_CREATIVE_FLY(MOVING), MOVING_SPEED(
+        MOVING
+    ),
+    MOVING_VEHICLE(
         MOVING
     ),
     MOVING_MORE_PACKETS(MOVING), MOVING_NO_FALL(MOVING), INVENTORY(ALL), INVENTORY_INSTANT_EAT(INVENTORY), INVENTORY_OPEN(
         INVENTORY
     ),
-    INVENTORY_FAST_CLICK(INVENTORY), INVENTORY_MOVE(INVENTORY);
+    INVENTORY_FAST_CLICK(INVENTORY), INVENTORY_MOVE(INVENTORY), FIGHT(ALL), FIGHT_SPEED(FIGHT), BLOCK_BREAK(ALL), BLOCK_BREAK_FAST_BREAK(
+        BLOCK_BREAK
+    );
 
     fun isUsedCheck(): Boolean {
-        return (parent != null && parent != ALL) || this == STAFF
+        return (parent != null && parent != ALL) || this == STAFF || this == UNKNOWN_PACKET
     }
 
     companion object {

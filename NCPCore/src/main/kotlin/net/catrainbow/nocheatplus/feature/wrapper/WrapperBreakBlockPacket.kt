@@ -14,26 +14,14 @@
 package net.catrainbow.nocheatplus.feature.wrapper
 
 import cn.nukkit.Player
-import cn.nukkit.level.Location
-import cn.nukkit.math.Vector3
+import cn.nukkit.block.Block
 import kotlin.properties.Delegates
 
-/**
- * Player input data package
- *
- * Detected once per tick
- */
-class WrapperInputPacket(player: Player) : WrapperPacket(player) {
+class WrapperBreakBlockPacket(player: Player) : WrapperPacket(player) {
 
-    lateinit var rotation: Vector3
-    lateinit var position: Vector3
-    lateinit var motion: Vector3
-    var inputMode by Delegates.notNull<Int>()
-    var clientPlayMode by Delegates.notNull<Int>()
-    lateinit var from: Location
-    lateinit var to: Location
-    var speed by Delegates.notNull<Double>()
-    var clientOnGround by Delegates.notNull<Boolean>()
-    var serverOnGround by Delegates.notNull<Boolean>()
+    lateinit var block: Block
+    var usedTicks by Delegates.notNull<Int>()
+    var breakTicks by Delegates.notNull<Int>()
+    var isValid = false
 
 }

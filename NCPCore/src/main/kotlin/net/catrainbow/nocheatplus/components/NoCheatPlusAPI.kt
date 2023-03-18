@@ -84,4 +84,6 @@ interface NoCheatPlusAPI {
 
     fun removeBypassPermission(permission: String, type: CheckType)
 
+    fun clearAllViolations(player: Player)
+
 }
