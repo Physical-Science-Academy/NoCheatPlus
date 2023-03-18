@@ -17,6 +17,7 @@ import cn.nukkit.event.Event
 import cn.nukkit.event.EventHandler
 import cn.nukkit.event.EventPriority
 import cn.nukkit.event.Listener
+import cn.nukkit.event.block.BlockBreakEvent
 import cn.nukkit.event.block.BlockPlaceEvent
 import cn.nukkit.event.entity.EntityDamageEvent
 import cn.nukkit.event.inventory.InventoryClickEvent
@@ -194,6 +195,9 @@ class NCPListener : Listener {
             true,
             EventPriority.HIGHEST
         )
+        registerEvent(
+            this, NoCheatPlus.instance, BlockBreakEvent::class.java, { playerBreaks(it) }, true, EventPriority.HIGHEST
+        )
         registerTickListener()
     }
 
@@ -251,6 +255,11 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerPlaces(event: BlockPlaceEvent) {
+        for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerBreaks(event: BlockBreakEvent) {
         for (listener in listeners) checkEvent(listener, event)
     }
 

@@ -15,6 +15,7 @@ package net.catrainbow.nocheatplus.checks
 
 import cn.nukkit.event.Event
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.checks.blockbreak.BlockBreakListener
 import net.catrainbow.nocheatplus.checks.fight.FightListener
 import net.catrainbow.nocheatplus.checks.inventory.InventoryListener
 import net.catrainbow.nocheatplus.checks.moving.MovingCheckListener
@@ -46,6 +47,7 @@ open class CheckListener(protected val type: CheckType) : ITickListener {
         this.subListeners.add(MovingCheckListener())
         this.subListeners.add(InventoryListener())
         this.subListeners.add(FightListener())
+        this.subListeners.add(BlockBreakListener())
     }
 
     override fun onDisabled() {

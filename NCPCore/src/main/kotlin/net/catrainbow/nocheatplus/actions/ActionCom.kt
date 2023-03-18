@@ -44,6 +44,7 @@ class ActionCom : NCPComponent(), INCPComponent {
         this.loadAction("inventory.open", CheckType.INVENTORY_OPEN.name)
         this.loadAction("inventory.fastclick", CheckType.INVENTORY_FAST_CLICK.name)
         this.loadAction("fight.speed", CheckType.FIGHT_SPEED.name)
+        this.loadAction("blockbreak.fastbreak", CheckType.BLOCK_BREAK_FAST_BREAK.name)
     }
 
     private fun loadAction(path: String, type: String) {

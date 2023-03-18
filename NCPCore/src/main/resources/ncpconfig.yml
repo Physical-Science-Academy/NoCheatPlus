@@ -30,6 +30,10 @@ protection:
         - "about"
         - "ver"
 checks:
+  blockbreak:
+    fastbreak:
+      active: true
+      actions: "cancel vl>5&&kick vl>10"
   fight:
     speed:
       active: true
