@@ -36,6 +36,10 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         return Config("${NoCheatPlus.instance.dataFolder}/ncpconfig.yml", Config.YAML)
     }
 
+    fun getConfig(): Config {
+        return this.config;
+    }
+
     fun reload() {
         this.inputConfig()
     }
