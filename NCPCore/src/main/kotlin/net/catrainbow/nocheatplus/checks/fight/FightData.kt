@@ -43,7 +43,7 @@ class FightData : ICheckData {
         lastInteractBoost.removeIf { l: Long -> l < System.currentTimeMillis() - 1000 }
         this.lastClickPerSecond = clickPerSecond
         this.clickPerSecond = max(0, swingQueue.size * this.clickPerSecondInteract - lastInteractBoost.size * 8)
-        this.clickPerSecondList.add(this.getClickPerSecond())
+        if (this.getClickPerSecond() > 0) this.clickPerSecondList.add(this.getClickPerSecond())
         var sumClickPerSecond = 0.0
         clickPerSecondList.forEach {
             sumClickPerSecond += it
