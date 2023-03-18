@@ -14,6 +14,9 @@
 package net.catrainbow.nocheatplus.checks.blockbreak
 
 import cn.nukkit.event.block.BlockBreakEvent
+import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.actions.ActionFactory
+import net.catrainbow.nocheatplus.checks.CheckType.BLOCK_BREAK_FAST_BREAK
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.dataPacket
 import net.catrainbow.nocheatplus.components.data.ICheckData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperBreakBlockPacket
@@ -32,6 +35,7 @@ class BlockBreakData : ICheckData {
     private var totalUsedTicks = 0
     private var usedBalanceTime = System.currentTimeMillis() - 1500L
     private var cancellable = false
+    private var isBreaking = false
 
     fun onUpdate() {
         if (breakQueue.size > 0) {
@@ -58,10 +62,22 @@ class BlockBreakData : ICheckData {
         this.breakQueue.add(System.currentTimeMillis() - 100L)
         if ((sendEvent.packet as WrapperBreakBlockPacket).isValid) {
             if (this.cancellable) {
-                event.setCancelled()
+                if (ActionFactory.actionDataMap[BLOCK_BREAK_FAST_BREAK.name]!!.enableCancel) {
+                    val data =
+                        NoCheatPlus.instance.getPlayerProvider(packet.player).getViolationData(BLOCK_BREAK_FAST_BREAK)
+                    if (data.getVL() > ActionFactory.actionDataMap[BLOCK_BREAK_FAST_BREAK.name]!!.cancel) event.setCancelled()
+                }
                 this.cancellable = false
             }
         }
+    }
+
+    fun setBreakingStatus(boolean: Boolean) {
+        this.isBreaking = boolean
+    }
+
+    fun isBreaking(): Boolean {
+        return this.isBreaking
     }
 
     fun setCancelled() {

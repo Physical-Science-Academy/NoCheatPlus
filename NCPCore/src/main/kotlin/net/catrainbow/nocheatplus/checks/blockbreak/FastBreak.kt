@@ -62,7 +62,14 @@ class FastBreak : Check("checks.blockbreak.fastbreak", CheckType.BLOCK_BREAK_FAS
             )
             else 0.0
             val ignorantTicks = effectiveBooster * 12
-            val diff = max(0.0, abs(balanceTime - expectedTicks) - ignorantTicks)
+            var diff = max(0.0, abs(balanceTime - expectedTicks) - ignorantTicks)
+            if (item.isSword) diff /= 2.0
+
+            if (diff > ConfigData.check_fast_break_max || diff < ConfigData.check_fast_break_min) {
+                (event.packet as WrapperBreakBlockPacket).isValid = true
+                data.setCancelled()
+                pData.getViolationData(this.typeName).addVL(diff / 20.0)
+            }
 
             if (ConfigData.logging_debug) {
                 player.sendMessage("NCP BlockBreak Check $diff ${(event.packet as WrapperBreakBlockPacket).usedTicks}")

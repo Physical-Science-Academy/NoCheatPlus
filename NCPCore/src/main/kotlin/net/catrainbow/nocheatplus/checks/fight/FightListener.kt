@@ -19,6 +19,7 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.network.protocol.AnimatePacket
 import cn.nukkit.network.protocol.LevelSoundEventPacket
+import cn.nukkit.network.protocol.PlayerActionPacket
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
@@ -45,9 +46,22 @@ class FightListener : CheckListener(CheckType.FIGHT) {
                 ) handle = false
             }
             if (handle) this.handleNormalSwing(event.player)
+            if (packet is PlayerActionPacket) {
+                when (packet.action) {
+                    PlayerActionPacket.ACTION_START_BREAK, PlayerActionPacket.ACTION_CONTINUE_BREAK, PlayerActionPacket.ACTION_CONTINUE_DESTROY_BLOCK -> {
+                        NoCheatPlus.instance.getPlayerProvider(event.player).blockBreakData.setBreakingStatus(true)
+                    }
+                    PlayerActionPacket.ACTION_STOP_BREAK, PlayerActionPacket.ACTION_ABORT_BREAK -> {
+                        NoCheatPlus.instance.getPlayerProvider(event.player).blockBreakData.setBreakingStatus(false)
+                    }
+                }
+            }
         } else if (event is WrapperPacketEvent) {
             val player = event.player
             val data = NoCheatPlus.instance.getPlayerProvider(player)
+            if (data.blockBreakData.isBreaking()) data.fightData.setClickPerSecondInteract(0) else data.fightData.setClickPerSecondInteract(
+                1
+            )
             data.fightData.onUpdate()
         } else if (event is EntityDamageByEntityEvent) {
             if (event.damager is Player) {

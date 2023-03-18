@@ -29,6 +29,7 @@ class FightData : ICheckData {
     private var lastClickPerSecond = 0
     private var clickPerSecondList = ArrayList<Double>()
     private var clickPerSecondVariance = 1.0
+    private var clickPerSecondInteract = 0
 
     var speedShortTermTick = 0
     var attackSoundBoost = System.currentTimeMillis() - 1000L
@@ -38,7 +39,7 @@ class FightData : ICheckData {
     fun onUpdate() {
         swingQueue.removeIf { l: Long -> l < System.currentTimeMillis() - 1000 }
         this.lastClickPerSecond = clickPerSecond
-        this.clickPerSecond = swingQueue.size
+        this.clickPerSecond = swingQueue.size * this.clickPerSecondInteract
         this.clickPerSecondList.add(this.getClickPerSecond())
         var sumClickPerSecond = 0.0
         clickPerSecondList.forEach {
@@ -66,6 +67,10 @@ class FightData : ICheckData {
 
     fun getClickPerSecond(): Double {
         return (this.clickPerSecond + lastClickPerSecond) / 2.0
+    }
+
+    fun setClickPerSecondInteract(count: Int) {
+        this.clickPerSecondInteract = count
     }
 
     fun getClickPerSecondVariance(): Double {
