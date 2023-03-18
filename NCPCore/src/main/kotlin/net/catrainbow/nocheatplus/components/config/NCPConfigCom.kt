@@ -69,6 +69,11 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.check_no_fall_reset_vehicle = config.getBoolean("checks.moving.nofall.resetonvehicle")
         ConfigData.check_no_fall_anti_critical = config.getBoolean("checks.moving.nofall.anticriticals")
         ConfigData.check_inventory_fast_click_delay = config.getLong("checks.inventory.fastclick.delay")
+        ConfigData.check_fight_max_speed = config.getInt("checks.fight.speed.maxspeed")
+        ConfigData.check_fight_deal_variance = config.getDouble("checks.fight.speed.dealvariance")
+        ConfigData.check_fight_cancel_damage = config.getBoolean("checks.fight.speed.cancelDamage")
+        ConfigData.check_fast_break_max = config.getInt("checks.blockbreak.fastbreak.max")
+        ConfigData.check_fast_break_min = config.getInt("checks.blockbreak.fastbreak.min")
     }
 
 }
