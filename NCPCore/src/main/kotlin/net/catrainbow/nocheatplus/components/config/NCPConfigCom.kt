@@ -18,6 +18,10 @@ import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.components.registry.INCPComponent
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+
 
 class NCPConfigCom : NCPComponent(), INCPComponent {
     private lateinit var config: Config
@@ -26,10 +30,43 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         this.getRegisterCom().setName("NCP Config")
         this.getRegisterCom().setVersion("1.0.0")
         this.getRegisterCom().setAuthor("Catrainbow")
-        NoCheatPlus.instance.saveResource("ncpconfig.yml")
+        NoCheatPlus.instance.saveResource("ncpconfig.yml", false)
         val config = this.getNCPConfig()
         this.config = config
+
+        // Updates the config and adds missing keys with
+        // default values from the current Plugin config
+        updateConfig()
+
         this.inputConfig()
+    }
+
+    private fun updateConfig() {
+        val tempConf = Config(getResourceAsFile("ncpconfig.yml"), Config.YAML)
+        tempConf.all.forEach { entry ->
+            if (!config.exists(entry.key))
+                config.set(entry.key, entry.value)
+        }
+    }
+
+    private fun getResourceAsFile(resourcePath: String?): File? {
+        return try {
+            val stream = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath) ?: return null
+            val tempFile = File.createTempFile(stream.hashCode().toString(), ".tmp")
+            tempFile.deleteOnExit()
+            FileOutputStream(tempFile).use { out ->
+                // Copy stream
+                val buffer = ByteArray(1024)
+                var bytesRead: Int
+                while (stream.read(buffer).also { bytesRead = it } != -1) {
+                    out.write(buffer, 0, bytesRead)
+                }
+            }
+            tempFile
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
     }
 
     private fun getNCPConfig(): Config {
