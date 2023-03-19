@@ -57,6 +57,9 @@ checks:
       active: true
       delay: 50
       actions: "cancel vl>5&&kick vl>20"
+    item:
+      active: true
+      actions: "kick vl>10"
   moving:
     survivalfly:
       active: true
