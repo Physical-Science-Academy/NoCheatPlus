@@ -32,8 +32,7 @@ import java.util.concurrent.CompletableFuture
  */
 class PluginUpdater {
 
-    private val updateLink =
-        "https://api.github.com/repos/Physical-Science-Academy/NoCheatPlus/commits/main\nhttps://api.github.com/repos/Physical-Science-Academy/NoCheatPlus/commits/main\n"
+    private val updateLink = "https://api.github.com/repos/Physical-Science-Academy/NoCheatPlus/commits/main"
 
     private val gitInfo = getGitInfo()
     private val version = getVersion()

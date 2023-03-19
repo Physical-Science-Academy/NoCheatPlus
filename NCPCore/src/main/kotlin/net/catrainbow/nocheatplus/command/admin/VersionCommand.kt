@@ -14,8 +14,10 @@
 package net.catrainbow.nocheatplus.command.admin
 
 import cn.nukkit.command.CommandSender
+import cn.nukkit.utils.TextFormat
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.command.NCPSubCommand
+import net.catrainbow.nocheatplus.utilities.PluginUpdater
 import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
 
 class VersionCommand : NCPSubCommand("version") {
@@ -28,11 +30,22 @@ class VersionCommand : NCPSubCommand("version") {
     }
 
     override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
-        val default = StringBuilder().append(getString("command.version.ncpversion", NoCheatPlus.PLUGIN_VERSION)).append("\n")
-            .append(getString("command.version.pluginDescription")).append("\n")
-            .append(getString("command.version.githubLink")).append("\n")
-            .append(getString("command.version.authors"))
+        val default =
+            StringBuilder().append(getString("command.version.ncpversion", NoCheatPlus.PLUGIN_VERSION)).append("\n")
+                .append(getString("command.version.pluginDescription")).append("\n")
+                .append(getString("command.version.githubLink")).append("\n")
+                .append(getString("command.version.authors"))
         sender.sendMessage(default.toString())
+        if (sender.isOp) {
+            val updater = PluginUpdater()
+            if (updater.onUpdate()) sender.sendMessage(
+                "${TextFormat.GOLD}${
+                    getString(
+                        "ncp.update", updater.getNCPVersion(), updater.latest
+                    )
+                }"
+            )
+        }
         return true
     }
 }
