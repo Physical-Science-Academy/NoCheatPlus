@@ -30,6 +30,7 @@ import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.math.min
 import kotlin.math.round
 
 /**
@@ -60,8 +61,10 @@ class PacketVerify {
                 //if (!event.isCancelled) playerLastUpdatePacket[player.name] = System.currentTimeMillis()
             } else if (packet is TextPacket) {
                 //Unknown TextPacket
-                if (packet.xboxUserId == "0") NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
-                else {
+                if (packet.xboxUserId == "0") {
+                    NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
+                    event.setCancelled()
+                } else {
                     val data = NoCheatPlus.instance.getPlayerProvider(player).movingData
                     val now = System.currentTimeMillis()
                     val isLive = data.isLive() && data.isSafeSpawn()
@@ -166,7 +169,7 @@ class PacketVerify {
             }
             //fix a disabler of NCP
             val height = LocUtil.getPlayerHeight(player)
-            if (height >= 1) player.teleport(player.add(0.0, 0.3 - height, 0.0))
+            if (player != null) if (height >= 1) player.teleport(player.add(0.0, min(0.0, 0.3 - height), 0.0))
         }
 
     }
