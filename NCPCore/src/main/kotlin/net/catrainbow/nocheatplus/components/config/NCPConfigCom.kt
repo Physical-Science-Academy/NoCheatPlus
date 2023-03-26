@@ -43,15 +43,19 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
 
     private fun updateConfig() {
         val tempConf = Config(getResourceAsFile("ncpconfig.yml"), Config.YAML)
+        var count = 0
         tempConf.all.forEach { entry ->
-            if (!config.exists(entry.key))
+            if (!config.exists(entry.key)) {
+                count++
                 config.set(entry.key, entry.value)
+            }
         }
+        config.save(true)
     }
 
-    private fun getResourceAsFile(resourcePath: String?): File? {
+    private fun getResourceAsFile(resourcePath: String): File? {
         return try {
-            val stream = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath) ?: return null
+            val stream = this.javaClass.classLoader.getResourceAsStream(resourcePath) ?: return null
             val tempFile = File.createTempFile(stream.hashCode().toString(), ".tmp")
             tempFile.deleteOnExit()
             FileOutputStream(tempFile).use { out ->
@@ -74,7 +78,7 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
     }
 
     fun getConfig(): Config {
-        return this.config;
+        return this.config
     }
 
     fun reload() {
@@ -98,9 +102,16 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         config.set("string.kick", ConfigData.string_kick_message)
         config.set("string.ban", ConfigData.string_ban_message)
         config.set("permission.no_permission", ConfigData.permission_no_permission)
-        config.set("checks.moving.survivalfly.setback_policy.fall_damage", ConfigData.check_survival_fly_set_back_fall_damage)
-        config.set("checks.moving.survivalfly.setback_policy.void_to_void", ConfigData.check_survival_fly_set_back_void_to_void)
-        config.set("checks.moving.survivalfly.setback_policy.latency_protection", ConfigData.check_survival_fly_latency_protection)
+        config.set(
+            "checks.moving.survivalfly.setback_policy.fall_damage", ConfigData.check_survival_fly_set_back_fall_damage
+        )
+        config.set(
+            "checks.moving.survivalfly.setback_policy.void_to_void", ConfigData.check_survival_fly_set_back_void_to_void
+        )
+        config.set(
+            "checks.moving.survivalfly.setback_policy.latency_protection",
+            ConfigData.check_survival_fly_latency_protection
+        )
         config.set("checks.moving.survivalfly.strict_mode", ConfigData.check_survival_fly_strict_mode)
         config.set("checks.moving.nofall.dealdamage", ConfigData.check_no_fall_deal_damage)
         config.set("checks.moving.nofall.skipallowflight", ConfigData.check_no_fall_skip_allow_flight)

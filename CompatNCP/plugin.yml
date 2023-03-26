@@ -1,0 +1,8 @@
+name: "CompatNCP"
+version: "1.0.0"
+main: net.catrainbow.nocheatplus.compat.CompatNCP
+description: "make your NCP supported more functions like server-side motion"
+api: [ "1.0.0" ]
+
+depend:
+  - NoCheatPlus

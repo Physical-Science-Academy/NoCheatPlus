@@ -19,6 +19,7 @@ import cn.nukkit.event.inventory.InventoryClickEvent
 import cn.nukkit.event.inventory.InventoryCloseEvent
 import cn.nukkit.event.inventory.InventoryEvent
 import cn.nukkit.event.inventory.InventoryOpenEvent
+import cn.nukkit.event.inventory.InventoryTransactionEvent
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
@@ -27,6 +28,7 @@ import net.catrainbow.nocheatplus.feature.inventory.InventoryAction
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperEatFoodPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInventoryPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperUpdateInventoryPacket
 
 /**
  * 子监听器
@@ -81,6 +83,16 @@ class InventoryListener : CheckListener(CheckType.INVENTORY) {
                 dataPacket(callEvent)
             }
 
+        } else if (event is InventoryTransactionEvent) {
+            val player = event.transaction.source
+            val packet = WrapperUpdateInventoryPacket(player)
+            packet.inventory = player.inventory
+            packet.item = player.inventory.itemInHand
+            val sendEvent = WrapperPacketEvent()
+            sendEvent.packet = packet
+            sendEvent.player = player
+            dataPacket(sendEvent)
+            if ((sendEvent.packet as WrapperUpdateInventoryPacket).isValid) event.setCancelled()
         }
     }
 
@@ -88,6 +100,7 @@ class InventoryListener : CheckListener(CheckType.INVENTORY) {
         this.addCheck(InstantEat())
         this.addCheck(InventoryMove())
         this.addCheck(Open())
+        this.addCheck(Item())
     }
 
 }

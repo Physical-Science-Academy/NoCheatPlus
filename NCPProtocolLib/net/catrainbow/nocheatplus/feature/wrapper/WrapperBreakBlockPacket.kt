@@ -14,20 +14,14 @@
 package net.catrainbow.nocheatplus.feature.wrapper
 
 import cn.nukkit.Player
-import net.catrainbow.nocheatplus.actions.ActionType
-import net.catrainbow.nocheatplus.checks.CheckType
+import cn.nukkit.block.Block
+import kotlin.properties.Delegates
 
-class WrapperDisconnectPacket(player: Player) : WrapperPacket(player) {
+class WrapperBreakBlockPacket(player: Player) : WrapperPacket(player) {
 
-    private var cancelled = false
-    var type: ActionType = ActionType.DEFAULT
-    var reason: CheckType = CheckType.ALL
+    lateinit var block: Block
+    var usedTicks by Delegates.notNull<Int>()
+    var breakTicks by Delegates.notNull<Int>()
+    var isValid = false
 
-    fun setCancelled() {
-        this.cancelled = true
-    }
-
-    fun isCancelled(): Boolean {
-        return this.cancelled
-    }
 }

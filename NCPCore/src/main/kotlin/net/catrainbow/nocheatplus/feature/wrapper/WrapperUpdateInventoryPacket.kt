@@ -14,20 +14,11 @@
 package net.catrainbow.nocheatplus.feature.wrapper
 
 import cn.nukkit.Player
-import net.catrainbow.nocheatplus.actions.ActionType
-import net.catrainbow.nocheatplus.checks.CheckType
+import cn.nukkit.inventory.Inventory
+import cn.nukkit.item.Item
 
-class WrapperDisconnectPacket(player: Player) : WrapperPacket(player) {
-
-    private var cancelled = false
-    var type: ActionType = ActionType.DEFAULT
-    var reason: CheckType = CheckType.ALL
-
-    fun setCancelled() {
-        this.cancelled = true
-    }
-
-    fun isCancelled(): Boolean {
-        return this.cancelled
-    }
+class WrapperUpdateInventoryPacket(player: Player) : WrapperPacket(player) {
+    lateinit var item: Item
+    lateinit var inventory: Inventory
+    var isValid = false
 }

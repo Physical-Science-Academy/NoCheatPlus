@@ -53,7 +53,7 @@
 
 ###### 相关插件
 * [NCPPlugin](https://cloudburstmc.org/resources/ncpplugin.896/)
-* [ECCompatNCP](https://github.com/Physical-Science-Academy/NoCheatPlus/tree/main/NCPCompatEC)
+* [ECCompatNCP](https://cloudburstmc.org/resources/eccompatncp.902/)
 
 ## 🎉重构进度
 - [95％] 生存飞行检测
@@ -69,6 +69,7 @@
 - [√] 防崩服
 - [√] 非法客户端检测
 - [√] 发包数量检测
+- [√] 快速挖掘检测
 - [ ] 自动搭路检测
 - [ ] 杀戮光环检测
 - [ ] 攻击距离检测
