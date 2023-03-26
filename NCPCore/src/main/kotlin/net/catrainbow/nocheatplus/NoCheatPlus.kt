@@ -36,6 +36,7 @@ import net.catrainbow.nocheatplus.logging.NCPLoggerCom
 import net.catrainbow.nocheatplus.permission.NCPPermissionCom
 import net.catrainbow.nocheatplus.players.PlayerData
 import net.catrainbow.nocheatplus.utilities.NCPTimeTool
+import net.catrainbow.nocheatplus.utilities.PluginUpdater
 import net.catrainbow.nocheatplus.utilities.i18n.I18N
 import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
 import java.io.File
@@ -83,6 +84,14 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
         this.logger.info(getString("ncp.autoDelete", this.getNCPLogger().getDeleteCount()))
         this.logger.info("${TextFormat.YELLOW}${getString("ncp.loaded")}")
         this.logger.info("${TextFormat.BLUE}${getString("ncp.link")}")
+        val updater = PluginUpdater()
+        if (updater.onUpdate()) this.logger.info(
+            "${TextFormat.GOLD}${
+                getString(
+                    "ncp.update", updater.getNCPVersion(), updater.latest
+                )
+            }"
+        )
     }
 
     override fun onDisable() {
@@ -134,7 +143,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     }
 
     override fun getNCPConfig(): Config {
-        return (this.getNCPComponent("NCP Config") as NCPConfigCom).getNCPConfig()
+        return (this.getNCPComponent("NCP Config") as NCPConfigCom).getConfig()
     }
 
     override fun getNCPBanRecord(): Config {
@@ -212,9 +221,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
 
     override fun clearAllViolations(player: Player) {
         val data = this.getPlayerProvider(player)
-        for (type in CheckType.values())
-            if (type.isUsedCheck())
-                data.getViolationData(type).clear()
+        for (type in CheckType.values()) if (type.isUsedCheck()) data.getViolationData(type).clear()
     }
 
 }

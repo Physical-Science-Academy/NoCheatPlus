@@ -62,6 +62,11 @@ class FightListener : CheckListener(CheckType.FIGHT) {
         } else if (event is EntityDamageByEntityEvent) {
             if (event.damager is Player) {
                 val player = event.damager as Player
+                if (!NoCheatPlus.instance.getPlayerProvider(player).movingData.isLive()) {
+                    event.setCancelled()
+                    NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
+                    return
+                }
                 //空刀机制
                 if (NoCheatPlus.instance.getPlayerProvider(player).fightData.lastDealDamage) {
                     NoCheatPlus.instance.getPlayerProvider(player).fightData.lastDealDamage = false

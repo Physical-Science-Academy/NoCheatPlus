@@ -25,6 +25,7 @@ import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperSetBackPacket
 
 /**
  * 多核心适配和架桥
@@ -60,12 +61,22 @@ class Bridge118 {
 
         //重写核心拉回算法
         fun Player.setback(location: Location, type: CheckType) {
-            if (ActionFactory.actionDataMap.containsKey(type.name)) if (ActionFactory.actionDataMap[type.name]!!.enableCancel) if (NoCheatPlus.instance.hasPlayer(
-                    player.name
-                )
-            ) if (NoCheatPlus.instance.getPlayerProvider(player).getViolationData(type)
-                    .getVL() >= ActionFactory.actionDataMap[type.name]!!.cancel
-            ) player.teleport(location)
+            val packet = WrapperSetBackPacket(player)
+            packet.checkType = type
+            packet.player = player
+            packet.target = location
+            val sendEvent = WrapperPacketEvent()
+            sendEvent.player = packet.player
+            sendEvent.packet = packet
+            dataPacket(sendEvent)
+            if (!sendEvent.isInvalid()) {
+                if (ActionFactory.actionDataMap.containsKey(type.name)) if (ActionFactory.actionDataMap[type.name]!!.enableCancel) if (NoCheatPlus.instance.hasPlayer(
+                        player.name
+                    )
+                ) if (NoCheatPlus.instance.getPlayerProvider(player).getViolationData(type)
+                        .getVL() >= ActionFactory.actionDataMap[type.name]!!.cancel
+                ) player.teleport(location)
+            }
         }
 
         //重写核心重生算法
