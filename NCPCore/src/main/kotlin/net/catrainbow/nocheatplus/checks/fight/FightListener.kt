@@ -16,6 +16,7 @@ package net.catrainbow.nocheatplus.checks.fight
 import cn.nukkit.Player
 import cn.nukkit.event.Event
 import cn.nukkit.event.entity.EntityDamageByEntityEvent
+import cn.nukkit.event.entity.EntityDamageEvent
 import cn.nukkit.event.player.PlayerInteractEvent
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.network.protocol.AnimatePacket
@@ -72,7 +73,7 @@ class FightListener : CheckListener(CheckType.FIGHT) {
                     NoCheatPlus.instance.getPlayerProvider(player).fightData.lastDealDamage = false
                     event.setCancelled()
                 }
-                if (!event.isCancelled) NoCheatPlus.instance.getPlayerProvider(player).fightData.lastDamageBoost =
+                if (!event.isCancelled && event.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) NoCheatPlus.instance.getPlayerProvider(player).fightData.lastDamageBoost =
                     System.currentTimeMillis()
             }
         } else if (event is PlayerInteractEvent) {
