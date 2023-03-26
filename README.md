@@ -53,7 +53,7 @@
 
 ###### Related Plugins
 * [NCPPlugin](https://cloudburstmc.org/resources/ncpplugin.896/)
-* [ECCompatNCP](https://github.com/Physical-Science-Academy/NoCheatPlus/tree/main/NCPCompatEC)
+* [ECCompatNCP](https://cloudburstmc.org/resources/eccompatncp.902/)
 
 ## 🎉Progress
 - [95％] SurvivalFly
@@ -69,6 +69,7 @@
 - [√] Crasher
 - [√] Client
 - [√] MorePacket
+- [√] FastBreak
 - [ ] Scaffold
 - [ ] KillAura
 - [ ] Reach
