@@ -16,7 +16,7 @@
 <p align="center"><img src="ncp-logo.png" height="128"/></p>
 <br>
 
-- An advanced AntiCheat worked on Nukkit/PetteriM1EditionNukkit/PowerNukkit.
+- An advanced AntiCheat worked on Nukkit/PetteriM1EditionNukkit/PowerNukkitX.
 - Learning from a well-known anti-cheat NoCheatPlus from Bukkit(Spigot).
 - We are in order to fix the bugs in Nukkit and prevent players from cheating.
 
@@ -244,7 +244,44 @@ Availabe CheckType:
 ## Development
 
 - NCP provides much API，to achieve many functions。see the api in NoCheatPlusAPI
-- Usage `NoCheatPlusAPI api = NoCheatPlus.instance;`
+
+A work in progress API for [NoCheatPlus](https://github.com/Physical-Science-Academy/NoCheatPlus)
+
+You can find the latest version here: https://jitpack.io/#Physical-Science-Academy/NoCheatPlus
+
+Gradle:
+```gradle
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+
+dependencies {
+	        implementation 'com.github.Physical-Science-Academy:NoCheatPlus:-SNAPSHOT'
+	}
+```
+
+Maven:
+```xml
+<repository>
+   <id>jitpack.io</id>
+   <url>https://jitpack.io</url>
+</repository>
+  
+<dependency>
+	    <groupId>com.github.Physical-Science-Academy</groupId>
+	    <artifactId>NoCheatPlus</artifactId>
+	    <version>-SNAPSHOT</version>
+	</dependency>
+```
+
+Obtaining an instance of the API:
+```java
+NoCheatPlusAPI api = NoCheatPlus.instance;
+```
+
 ### 
 | Method | Description |
 |:------------|:----------------|

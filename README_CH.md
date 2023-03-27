@@ -243,7 +243,44 @@ permission:
 ## 开发者接口
 
 - NCP提供丰富的API，可以实现大量自定义功能。API可以在NoCheatPlusAPI中查看
-- 实例化方式 `NoCheatPlusAPI api = NoCheatPlus.instance;`
+
+根据NCP依赖开发 [NoCheatPlus](https://github.com/Physical-Science-Academy/NoCheatPlus)
+
+历史依赖版本查询: https://jitpack.io/#Physical-Science-Academy/NoCheatPlus
+
+Gradle:
+```gradle
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+
+dependencies {
+	        implementation 'com.github.Physical-Science-Academy:NoCheatPlus:-SNAPSHOT'
+	}
+```
+
+Maven:
+```xml
+<repository>
+   <id>jitpack.io</id>
+   <url>https://jitpack.io</url>
+</repository>
+  
+<dependency>
+	    <groupId>com.github.Physical-Science-Academy</groupId>
+	    <artifactId>NoCheatPlus</artifactId>
+	    <version>-SNAPSHOT</version>
+	</dependency>
+```
+
+实例化APII:
+```java
+NoCheatPlusAPI api = NoCheatPlus.instance;
+```
+
 ### 
 | 方法名 | 介绍 |
 |:------------|:----------------|
