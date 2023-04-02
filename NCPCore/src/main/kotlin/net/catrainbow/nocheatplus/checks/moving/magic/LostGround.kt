@@ -27,6 +27,7 @@ class LostGround(val player: Player, val data: MovingData) {
 
     private var usedLocation: Location = player.location
     var lastTags: ArrayList<String> = ArrayList()
+    var isLive = false
     private var motionDirection = 0.0
     private var lastMotionDirection = 0.0
     private var vYDist: ArrayList<Double> = ArrayList()
@@ -34,6 +35,7 @@ class LostGround(val player: Player, val data: MovingData) {
 
     fun lostGround(location: Location) {
         this.usedLocation = location
+        this.isLive = true
     }
 
     fun onUpdate() {
@@ -44,6 +46,7 @@ class LostGround(val player: Player, val data: MovingData) {
         if (setClear) {
             this.vYDist.clear()
             this.setClear = false
+            this.isLive = false
         }
         if (motionDirection <= 0.0 && lastMotionDirection > 0.0) {
             vYDist.add(player.location.y)

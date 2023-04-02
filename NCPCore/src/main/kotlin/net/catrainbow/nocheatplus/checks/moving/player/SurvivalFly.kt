@@ -456,7 +456,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             data.getLostGround()!!.setClear()
         }
         data.getLostGround()!!.lastTags = this.tags
-        if (fromOnGround && !toOnGround) {
+        if ((fromOnGround && !toOnGround) || (!data.getLostGround()!!.isLive && yDistance < 0)) {
             data.getLostGround()!!.lostGround(from)
         } else if (fromOnGround && toOnGround) data.getLostGround()!!.setClear()
         data.getLostGround()!!.onUpdate()
