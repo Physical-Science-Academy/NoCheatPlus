@@ -177,6 +177,11 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                         val diffGround = abs(expectedDist - tracker.getHeight())
                         if (debug) player.sendMessage("slime diff $diffGround")
                     }
+                    val expectedVY = v0 + Magic.TINY_GRAVITY * data.getSlimeTick()
+                    val expectedXAngle = v0 / yDistance
+                    val motionX0 = v0 * sin(acos(expectedXAngle))
+                    val expectedX0 = motionX0 + data.getAcc() * data.getSlimeTick()
+                    if (debug) player.sendMessage("slime motion vX:${data.getMotionX()}/$expectedX0 vY:${data.getMotionY()}/$expectedVY")
                 } else data.setSlimeBump(false)
             } else if (player.isGliding) {
                 //检测鞘翅飞行的玩家
