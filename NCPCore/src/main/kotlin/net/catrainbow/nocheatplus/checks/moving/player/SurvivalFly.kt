@@ -133,6 +133,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (sprinting) this.tags.add("sprint")
         this.setNextFriction(from, to, data)
         data.getGhostBlockChecker().run()
+        if (player.levelBlock.canPassThrough() && player.levelBlock.id != 0) this.tags.add("passable")
 
         // Ghost Cube Tracker
         var lagGhostBlock = false
