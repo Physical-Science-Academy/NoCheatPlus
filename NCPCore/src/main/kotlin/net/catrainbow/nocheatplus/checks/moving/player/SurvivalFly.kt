@@ -195,12 +195,15 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                         pData.addViolationToBuffer(this.typeName, violation)
                         player.setback(data.getLastNormalGround(), this.typeName)
                     }
-                } else if (yDistance < -0.2) data.setSlimeBump(false)
+                } else if (yDistance < -0.2) {
+                    data.setSlimeBump(false)
+                    data.getLostGround()!!.setClear()
+                }
                 //异常运动
                 if (!data.getLostGround()!!.compareUsedLocation()) {
                     data.getLostGround()!!.setClear()
                 }
-                player.sendMessage("${data.getLostGround()!!.toString()}")
+                player.sendMessage(data.getLostGround()!!.toString())
             } else if (player.isGliding) {
                 //检测鞘翅飞行的玩家
                 val mathMotion = this.vDistGlideMotion(player, data)
@@ -455,7 +458,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         data.getLostGround()!!.lastTags = this.tags
         if (fromOnGround && !toOnGround) {
             data.getLostGround()!!.lostGround(from)
-        }
+        } else if (fromOnGround && toOnGround) data.getLostGround()!!.setClear()
         data.getLostGround()!!.onUpdate()
 
         //检测到幽灵方块,产生拉回但不增加violation

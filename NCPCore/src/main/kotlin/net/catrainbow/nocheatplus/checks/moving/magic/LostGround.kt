@@ -38,14 +38,12 @@ class LostGround(val player: Player, val data: MovingData) {
 
     fun onUpdate() {
         this.motionDirection = data.getMotionY()
-        if (this.player.onGround() && data.getGroundTick() > 13) {
+        if (this.player.onGround() && data.getGroundTick() > 20) {
             this.usedLocation = player.location
-            if (this.vYDist.size > 0) {
-                if (setClear) {
-                    this.vYDist.clear()
-                    this.setClear = false
-                }
-            }
+        }
+        if (setClear) {
+            this.vYDist.clear()
+            this.setClear = false
         }
         if (motionDirection <= 0.0 && lastMotionDirection > 0.0) {
             vYDist.add(player.location.y)
