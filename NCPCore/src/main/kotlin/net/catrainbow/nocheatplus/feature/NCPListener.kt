@@ -318,7 +318,8 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerTeleports(event: PlayerTeleportEvent) {
-        for (listener in listeners) checkEvent(listener, event)
+        if (event.player != null)
+            for (listener in listeners) checkEvent(listener, event)
     }
 
     @EventHandler
