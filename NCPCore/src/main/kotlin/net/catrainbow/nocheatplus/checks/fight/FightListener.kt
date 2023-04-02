@@ -73,6 +73,7 @@ class FightListener : CheckListener(CheckType.FIGHT) {
                     NoCheatPlus.instance.getPlayerProvider(player).fightData.lastDealDamage = false
                     event.setCancelled()
                 }
+                //排除远程攻击机制
                 if (!event.isCancelled && event.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) NoCheatPlus.instance.getPlayerProvider(player).fightData.lastDamageBoost =
                     System.currentTimeMillis()
             }
