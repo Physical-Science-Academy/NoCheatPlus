@@ -166,7 +166,9 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (data.getKnockBackTick() > 13) {
             //反弹运动
             if (data.isOnSlimeBump()) {
-                val v0 = data.getSpeedList()[0]
+                val v0 =
+                    if (data.getSpeedList().size > 0) data.getSpeedList()[0] else if (data.getSpeed() != 0.0) data.getSpeed()
+                    else yDistance
                 if (yDistance >= 0) {
                     if (data.getMovementTracker() == null) return
                     val tracker = data.getMovementTracker()!!
@@ -180,9 +182,17 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                     val expectedVY = v0 + Magic.TINY_GRAVITY * data.getSlimeTick()
                     val expectedXAngle = v0 / yDistance
                     val motionX0 = v0 * sin(acos(expectedXAngle))
-                    val expectedX0 = motionX0 + data.getAcc() * data.getSlimeTick()
+                    val expectedX0 = motionX0 + 0.2
                     if (debug) player.sendMessage("slime motion vX:${data.getMotionX()}/$expectedX0 vY:${data.getMotionY()}/$expectedVY")
-                } else data.setSlimeBump(false)
+
+                    if (data.getMotionX() > expectedX0 || data.getMotionY() > expectedVY) {
+                        val violation = (max(data.getMotionY(), data.getMotionX()) - min(
+                            expectedX0, expectedVY
+                        )) * 10 * data.getSlimeTick() * 1.2
+                        pData.addViolationToBuffer(this.typeName, violation)
+                        player.setback(data.getLastNormalGround(), this.typeName)
+                    }
+                } else if (yDistance < -0.2) data.setSlimeBump(false)
             } else if (player.isGliding) {
                 //检测鞘翅飞行的玩家
                 val mathMotion = this.vDistGlideMotion(player, data)
@@ -413,9 +423,13 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         }
 
         //start with slime
-        if (downB1.id == Block.SLIME_BLOCK || downB2.id == Block.SLIME_BLOCK) {
+        val bbMoveInTo = this.getTinyHeight(player, ArrayList()) > 0.0 && player.add(
+            0.0, -1.5, 0.0
+        ).levelBlock.id == Block.SLIME_BLOCK
+        if (downB1.id == Block.SLIME_BLOCK || downB2.id == Block.SLIME_BLOCK || bbMoveInTo) {
             if (!this.tags.contains("same_at") && !this.tags.contains("bunny_hop")) {
                 if (!data.isOnSlimeBump()) {
+                    if (debug) player.sendMessage("move into slime")
                     data.setSlimeBump(true)
                     //catch violations
                     pData.getViolationData(this.typeName).setCancel()
@@ -424,7 +438,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         }
 
         //reset the slime data
-        if (fromOnGround && toOnGround && this.tags.contains("same_at")) if (data.isOnSlimeBump()) data.setSlimeBump(
+        if (fromOnGround && toOnGround && this.tags.contains("same_at") && data.getGroundTick() > 13) if (data.isOnSlimeBump()) data.setSlimeBump(
             false
         )
 

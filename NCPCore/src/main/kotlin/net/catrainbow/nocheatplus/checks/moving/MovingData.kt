@@ -567,8 +567,8 @@ class MovingData : ICheckData {
         return this.onSlimeBump
     }
 
-    fun getSlimeTick(): Int {
-        return this.slimeTick
+    fun getSlimeTick(): Double {
+        return this.slimeTick / 20.0
     }
 
 }
