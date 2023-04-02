@@ -164,8 +164,22 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         //==========================
 
         if (data.getKnockBackTick() > 13) {
-            //检测鞘翅飞行的玩家
-            if (player.isGliding) {
+            //反弹运动
+            if (data.isOnSlimeBump()) {
+                val v0 = data.getSpeedList()[0]
+                if (yDistance >= 0) {
+                    if (data.getMovementTracker() == null) return
+                    val tracker = data.getMovementTracker()!!
+                    val expectedMotion = data.getLastNormalGround().y - player.y
+                    if (tracker.getHeight() != 0.0) {
+                        val motionY = sqrt(2.0 * Magic.TINY_GRAVITY * expectedMotion)
+                        val expectedDist = (motionY.pow(2.0) - v0.pow(2.0)) / (2.0 * Magic.TINY_GRAVITY)
+                        val diffGround = abs(expectedDist - tracker.getHeight())
+                        if (debug) player.sendMessage("slime diff $diffGround")
+                    }
+                } else data.setSlimeBump(false)
+            } else if (player.isGliding) {
+                //检测鞘翅飞行的玩家
                 val mathMotion = this.vDistGlideMotion(player, data)
                 val distGlide = this.getLimitedGlideMotion(now, player, mathMotion, data, pData)
                 if (distGlide[0] > distGlide[1]) {
@@ -392,6 +406,22 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             }
             if (!data.getPacketTracker()!!.isLive()) data.getPacketTracker()!!.run()
         }
+
+        //start with slime
+        if (downB1.id == Block.SLIME_BLOCK || downB2.id == Block.SLIME_BLOCK) {
+            if (!this.tags.contains("same_at") && !this.tags.contains("bunny_hop")) {
+                if (!data.isOnSlimeBump()) {
+                    data.setSlimeBump(true)
+                    //catch violations
+                    pData.getViolationData(this.typeName).setCancel()
+                }
+            }
+        }
+
+        //reset the slime data
+        if (fromOnGround && toOnGround && this.tags.contains("same_at")) if (data.isOnSlimeBump()) data.setSlimeBump(
+            false
+        )
 
         //检测到幽灵方块,产生拉回但不增加violation
         if (lagGhostBlock) {

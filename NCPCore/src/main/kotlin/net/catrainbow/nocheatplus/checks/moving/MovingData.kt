@@ -103,6 +103,8 @@ class MovingData : ICheckData {
     private var eatFood = false
     private var eatFoodTick = 0
     private var fallDist = 0.0
+    private var onSlimeBump = false
+    private var slimeTick = 0
 
     //Timer Clock
     private var timeBalance = System.currentTimeMillis() - 5000L
@@ -248,6 +250,7 @@ class MovingData : ICheckData {
         }
         if (System.currentTimeMillis() - this.lastConsumeFood > 100 && this.firstGagApple) this.firstGagApple = false
         this.lastHealth = player.health.toDouble()
+        if (this.onSlimeBump) this.slimeTick++ else this.slimeTick = 0
     }
 
     fun getLiquidTick(): Int {
@@ -554,6 +557,18 @@ class MovingData : ICheckData {
 
     fun getFallDist(): Double {
         return this.fallDist
+    }
+
+    fun setSlimeBump(boolean: Boolean) {
+        this.onSlimeBump = boolean
+    }
+
+    fun isOnSlimeBump(): Boolean {
+        return this.onSlimeBump
+    }
+
+    fun getSlimeTick(): Int {
+        return this.slimeTick
     }
 
 }
