@@ -32,6 +32,7 @@ import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.MovingData
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
+import net.catrainbow.nocheatplus.checks.moving.magic.LostGround
 import net.catrainbow.nocheatplus.checks.moving.magic.Magic
 import net.catrainbow.nocheatplus.checks.moving.magic.MagicLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118
@@ -70,6 +71,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (player.gamemode == 1 || player.gamemode == 3) return
         val pData = NoCheatPlus.instance.getPlayerProvider(player)
         val data = pData.movingData
+        if (data.getLostGround() == null) data.initLostGround(LostGround(player, data))
         if (!data.isSafeSpawn() || !data.isLive()) return
         if (data.getRespawnTick() > 0) return
         if (player.riding != null) return
@@ -194,6 +196,11 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                         player.setback(data.getLastNormalGround(), this.typeName)
                     }
                 } else if (yDistance < -0.2) data.setSlimeBump(false)
+                //异常运动
+                if (!data.getLostGround()!!.compareUsedLocation()) {
+                    data.getLostGround()!!.setClear()
+                }
+                player.sendMessage("${data.getLostGround()!!.toString()}")
             } else if (player.isGliding) {
                 //检测鞘翅飞行的玩家
                 val mathMotion = this.vDistGlideMotion(player, data)
@@ -439,9 +446,17 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         }
 
         //reset the slime data
-        if (fromOnGround && toOnGround && this.tags.contains("same_at") && data.getGroundTick() > 13) if (data.isOnSlimeBump()) data.setSlimeBump(
-            false
-        )
+        if (fromOnGround && toOnGround && this.tags.contains("same_at") && data.getGroundTick() > 13) {
+            if (data.isOnSlimeBump()) data.setSlimeBump(
+                false
+            )
+            data.getLostGround()!!.setClear()
+        }
+        data.getLostGround()!!.lastTags = this.tags
+        if (fromOnGround && !toOnGround) {
+            data.getLostGround()!!.lostGround(from)
+        }
+        data.getLostGround()!!.onUpdate()
 
         //检测到幽灵方块,产生拉回但不增加violation
         if (lagGhostBlock) {

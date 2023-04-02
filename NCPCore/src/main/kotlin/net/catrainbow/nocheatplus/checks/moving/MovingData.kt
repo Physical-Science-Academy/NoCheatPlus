@@ -24,6 +24,7 @@ import cn.nukkit.math.Vector3
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
+import net.catrainbow.nocheatplus.checks.moving.magic.LostGround
 import net.catrainbow.nocheatplus.checks.moving.model.*
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInWeb
@@ -113,6 +114,7 @@ class MovingData : ICheckData {
     private var locationList: ArrayList<Location> = ArrayList()
     private var speedList: ArrayList<Double> = ArrayList()
     private var ghostBlockChecker: GhostBlockChecker = GhostBlockChecker("NCP", Vector3(0.0, 0.0, 0.0), 0, 0)
+    private var lostGround: LostGround? = null
 
     private var normalGround = Location(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Server.getInstance().defaultLevel)
 
@@ -569,6 +571,14 @@ class MovingData : ICheckData {
 
     fun getSlimeTick(): Double {
         return this.slimeTick / 20.0
+    }
+
+    fun getLostGround(): LostGround? {
+        return this.lostGround
+    }
+
+    fun initLostGround(lostGround: LostGround) {
+        this.lostGround = lostGround
     }
 
 }
