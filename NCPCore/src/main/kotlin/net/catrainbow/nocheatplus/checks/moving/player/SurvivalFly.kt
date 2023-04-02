@@ -135,7 +135,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (sprinting) this.tags.add("sprint")
         this.setNextFriction(from, to, data)
         data.getGhostBlockChecker().run()
-        if (player.levelBlock.canPassThrough() && player.levelBlock.id != 0) this.tags.add("passable")
+        if ((player.levelBlock.canPassThrough() || player.isOnLadder) && player.levelBlock.id != 0) this.tags.add("passable")
 
         // Ghost Cube Tracker
         var lagGhostBlock = false
@@ -197,13 +197,12 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                     }
                 } else if (yDistance < -0.2) {
                     data.setSlimeBump(false)
-                    data.getLostGround()!!.setClear()
                 }
                 //异常运动
                 if (!data.getLostGround()!!.compareUsedLocation()) {
+                    player.sendMessage(data.getLostGround()!!.toString())
                     data.getLostGround()!!.setClear()
                 }
-                player.sendMessage(data.getLostGround()!!.toString())
             } else if (player.isGliding) {
                 //检测鞘翅飞行的玩家
                 val mathMotion = this.vDistGlideMotion(player, data)
@@ -449,16 +448,18 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         }
 
         //reset the slime data
-        if (fromOnGround && toOnGround && this.tags.contains("same_at") && data.getGroundTick() > 13) {
+        if (fromOnGround && toOnGround && this.tags.contains("same_at") && data.getGroundTick() > 20) {
             if (data.isOnSlimeBump()) data.setSlimeBump(
                 false
             )
             data.getLostGround()!!.setClear()
         }
         data.getLostGround()!!.lastTags = this.tags
-        if ((fromOnGround && !toOnGround) || (!data.getLostGround()!!.isLive && yDistance < 0)) {
-            data.getLostGround()!!.lostGround(from)
-        } else if (fromOnGround && toOnGround) data.getLostGround()!!.setClear()
+        if (!this.tags.contains("same_at") && data.getLostGround()!!.lastTags.contains("same_at") && yDistance < 0.0
+            && !data.getLostGround()!!.isLive
+        ) {
+            data.getLostGround()!!.lostGround(data.getLastNormalGround())
+        }
         data.getLostGround()!!.onUpdate()
 
         //检测到幽灵方块,产生拉回但不增加violation
