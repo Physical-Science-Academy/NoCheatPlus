@@ -155,6 +155,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (downB1 is BlockStairs || downB1 is BlockSlab || downB2 is BlockStairs || downB2 is BlockSlab) this.tags.add(
             "stair_slab"
         )
+        if (data.isOnSlimeBump()) this.tags.add("slime")
 
         var revertBuffer = false
 
