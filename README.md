@@ -54,6 +54,7 @@
 ###### Related Plugins
 * [NCPPlugin](https://cloudburstmc.org/resources/ncpplugin.896/)
 * [ECCompatNCP](https://cloudburstmc.org/resources/eccompatncp.902/)
+* [NCPPanel](https://cloudburstmc.org/resources/ncppanel.906/)
 
 ## 🎉Progress
 - [95％] SurvivalFly

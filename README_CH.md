@@ -54,6 +54,7 @@
 ###### 相关插件
 * [NCPPlugin](https://cloudburstmc.org/resources/ncpplugin.896/)
 * [ECCompatNCP](https://cloudburstmc.org/resources/eccompatncp.902/)
+* [NCPPanel](https://cloudburstmc.org/resources/ncppanel.906/)
 
 ## 🎉重构进度
 - [95％] 生存飞行检测
