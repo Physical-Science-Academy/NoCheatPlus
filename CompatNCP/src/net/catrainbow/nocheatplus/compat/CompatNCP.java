@@ -52,6 +52,7 @@ public class CompatNCP extends PluginBase {
             updateKeys(config, "plugin.slimeJump", false);
             updateKeys(config, "plugin.booster", false);
             updateKeys(config, "plugin.allowFlight", false);
+            updateKeys(config,"plugin.ignorePacket",false);
         }
         for (String key : config.getSection("plugin").getAllMap().keySet()) {
             settings.put(key, config.getBoolean(key));

@@ -23,6 +23,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
 import net.catrainbow.nocheatplus.checks.CheckType;
 import net.catrainbow.nocheatplus.checks.moving.MovingData;
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperDisconnectPacket;
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacket;
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent;
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperSetBackPacket;
@@ -68,6 +69,7 @@ public class PluginListener implements Listener {
                 if (packet instanceof WrapperSetBackPacket) {
                     playerData.getViolationData(CheckType.MOVING_SURVIVAL_FLY).setCancel();
                     event.setInvalid();
+                    return;
                 }
             }
         }
@@ -76,6 +78,15 @@ public class PluginListener implements Listener {
                 playerData.getViolationData(CheckType.MOVING_SURVIVAL_FLY).setCancel();
                 playerData.getViolationData(CheckType.MOVING_SURVIVAL_FLY).clear();
                 if (packet instanceof WrapperSetBackPacket) {
+                    event.setInvalid();
+                    return;
+                }
+            }
+        }
+        if (CompatNCP.settings.get("ignorePacket")) {
+            if (event.packet instanceof WrapperDisconnectPacket) {
+                if (((WrapperDisconnectPacket) event.packet).getReason() == CheckType.UNKNOWN_PACKET) {
+                    ((WrapperDisconnectPacket) event.packet).setCancelled();
                     event.setInvalid();
                 }
             }
