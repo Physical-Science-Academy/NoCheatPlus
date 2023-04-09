@@ -32,6 +32,7 @@ import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.MovingData
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
+import net.catrainbow.nocheatplus.checks.moving.magic.LostGround
 import net.catrainbow.nocheatplus.checks.moving.magic.Magic
 import net.catrainbow.nocheatplus.checks.moving.magic.MagicLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118
@@ -70,6 +71,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (player.gamemode == 1 || player.gamemode == 3) return
         val pData = NoCheatPlus.instance.getPlayerProvider(player)
         val data = pData.movingData
+        if (data.getLostGround() == null) data.initLostGround(LostGround(player, data))
         if (!data.isSafeSpawn() || !data.isLive()) return
         if (data.getRespawnTick() > 0) return
         if (player.riding != null) return
@@ -133,6 +135,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (sprinting) this.tags.add("sprint")
         this.setNextFriction(from, to, data)
         data.getGhostBlockChecker().run()
+        if ((player.levelBlock.canPassThrough() || player.isOnLadder) && player.levelBlock.id != 0) this.tags.add("passable")
 
         // Ghost Cube Tracker
         var lagGhostBlock = false
@@ -154,6 +157,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (downB1 is BlockStairs || downB1 is BlockSlab || downB2 is BlockStairs || downB2 is BlockSlab) this.tags.add(
             "stair_slab"
         )
+        if (data.isOnSlimeBump()) this.tags.add("slime")
 
         var revertBuffer = false
 
@@ -163,8 +167,56 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         //==========================
 
         if (data.getKnockBackTick() > 13) {
-            //检测鞘翅飞行的玩家
-            if (player.isGliding) {
+            //反弹运动
+            if (data.isOnSlimeBump()) {
+                val v0 =
+                    if (data.getSpeedList().size > 0) data.getSpeedList()[0] else if (data.getSpeed() != 0.0) data.getSpeed()
+                    else yDistance
+                if (yDistance >= 0) {
+                    if (data.getMovementTracker() == null) return
+                    val tracker = data.getMovementTracker()!!
+                    val expectedMotion = data.getLastNormalGround().y - player.y
+                    if (tracker.getHeight() != 0.0) {
+                        val motionY = sqrt(2.0 * Magic.TINY_GRAVITY * expectedMotion)
+                        val expectedDist = (motionY.pow(2.0) - v0.pow(2.0)) / (2.0 * Magic.TINY_GRAVITY)
+                        val diffGround = abs(expectedDist - tracker.getHeight())
+                        if (debug) player.sendMessage("slime diff $diffGround")
+                    }
+                    val expectedVY = v0 + Magic.TINY_GRAVITY * data.getSlimeTick()
+                    val expectedXAngle = v0 / yDistance
+                    val motionX0 = v0 * sin(acos(expectedXAngle))
+                    val expectedX0 = motionX0 + 0.2
+                    if (debug) player.sendMessage("slime motion vX:${data.getMotionX()}/$expectedX0 vY:${data.getMotionY()}/$expectedVY")
+
+                    if (data.getMotionX() > expectedX0 || data.getMotionY() > expectedVY) {
+                        val violation = (max(data.getMotionY(), data.getMotionX()) - min(
+                            expectedX0, expectedVY
+                        )) * 10 * data.getSlimeTick() * 1.2
+                        pData.addViolationToBuffer(this.typeName, violation)
+                        player.setback(data.getLastNormalGround(), this.typeName)
+                    }
+                } else if (yDistance < -0.2) {
+                    data.setSlimeBump(false)
+                }
+                //异常运动
+                if (!data.getLostGround()!!.compareUsedLocation()) {
+                    if (debug) player.sendMessage(data.getLostGround()!!.toString())
+                    if (data.getLostGround()!!.getVYDist().size >= 1) {
+                        val vGround = data.getLostGround()!!.usedLocation.y
+                        val tickVelocity = data.getLostGround()!!.getVYDist()[0]
+                        if (tickVelocity - vGround > data.getLostGround()!!.lastDist && data.getLostGround()!!.lastDist != 0.0) {
+                            if (tickVelocity - vGround > Magic.FALL_DAMAGE_DIST) {
+                                val violation =
+                                    (tickVelocity - vGround - data.getLostGround()!!.lastDist) * player.inAirTicks / 20.0 * 10
+                                if (violation > 10) player.setback(data.getLastNormalGround(), this.typeName)
+                            } else data.getLostGround()!!.lastDist = 0.0
+                        }
+                        data.getLostGround()!!.lastDist = max(0.0, tickVelocity - vGround)
+                    }
+                    data.getLostGround()!!.setClear()
+                }
+            } else if (player.isGliding) {
+                //检测鞘翅飞行的玩家
                 val mathMotion = this.vDistGlideMotion(player, data)
                 val distGlide = this.getLimitedGlideMotion(now, player, mathMotion, data, pData)
                 if (distGlide[0] > distGlide[1]) {
@@ -392,12 +444,41 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             if (!data.getPacketTracker()!!.isLive()) data.getPacketTracker()!!.run()
         }
 
+        //start with slime
+        val bbMoveInTo = this.getTinyHeight(player, ArrayList()) > 0.0 && player.add(
+            0.0, -1.5, 0.0
+        ).levelBlock.id == Block.SLIME_BLOCK
+        if (downB1.id == Block.SLIME_BLOCK || downB2.id == Block.SLIME_BLOCK || bbMoveInTo) {
+            if (!this.tags.contains("same_at") && !this.tags.contains("bunny_hop")) {
+                if (!data.isOnSlimeBump()) {
+                    if (debug) player.sendMessage("move into slime")
+                    data.setSlimeBump(true)
+                    //catch violations
+                    pData.getViolationData(this.typeName).setCancel()
+                }
+            }
+        }
+
+        //reset the slime data
+        if (fromOnGround && toOnGround && this.tags.contains("same_at") && data.getGroundTick() > 20) {
+            if (data.isOnSlimeBump()) data.setSlimeBump(
+                false
+            )
+            data.getLostGround()!!.setClear()
+        }
+        data.getLostGround()!!.lastTags = this.tags
+        if (!this.tags.contains("same_at") && data.getLostGround()!!.lastTags.contains("same_at") && yDistance < 0.0 && !data.getLostGround()!!.isLive) {
+            data.getLostGround()!!.lostGround(data.getLastNormalGround())
+        }
+        data.getLostGround()!!.onUpdate()
+
         //检测到幽灵方块,产生拉回但不增加violation
         if (lagGhostBlock) {
             pData.getViolationData(typeName).setCancel()
             //强制的拉回
             player.teleport(data.getLastNormalGround())
         }
+        if (this.tags.size == 1) if (this.tags[0] == "passable") pData.getViolationData(this.typeName).setCancel()
 
         if (debug) {
             val builder = StringBuilder("empty")
