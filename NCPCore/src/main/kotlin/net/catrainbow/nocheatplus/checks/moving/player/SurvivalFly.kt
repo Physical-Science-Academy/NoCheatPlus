@@ -188,7 +188,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                     val expectedX0 = motionX0 + 0.2
                     if (debug) player.sendMessage("slime motion vX:${data.getMotionX()}/$expectedX0 vY:${data.getMotionY()}/$expectedVY")
 
-                    if (data.getMotionX() > expectedX0 || data.getMotionY() > expectedVY) {
+                    if (data.getMotionX() > expectedX0 && data.getMotionY() > expectedVY) {
                         val violation = (max(data.getMotionY(), data.getMotionX()) - min(
                             expectedX0, expectedVY
                         )) * 10 * data.getSlimeTick() * 1.2
