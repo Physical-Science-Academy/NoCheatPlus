@@ -188,7 +188,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                     val expectedX0 = motionX0 + 0.2
                     if (debug) player.sendMessage("slime motion vX:${data.getMotionX()}/$expectedX0 vY:${data.getMotionY()}/$expectedVY")
 
-                    if (data.getMotionX() > expectedX0 && data.getMotionY() > expectedVY) {
+                    if (data.getMotionX() > expectedX0 || data.getMotionY() > expectedVY) {
                         val violation = (max(data.getMotionY(), data.getMotionX()) - min(
                             expectedX0, expectedVY
                         )) * 10 * data.getSlimeTick() * 1.2
@@ -205,12 +205,13 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                         val vGround = data.getLostGround()!!.usedLocation.y
                         val tickVelocity = data.getLostGround()!!.getVYDist()[0]
                         if (tickVelocity - vGround > data.getLostGround()!!.lastDist && data.getLostGround()!!.lastDist != 0.0) {
-                            val violation =
-                                (tickVelocity - vGround - data.getLostGround()!!.lastDist) * player.inAirTicks / 20.0 * 10
-                            pData.addViolationToBuffer(this.typeName, violation)
-                            player.setback(data.getLastNormalGround(), this.typeName)
+                            if (tickVelocity - vGround > Magic.FALL_DAMAGE_DIST) {
+                                val violation =
+                                    (tickVelocity - vGround - data.getLostGround()!!.lastDist) * player.inAirTicks / 20.0 * 10
+                                if (violation > 10) player.setback(data.getLastNormalGround(), this.typeName)
+                            } else data.getLostGround()!!.lastDist = 0.0
                         }
-                        data.getLostGround()!!.lastDist = tickVelocity - vGround
+                        data.getLostGround()!!.lastDist = max(0.0, tickVelocity - vGround)
                     }
                     data.getLostGround()!!.setClear()
                 }
