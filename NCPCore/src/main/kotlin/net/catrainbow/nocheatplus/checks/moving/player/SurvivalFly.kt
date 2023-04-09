@@ -200,7 +200,18 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                 }
                 //异常运动
                 if (!data.getLostGround()!!.compareUsedLocation()) {
-                    player.sendMessage(data.getLostGround()!!.toString())
+                    if (debug) player.sendMessage(data.getLostGround()!!.toString())
+                    if (data.getLostGround()!!.getVYDist().size >= 1) {
+                        val vGround = data.getLostGround()!!.usedLocation.y
+                        val tickVelocity = data.getLostGround()!!.getVYDist()[0]
+                        if (tickVelocity - vGround > data.getLostGround()!!.lastDist && data.getLostGround()!!.lastDist != 0.0) {
+                            val violation =
+                                (tickVelocity - vGround - data.getLostGround()!!.lastDist) * player.inAirTicks / 20.0 * 10
+                            pData.addViolationToBuffer(this.typeName, violation)
+                            player.setback(data.getLastNormalGround(), this.typeName)
+                        }
+                        data.getLostGround()!!.lastDist = tickVelocity - vGround
+                    }
                     data.getLostGround()!!.setClear()
                 }
             } else if (player.isGliding) {
@@ -455,9 +466,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             data.getLostGround()!!.setClear()
         }
         data.getLostGround()!!.lastTags = this.tags
-        if (!this.tags.contains("same_at") && data.getLostGround()!!.lastTags.contains("same_at") && yDistance < 0.0
-            && !data.getLostGround()!!.isLive
-        ) {
+        if (!this.tags.contains("same_at") && data.getLostGround()!!.lastTags.contains("same_at") && yDistance < 0.0 && !data.getLostGround()!!.isLive) {
             data.getLostGround()!!.lostGround(data.getLastNormalGround())
         }
         data.getLostGround()!!.onUpdate()

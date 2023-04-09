@@ -25,9 +25,10 @@ import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onGround
  */
 class LostGround(val player: Player, val data: MovingData) {
 
-    private var usedLocation: Location = player.location
+    var usedLocation: Location = player.location
     var lastTags: ArrayList<String> = ArrayList()
     var isLive = false
+    var lastDist = 0.0
     private var motionDirection = 0.0
     private var lastMotionDirection = 0.0
     private var vYDist: ArrayList<Double> = ArrayList()
@@ -42,6 +43,7 @@ class LostGround(val player: Player, val data: MovingData) {
         this.motionDirection = data.getMotionY()
         if (this.player.onGround() && data.getGroundTick() > 20) {
             this.usedLocation = player.location
+            this.lastDist = 0.0
         }
         if (setClear) {
             this.vYDist.clear()
@@ -63,6 +65,10 @@ class LostGround(val player: Player, val data: MovingData) {
             val lastPosition = vYDist[vYDist.size - 1]
             lastPosition < usedLocation.y
         } else true
+    }
+
+    fun getVYDist(): ArrayList<Double> {
+        return this.vYDist
     }
 
     override fun toString(): String {
