@@ -478,6 +478,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             //强制的拉回
             player.teleport(data.getLastNormalGround())
         }
+        if (this.tags.size == 1) if (this.tags[0] == "passable") pData.getViolationData(this.typeName).setCancel()
 
         if (debug) {
             val builder = StringBuilder("empty")
