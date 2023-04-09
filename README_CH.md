@@ -55,9 +55,10 @@
 * [NCPPlugin](https://cloudburstmc.org/resources/ncpplugin.896/)
 * [ECCompatNCP](https://cloudburstmc.org/resources/eccompatncp.902/)
 * [NCPPanel](https://cloudburstmc.org/resources/ncppanel.906/)
+* [CompatNCP](https://cloudburstmc.org/resources/compatncp.907/)
 
 ## 🎉重构进度
-- [95％] 生存飞行检测
+- [97％] 生存飞行检测
 - [√] 创造飞行检测
 - [20%] 加速检测
 - [√] 秒吃检测

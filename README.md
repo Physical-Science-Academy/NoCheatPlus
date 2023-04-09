@@ -55,9 +55,10 @@
 * [NCPPlugin](https://cloudburstmc.org/resources/ncpplugin.896/)
 * [ECCompatNCP](https://cloudburstmc.org/resources/eccompatncp.902/)
 * [NCPPanel](https://cloudburstmc.org/resources/ncppanel.906/)
+* [CompatNCP](https://cloudburstmc.org/resources/compatncp.907/)
 
 ## 🎉Progress
-- [95％] SurvivalFly
+- [97％] SurvivalFly
 - [√] CreativeFly
 - [20%] Speed
 - [√] FastEat
