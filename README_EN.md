@@ -23,7 +23,7 @@
 - You are supported to contribute, and give us a star to support our development.
 
 ## Feature
-- Gigh-Performance、Low Occupancy、High Efficiency
+- High-Performance、Low Occupancy、High Efficiency
 - Light、International、Open Source
 - Protect your server, and prevent it from crashing
 - prevent players from cheating on your server
@@ -243,7 +243,7 @@ Availabe CheckType:
 | addComponents(components: NCPComponent) | register a NCP Module |
 | hasPlayer(player: Player) | judge a player's data is existed |
 | getPlayerProvider(player: Player) | get a player's data in NCP |
-| getNCPLogger() | get NCP Logget |
+| getNCPLogger() | get NCP Logger |
 | getNCPConfig() | get config file of NCP |
 | getNCPBanRecord() | get ban config of NCP |
 | isPlayerBan(player: Player) | judge a player if he is banned by NCP |
