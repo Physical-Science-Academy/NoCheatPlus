@@ -65,7 +65,7 @@
 - [50%] 无减速检测
 - [√] 背包行走
 - [√] 自动拿箱
-- [ ] 无摔落伤害检测
+- [√] 无摔落伤害检测
 - [ ] 无击退检测
 - [ ] 穿墙检测
 - [√] 防崩服
@@ -76,8 +76,9 @@
 - [ ] 杀戮光环检测
 - [ ] 攻击距离检测
 - [√] 连点器检测
+- [√] 矿物透视检测
 - [ ] 范围伤害检测
-- [ ] 协管面板
+- [√] 协管面板
 
 ## 安装
 - Java CI: https://ci.lanink.cn/job/NoCheatPlus
@@ -124,6 +125,60 @@ actions:
   waring_delay: 10
   kick_broadcast: "§c§lNCP §7>>@player has been kicked for @hack"
 protection:
+  net:
+    packet: true
+    chunk:
+      active: true
+      dynamicScan: false
+      scanHeight: 6.0
+      scanWorld:
+        - world
+      filter:
+        - 0
+        - 8
+        - 9
+        - 10
+        - 11
+        - 20
+        - 26
+        - 27
+        - 30
+        - 31
+        - 32
+        - 37
+        - 38
+        - 39
+        - 40
+        - 44
+        - 50
+        - 63
+        - 64
+        - 65
+        - 66
+        - 68
+        - 71
+        - 81
+        - 83
+        - 85
+        - 96
+        - 101
+        - 102
+        - 104
+        - 105
+        - 106
+        - 107
+        - 126
+        - 141
+        - 142
+      ores:
+        - 14
+        - 15
+        - 16
+        - 21
+        - 56
+        - 73
+        - 74
+        - 129
   command:
     hide:
       active: true
@@ -135,6 +190,12 @@ protection:
         - "about"
         - "ver"
 checks:
+  blockbreak:
+    fastbreak:
+      active: true
+      max: 35
+      min: 0
+      actions: "cancel vl>5"
   fight:
     speed:
       active: true
@@ -156,6 +217,9 @@ checks:
       active: true
       delay: 50
       actions: "cancel vl>5&&kick vl>20"
+    item:
+      active: true
+      actions: "kick vl>10"
   moving:
     survivalfly:
       active: true
