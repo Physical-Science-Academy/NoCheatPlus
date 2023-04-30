@@ -27,6 +27,7 @@ import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
+import net.catrainbow.nocheatplus.components.data.ConfigData
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -52,6 +53,7 @@ class PacketVerify {
         private val playerLastUpdateAnimate: HashMap<String, Long> = HashMap()
 
         fun verifyPacket(event: DataPacketReceiveEvent) {
+            if (!ConfigData.protection_net_packet) return
             val player = event.player
             val packet = event.packet
 

@@ -138,6 +138,12 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.protection_command_hide_active = config.getBoolean("protection.command.hide.active")
         ConfigData.protection_command_hide_message = config.getString("protection.command.hide.message")
         ConfigData.protection_command_commands = config.getStringList("protection.command.hide.commands") as ArrayList
+        ConfigData.protection_net_packet = config.getBoolean("protection.net.packet")
+        ConfigData.protection_net_chunk = config.getBoolean("protection.net.chunk.active")
+        ConfigData.protection_net_chunk_dynamic_scan = config.getBoolean("protection.net.chunk.dynamicScan")
+        ConfigData.protection_net_chunk_scan_height = config.getDouble("protection.net.chunk.scanHeight")
+        ConfigData.protection_net_chunk_filter = config.getIntegerList("protection.net.chunk.filter") as ArrayList<Int>
+        ConfigData.protection_net_chunk_ores = config.getIntegerList("protection.net.chunk.ores") as ArrayList<Int>
         ConfigData.string_kick_message = config.getString("string.kick")
         ConfigData.string_ban_message = config.getString("string.ban")
         ConfigData.permission_no_permission = config.getString("permission.no_permission")
