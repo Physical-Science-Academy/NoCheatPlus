@@ -25,6 +25,8 @@ protection:
       active: true
       dynamicScan: false
       scanHeight: 6.0
+      scanWorld:
+        - world
       filter:
         - 0
         - 8

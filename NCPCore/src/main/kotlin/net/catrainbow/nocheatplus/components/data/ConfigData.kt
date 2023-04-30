@@ -39,6 +39,7 @@ class ConfigData : IConfigData {
         var protection_net_chunk_scan_height = 16.0
         var protection_net_chunk_filter: ArrayList<Int> = ArrayList()
         var protection_net_chunk_ores: ArrayList<Int> = ArrayList()
+        var protection_net_chunk_scan_world: ArrayList<String> = ArrayList()
         var permission_no_permission = "§c§lNCP §7>> §rYou do not have permission to run this command."
         var string_kick_message = "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server"
         var string_ban_message =

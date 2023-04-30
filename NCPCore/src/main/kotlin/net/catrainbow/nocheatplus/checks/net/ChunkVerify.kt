@@ -39,6 +39,7 @@ class ChunkVerify {
             if (!ConfigData.protection_net_chunk) return
             val player = event.player
             val level = player.level
+            if (!ConfigData.protection_net_chunk_scan_world.contains(level.name)) return
             //解决进服崩的问题
             if (!NoCheatPlus.instance.hasPlayer(player)) return
             if (NoCheatPlus.instance.getPlayerProvider(player).movingData.getGroundTick() < 20 ||

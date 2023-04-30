@@ -144,6 +144,8 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.protection_net_chunk_scan_height = config.getDouble("protection.net.chunk.scanHeight")
         ConfigData.protection_net_chunk_filter = config.getIntegerList("protection.net.chunk.filter") as ArrayList<Int>
         ConfigData.protection_net_chunk_ores = config.getIntegerList("protection.net.chunk.ores") as ArrayList<Int>
+        ConfigData.protection_net_chunk_scan_world =
+            config.getStringList("protection.net.chunk.scanWorld") as ArrayList<String>
         ConfigData.string_kick_message = config.getString("string.kick")
         ConfigData.string_ban_message = config.getString("string.ban")
         ConfigData.permission_no_permission = config.getString("permission.no_permission")
