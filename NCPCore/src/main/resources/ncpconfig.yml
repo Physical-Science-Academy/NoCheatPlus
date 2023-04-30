@@ -23,8 +23,8 @@ protection:
     packet: true
     chunk:
       active: true
-      dynamicScan: true
-      scanHeight: 16.0
+      dynamicScan: false
+      scanHeight: 6.0
       filter:
         - 0
         - 8

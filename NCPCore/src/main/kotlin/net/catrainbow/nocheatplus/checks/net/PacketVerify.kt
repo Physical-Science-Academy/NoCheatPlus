@@ -171,7 +171,10 @@ class PacketVerify {
             }
             //fix a disabler of NCP
             val height = LocUtil.getPlayerHeight(player)
-            if (player != null) if (height >= 1) player.teleport(player.add(0.0, min(0.0, 0.3 - height), 0.0))
+            try {
+                if (player != null) if (height >= 1) player.teleport(player.add(0.0, min(0.0, 0.3 - height), 0.0))
+            } catch (_: Exception) {
+            }
         }
 
     }

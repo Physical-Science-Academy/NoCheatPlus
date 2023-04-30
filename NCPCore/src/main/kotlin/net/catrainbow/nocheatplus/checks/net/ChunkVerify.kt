@@ -20,10 +20,11 @@ import cn.nukkit.nbt.NBTIO
 import cn.nukkit.nbt.tag.CompoundTag
 import cn.nukkit.utils.BinaryStream
 import cn.nukkit.utils.ThreadCache
+import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import java.io.IOException
 import java.nio.ByteOrder
-import java.util.ArrayList
+import java.util.*
 
 /**
  * 区块检测
@@ -38,6 +39,13 @@ class ChunkVerify {
             if (!ConfigData.protection_net_chunk) return
             val player = event.player
             val level = player.level
+            //解决进服崩的问题
+            if (!NoCheatPlus.instance.hasPlayer(player)) return
+            if (NoCheatPlus.instance.getPlayerProvider(player).movingData.getGroundTick() < 20 ||
+                NoCheatPlus.instance.getPlayerProvider(player).movingData.getMotionY() == 0.0
+            ) return
+            //随机隐藏矿物,防止客户端崩溃
+            if (!(Random()).nextBoolean()) return
             event.setCancelled()
 
             //by FENGBerd https://github.com/fengberd/FHiddenMine-Nukkit
