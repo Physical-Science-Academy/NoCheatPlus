@@ -1,0 +1,9 @@
+name: "NCPLiteBan"
+version: "1.0.0"
+main: net.catrainbow.nocheatplus.liteban.NCPLiteBan
+description: "make your NCP supported by Mysql System through DBLib"
+api: [ "1.0.0" ]
+
+depend:
+  - NoCheatPlus
+  - DBLib
