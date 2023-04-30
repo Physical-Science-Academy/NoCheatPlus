@@ -31,7 +31,7 @@ public class NCPStaticListener implements Listener {
         WrapperPacket packet = event.getPacket();
         Player player = event.getPlayer();
         if (packet instanceof WrapperActionPacket || packet instanceof WrapperSetBackPacket || packet instanceof WrapperDisconnectPacket) {
-            if (NCPStaticAPI.isPlayerChecked(player)) {
+            if (!NCPStaticAPI.isPlayerChecked(player)) {
                 event.setCancelled();
                 event.setInvalid();
                 if (packet instanceof WrapperDisconnectPacket) ((WrapperDisconnectPacket) packet).setCancelled();
