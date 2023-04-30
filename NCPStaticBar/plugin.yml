@@ -1,0 +1,8 @@
+name: "NCPStaticBar"
+version: "1.0.0"
+main: net.catrainbow.nocheatplus.staticbar.NCPStaticBar
+description: "provide a static mode for your NCP"
+api: [ "1.0.0" ]
+
+depend:
+  - NoCheatPlus
