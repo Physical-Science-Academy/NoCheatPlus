@@ -65,7 +65,7 @@
 - [50%] NoSlow 
 - [√] InventoryMove
 - [√] InventoryFastClick
-- [ ] NoFall
+- [√] NoFall
 - [ ] Velocity
 - [ ] Phase
 - [√] Crasher
@@ -75,9 +75,10 @@
 - [ ] Scaffold
 - [ ] KillAura
 - [ ] Reach
+- [√] XRay
 - [√] AutoClicker
 - [ ] HitBox
-- [ ] Helper Tool GUI
+- [√] Helper Tool GUI
 
 ## Installation
 - Java CI: https://ci.lanink.cn/job/NoCheatPlus
@@ -125,6 +126,60 @@ actions:
   waring_delay: 10
   kick_broadcast: "§c§lNCP §7>>@player has been kicked for @hack"
 protection:
+  net:
+    packet: true
+    chunk:
+      active: true
+      dynamicScan: false
+      scanHeight: 6.0
+      scanWorld:
+        - world
+      filter:
+        - 0
+        - 8
+        - 9
+        - 10
+        - 11
+        - 20
+        - 26
+        - 27
+        - 30
+        - 31
+        - 32
+        - 37
+        - 38
+        - 39
+        - 40
+        - 44
+        - 50
+        - 63
+        - 64
+        - 65
+        - 66
+        - 68
+        - 71
+        - 81
+        - 83
+        - 85
+        - 96
+        - 101
+        - 102
+        - 104
+        - 105
+        - 106
+        - 107
+        - 126
+        - 141
+        - 142
+      ores:
+        - 14
+        - 15
+        - 16
+        - 21
+        - 56
+        - 73
+        - 74
+        - 129
   command:
     hide:
       active: true
@@ -136,6 +191,12 @@ protection:
         - "about"
         - "ver"
 checks:
+  blockbreak:
+    fastbreak:
+      active: true
+      max: 35
+      min: 0
+      actions: "cancel vl>5"
   fight:
     speed:
       active: true
@@ -157,6 +218,9 @@ checks:
       active: true
       delay: 50
       actions: "cancel vl>5&&kick vl>20"
+    item:
+      active: true
+      actions: "kick vl>10"
   moving:
     survivalfly:
       active: true
