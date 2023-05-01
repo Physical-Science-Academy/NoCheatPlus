@@ -1,8 +1,4 @@
-<div align="right">
-  Languages:
-  English | 
-  <a title="中文" href="/README_CH.md">中文</a>
-</div>
+<div align="center">
 
 [![Java CI](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven-publish.yml/badge.svg?branch=main)](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven-publish.yml)
 [![English](https://img.shields.io/badge/English-100%25-green?style=flat-square)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/README.md)
@@ -11,9 +7,18 @@
 [![forthebadge](https://forthebadge.com/images/badges/uses-git.svg)](https://forthebadge.com)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg?style=flat-square)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/LICENSE)
 
+[English](README.md) | [简体中文](README_CH.md)
+
+</div>
+
+<div align="center">
+
 # NoCheatPlus
+
+</div>
+
 <br>
-<p align="center"><img src="ncp-logo.png" height="128"/></p>
+<p align="center"><img src="ncp-logo.png" height="256"/></p>
 <br>
 
 - An advanced AntiCheat worked on Nukkit/PetteriM1EditionNukkit/PowerNukkitX.
@@ -22,73 +27,137 @@
 
 - You are supported to contribute, and give us a star to support our development.
 
-## Feature
+---------
+
+## Current Features
+
 - High-Performance、Low Occupancy、High Efficiency
 - Light、International、Open Source
 - Protect your server, and prevent it from crashing
 - prevent players from cheating on your server
 
-## Links
 ---------
 
+## Links
+
 ###### Download
+
 * [Jenkins (current)](https://ci.lanink.cn/job/NoCheatPlus/)
 * [NukkitX/CloudBurst (stable)](https://cloudburstmc.org/resources/nocheatplus.820/)
 * [MCBBS (stable)](https://www.mcbbs.net/forum.php?mod=viewthread&tid=1430379)
 * [MINEBBS (stable)](https://www.minebbs.com/resources/nocheatplus.5551/)
+* [PowerNukkitX Hub (current)](https://powernukkitx.com/hub/plugin/detail/Physical-Science-Academy/NoCheatPlus)
 
 ###### Supports
+
 * [Issues/Tickets](https://github.com/Physical-Science-Academy/NoCheatPlus/issues)
 
 ###### Developers
+
 * [License (GPLv3)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/LICENSE)
 * [Contribute](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/CONTRIBUTING.md)
 
 ###### Nukkit Support
+
 * [Nukkit](https://github.com/Nukkit/Nukkit)
 * [NukkitX](https://github.com/CloudburstMC/Nukkit)
 * [PM1E](https://github.com/PetteriM1/NukkitPetteriM1Edition)
 * [PNX](https://github.com/PowerNukkitX/PowerNukkitX)
 * [EaseCation-Nukkit](https://github.com/EaseCation/Nukkit)
 
-###### Related Plugins
+###### Related Plugins And Addons
+
 * [NCPPlugin](https://cloudburstmc.org/resources/ncpplugin.896/)
+  ------------------------------
+  This is a debugging plugin, it can make your NCP only remind the kicked player through the Title without actually
+  kicking it, it can be used to debug the configuration of the plugin.
+
+ -------------------------------
+
 * [ECCompatNCP](https://cloudburstmc.org/resources/eccompatncp.902/)
+  ------------------------------
+  This is a CPS detection extension component. It uses the detection algorithm of the well-known small game server
+  EaseCation, and obtains cps at intervals. If it is higher than the threshold every time, the anti-cheat will kick it.
+  Using this plugin will automatically close the CPS detection system of NCP itself.
+
+ -------------------------------
+
 * [NCPPanel](https://cloudburstmc.org/resources/ncppanel.906/)
+  ------------------------------
+  This is an extension component of NCP, which provides a visual operation panel and player reporting system for NCP.
+  All of its language themes and even commands can be customized in configuration files.
+
+ -------------------------------
+
 * [CompatNCP](https://cloudburstmc.org/resources/compatncp.907/)
+  ------------------------------
+  This is an extension of NCP, which allows you to manually compatible with other plugins to reduce the misjudgment
+  caused by anti-cheat due to non-support, such as double jump.
+
+  ------------------------------
+
+* [NCPLiteBan](https://cloudburstmc.org/resources/ncpliteban.912/)
+  ------------------------------
+  This is an extension plug-in of NCP, which synchronizes NCP ban data to the database for group server data
+  synchronization, and relies on the plug-in DbLib. If you have NCPPanel installed, it can even sync panel data.
+
+  ------------------------------
+
+* [NCPStaticBar](https://cloudburstmc.org/resources/ncpstaticbar.913/)
+  ------------------------------
+  This is an extension for NCP that will turn your NCP into a passive static anti-cheat. Anti-cheat doesn't work
+  normally, it only detects a player after it has been reported by other players. It does not have a reporting system
+  itself, and NCPPanel needs to be installed.
+
+  ------------------------------
 
 ## 🎉Progress
-- [97％] SurvivalFly
-- [√] CreativeFly
-- [20%] Speed
-- [√] FastEat
-- [50%] NoSlow 
-- [√] InventoryMove
-- [√] InventoryFastClick
-- [√] NoFall
+
+- [ ] SurvivalFly(97%)
+- [x] CreativeFly
+- [ ] Speed(20%)
+- [x] FastEat
+- [ ] NoSlow(50%)
+- [x] InventoryMove
+- [x] InventoryFastClick
+- [x] NoFall
 - [ ] Velocity
 - [ ] Phase
-- [√] Crasher
-- [√] Client
-- [√] MorePacket
-- [√] FastBreak
+- [x] Crasher
+- [x] Client
+- [x] MorePacket
+- [x] FastBreak
 - [ ] Scaffold
 - [ ] KillAura
 - [ ] Reach
-- [√] XRay
-- [√] AutoClicker
+- [x] X-Ray
+- [x] AutoClicker
 - [ ] HitBox
-- [√] Helper Tool GUI
+- [x] Helper Tool GUI
 
-## Installation
+## Installation & Setup
+
 - Java CI: https://ci.lanink.cn/job/NoCheatPlus
-- Download the latest `NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar` on [CI](https://ci.lanink.cn/job/NoCheatPlus/)
+- Download the latest `NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar`
+  on [CI](https://ci.lanink.cn/job/NoCheatPlus/)
 - and put it in your folder `plugins/`.
 - And It needs Library plugin
- 
+
 - `KotlinLib`
 
+## Build JAR file
+
+#### Require: Kotlin | Java (8|17)
+
+- `git clone https://github.com/Physical-Science-Academy/NoCheatPlus.git`
+- `cd NoCheatPlis`
+- `git submodule update --init`
+- `./mvnw clean package`
+
+* The compiled JAR can be found in the target/ directory.
+
 ## Command
+
 - `/ncp` get the version info
 - `/ncp version` get the version info
 - `/ncp reload` reload the config currently
@@ -101,9 +170,10 @@
 
 ## Config
 
-- Then let's run the server. 
+- Then let's run the server.
 - You can ser a folder was created in`plugins/` named `NoCheatPlus`.
 - Here we pay attention to the main config `ncpconfig.yml`.
+
 ~~~yaml
 # NoCheatPlus AntiCheat Config
 config-version:
@@ -267,8 +337,9 @@ permission:
 ~~~
 
 ### Custom Action System
-- There is an actions setting in each detection item, and the format of the penalty operation is given below: 
-- Penalty Type Object A[ Relation] Object B Other parameters 
+
+- There is an actions setting in each detection item, and the format of the penalty operation is given below:
+- Penalty Type Object A[ Relation] Object B Other parameters
 - The penalty types supported by connecting multiple penalty operations with &&
 - are as follows:
 - `cancel` Lag back a player
@@ -280,18 +351,22 @@ permission:
 - to add warning message, which needs to be added in string.
 
 ### NCP Commands Permission
+
 - Set it in permission.policy, and the format is:
-- `Permission: Command Table' 
-- commands are connected by commas(,). 
+- ` Permission: Command Table `
+- commands are connected by commas(,).
 - If there is no record of a command in NCP, all players can use it by default.
-- For example, the version is not specified in nocheatplus.admin.all and nocheatplus.admin.helper of the case.
+- For example, the version is not specified in `nocheatplus.admin.all` and `nocheatplus.admin.helper` of the case.
 
 ### NCP Custom Bypass Permission
-Add them in permission.bypass，and the format is:
-- `CheckType:Permissions(List)`
-The player who has these permissions will bypass the check.
 
-Availabe CheckType:
+Add them in permission.bypass，and the format is:
+
+- `CheckType:Permissions(List)`
+  The player who has these permissions will bypass the check.
+
+Available CheckType:
+
 - `MOVING_SURVIVAL_FLY`
 - `MOVING_CREATIVE_FLY`
 - `MOVING_VEHICLE`
@@ -305,7 +380,8 @@ Availabe CheckType:
 - `FIGHT_SPEED`
 
 ## Video Showing
-- https://b23.tv/3xIrYPQ
+
+- [BiliBili (Deleted)](https://b23.tv/3xIrYPQ)
 
 ## Development
 
@@ -316,6 +392,7 @@ A work in progress API for [NoCheatPlus](https://github.com/Physical-Science-Aca
 You can find the latest version here: https://jitpack.io/#Physical-Science-Academy/NoCheatPlus
 
 Gradle:
+
 ```gradle
 allprojects {
 		repositories {
@@ -330,25 +407,29 @@ dependencies {
 ```
 
 Maven:
+
 ```xml
+
 <repository>
-   <id>jitpack.io</id>
-   <url>https://jitpack.io</url>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
 </repository>
-  
+
 <dependency>
-	    <groupId>com.github.Physical-Science-Academy</groupId>
-	    <artifactId>NoCheatPlus</artifactId>
-	    <version>-SNAPSHOT</version>
-	</dependency>
+<groupId>com.github.Physical-Science-Academy</groupId>
+<artifactId>NoCheatPlus</artifactId>
+<version>-SNAPSHOT</version>
+</dependency>
 ```
 
 Obtaining an instance of the API:
+
 ```java
-NoCheatPlusAPI api = NoCheatPlus.instance;
+NoCheatPlusAPI api=NoCheatPlus.instance;
 ```
 
-### 
+###                     
+
 | Method | Description |
 |:------------|:----------------|
 | getNCPProvider() | get main class of NCP |
@@ -370,7 +451,8 @@ NoCheatPlusAPI api = NoCheatPlus.instance;
 | removeBypassPermission(permission: String, type: CheckType) | delete a permission which can bypass some checks |
 | clearAllViolations(player: Player) | clear all Violation Levels of a player |
 
-## Test Server
+## Test Server(Not always opens)
+
 - Address: axe.0mc.me
 - Port: 10878
 
@@ -379,4 +461,6 @@ NoCheatPlusAPI api = NoCheatPlus.instance;
 - Plugin are still in development. Report through Issue if you need!
 
 ## Contact us
-- Discord: https://discord.gg/bCQ8pEgk4t
+
+- [Discord](https://discord.gg/bCQ8pEgk4t)
+- [TencentQQ](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=ysAUd55Yl8WDcfk910CVmc6ROGf0RqFU&authKey=CHhN10VbvJV6zO81LLz44I3gVa8UvU%2BCfiGBmTMTgI4do29IJ55AlIptNu8ctzO7&noverify=0&group_code=603565881)
