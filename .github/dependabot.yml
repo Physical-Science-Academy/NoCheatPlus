@@ -9,4 +9,4 @@ updates:
     directory: "/NCPCore" # Location of package manifests
     schedule:
       interval: "daily"
-      open-pull-requests-limit: 5
+    open-pull-requests-limit: 5
