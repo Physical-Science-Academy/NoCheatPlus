@@ -6,7 +6,7 @@
 version: 2
 updates:
   - package-ecosystem: "maven" # See documentation for possible values
-    directory: "/NCPCore/" # Location of package manifests
+    directory: "/NCPCore" # Location of package manifests
     schedule:
       interval: "daily"
       open-pull-requests-limit: 5
