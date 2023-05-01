@@ -7,3 +7,6 @@ api: [ "1.0.0" ]
 depend:
   - NoCheatPlus
   - DBLib
+
+softdepend:
+  - NCPPanel

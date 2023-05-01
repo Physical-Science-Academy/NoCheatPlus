@@ -28,6 +28,9 @@ import net.catrainbow.nocheatplus.components.NoCheatPlusAPI;
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperActionPacket;
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacket;
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent;
+import net.catrainbow.nocheatplus.gui.ViolationBuffer;
+import net.catrainbow.nocheatplus.gui.event.NCPanelEvent;
+import net.catrainbow.nocheatplus.liteban.task.UpdatePanelTask;
 import net.catrainbow.nocheatplus.utilities.NCPTimeTool;
 import ru.nukkit.dblib.DbLib;
 
@@ -50,6 +53,17 @@ public class NCPLiteBan extends PluginBase implements Listener {
 
     private final String TABLE_NAME = "nocheatplusliteban";
     private final NoCheatPlusAPI provider = NoCheatPlus.instance;
+    public static boolean updatePanel = false;
+    private static NCPLiteBan instance;
+
+    public static NCPLiteBan getInstance() {
+        return instance;
+    }
+
+    @Override
+    public void onLoad() {
+        instance = this;
+    }
 
     @Override
     public void onEnable() {
@@ -61,15 +75,28 @@ public class NCPLiteBan extends PluginBase implements Listener {
             this.getLogger().info("§e[NCP§bLiteBan§e] §cNoCheatPlus plugin not found");
             return;
         }
+        updatePanel = this.getServer().getPluginManager().getPlugin("NCPPanel") != null;
         if (this.connectToDbLib()) {
             try {
                 this.createTable();
                 this.getServer().getPluginManager().registerEvents(this, this);
+                if (updatePanel)
+                    this.getServer().getScheduler().scheduleRepeatingTask(new UpdatePanelTask(), 20 * 60);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         } else {
             this.getLogger().info("§e[NCP§bLiteBan§e] §cCan't connect to DBLib!");
+        }
+    }
+
+    @EventHandler
+    public void onNCPPanelEvents(NCPanelEvent event) throws SQLException {
+        if (!event.isCancelled()) {
+            ViolationBuffer violationBuffer = event.getViolationBuffer();
+            String data = violationBuffer.info + ":" + violationBuffer.playerName + ":" + violationBuffer.level + ":" + violationBuffer.type;
+            this.updatePanelData(data);
+            this.getLogger().info("§e[NCP§bLiteBan§e] §aNCPPanel Data has committed to the cloud.");
         }
     }
 
@@ -139,6 +166,31 @@ public class NCPLiteBan extends PluginBase implements Listener {
         List<String> list = executeSelect(query);
         assert list != null;
         return !list.isEmpty();
+    }
+
+    public void updatePanelData(String data) throws SQLException {
+        String query;
+        if (isPanelHasData()) {
+            query = "update " + TABLE_NAME + " set date = \"" + data + "\" where name = \"$" + "ncppanel" + "\";";
+        } else query = "insert into " + TABLE_NAME + " (name,date) values ('" + "ncppanel" + "','" + data + "')";
+        executeUpdate(query);
+    }
+
+    public boolean isPanelHasData() throws SQLException {
+        String query = "select * from " + TABLE_NAME + " where name='ncppanel'";
+        List<String> list = executeSelect(query);
+        assert list != null;
+        return !list.isEmpty();
+    }
+
+    public String getPanelData() throws SQLException {
+        if (isPanelHasData()) {
+            String query = "select * from " + TABLE_NAME + " where name='" + "ncppanel" + "'";
+            List<String> list = executeSelect(query);
+            assert list != null;
+            for (String s : list) return s;
+        } else return null;
+        return null;
     }
 
     public void deletePlayerBanRecord(Player player) throws SQLException {

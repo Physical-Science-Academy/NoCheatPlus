@@ -24,6 +24,8 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.dataPacket
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperDamagePacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 
 /**
@@ -63,6 +65,15 @@ class FightListener : CheckListener(CheckType.FIGHT) {
         } else if (event is EntityDamageByEntityEvent) {
             if (event.damager is Player) {
                 val player = event.damager as Player
+                val packet = WrapperDamagePacket(player)
+                packet.knockBack = event.knockBack
+                packet.attacker = player
+                packet.target = event.entity
+                packet.cause = event.cause
+                val wrapperEvent = WrapperPacketEvent()
+                wrapperEvent.player = packet.player
+                wrapperEvent.packet = packet
+                dataPacket(wrapperEvent)
                 if (!NoCheatPlus.instance.getPlayerProvider(player).movingData.isLive()) {
                     event.setCancelled()
                     NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
@@ -74,7 +85,9 @@ class FightListener : CheckListener(CheckType.FIGHT) {
                     event.setCancelled()
                 }
                 //排除远程攻击机制
-                if (!event.isCancelled && event.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) NoCheatPlus.instance.getPlayerProvider(player).fightData.lastDamageBoost =
+                if (!event.isCancelled && event.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) NoCheatPlus.instance.getPlayerProvider(
+                    player
+                ).fightData.lastDamageBoost =
                     System.currentTimeMillis()
             }
         } else if (event is PlayerInteractEvent) {

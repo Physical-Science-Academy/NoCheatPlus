@@ -62,6 +62,14 @@
             <systemPath>C:/Users/dell/Desktop/FAP 3/plugins/NoCheatPlus-1.0.0-jar-with-dependencies.jar</systemPath>
         </dependency>
 
+        <dependency>
+            <groupId>net.catrainbow.nocheatplus</groupId>
+            <artifactId>NCPPanel</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>C:/Users/dell/Desktop/FAP 3/plugins/NCPPanel-1.0.0.jar</systemPath>
+        </dependency>
+
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
