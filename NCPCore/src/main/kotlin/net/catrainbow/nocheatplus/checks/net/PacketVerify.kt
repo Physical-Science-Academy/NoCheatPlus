@@ -13,6 +13,7 @@
  */
 package net.catrainbow.nocheatplus.checks.net
 
+import cn.nukkit.AdventureSettings
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.item.Item
 import cn.nukkit.network.protocol.AnimatePacket
@@ -51,7 +52,6 @@ class PacketVerify {
         )
         private val playerLastUpdateSound: HashMap<String, Long> = HashMap()
         private val playerLastUpdateAnimate: HashMap<String, Long> = HashMap()
-
         fun verifyPacket(event: DataPacketReceiveEvent) {
             if (!ConfigData.protection_net_packet) return
             val player = event.player
@@ -76,6 +76,11 @@ class PacketVerify {
                 }
             } else if (packet is PlayerAuthInputPacket || packet is MovePlayerPacket) {
                 if (!NoCheatPlus.instance.hasPlayer(player)) return
+                if (!NoCheatPlus.instance.server.allowFlight) {
+                    if (player.adventureSettings.get(AdventureSettings.Type.ALLOW_FLIGHT)) {
+                        player.adventureSettings.set(AdventureSettings.Type.ALLOW_FLIGHT, false)
+                    }
+                }
                 val data = NoCheatPlus.instance.getPlayerProvider(player).fightData
                 if (!playerLastUpdatePacket.containsKey(player.name)) playerLastUpdatePacket[player.name] =
                     System.currentTimeMillis()
