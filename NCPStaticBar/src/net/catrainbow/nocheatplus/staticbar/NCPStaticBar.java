@@ -62,7 +62,7 @@ public class NCPStaticBar extends PluginBase {
             @Override
             public void onRun(int i) {
                 for (Player player : getServer().getOnlinePlayers().values()) {
-                    if (!NCPStaticAPI.isPlayerChecked(player)) {
+                    if (NCPStaticAPI.isPlayerChecked(player)) {
                         provider.clearAllViolations(player);
                     }
                 }

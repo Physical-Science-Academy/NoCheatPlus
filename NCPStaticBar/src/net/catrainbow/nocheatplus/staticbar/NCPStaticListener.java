@@ -17,6 +17,7 @@ package net.catrainbow.nocheatplus.staticbar;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.player.PlayerJoinEvent;
 import net.catrainbow.nocheatplus.feature.wrapper.*;
 
 /**
@@ -31,12 +32,19 @@ public class NCPStaticListener implements Listener {
         WrapperPacket packet = event.getPacket();
         Player player = event.getPlayer();
         if (packet instanceof WrapperActionPacket || packet instanceof WrapperSetBackPacket || packet instanceof WrapperDisconnectPacket) {
-            if (!NCPStaticAPI.isPlayerChecked(player)) {
+            if (NCPStaticAPI.isPlayerChecked(player)) {
                 event.setCancelled();
                 event.setInvalid();
                 if (packet instanceof WrapperDisconnectPacket) ((WrapperDisconnectPacket) packet).setCancelled();
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerJoins(PlayerJoinEvent event){
+        Player player = event.getPlayer();
+        if (!NCPStaticBar.instance.staticBar.containsKey(player.getName()))
+            NCPStaticBar.instance.staticBar.put(player.getName(), System.currentTimeMillis() - NCPStaticBar.fetchTime * 1000L);
     }
 
 }

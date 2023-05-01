@@ -27,7 +27,7 @@ public class NCPStaticAPI {
     public static boolean isPlayerChecked(Player player) {
         if (!NCPStaticBar.instance.staticBar.containsKey(player.getName()))
             NCPStaticBar.instance.staticBar.put(player.getName(), System.currentTimeMillis() - NCPStaticBar.fetchTime * 1000L);
-        return System.currentTimeMillis() - getPlayerFetchTime(player) < NCPStaticBar.fetchTime * 1000L;
+        return (System.currentTimeMillis() - getPlayerFetchTime(player)) > NCPStaticBar.fetchTime * 1000L;
     }
 
     public static void setPlayerCheckable(Player player) {
