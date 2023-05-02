@@ -380,73 +380,102 @@ permission:
 
 - [BiliBili (已删除)](https://b23.tv/3xIrYPQ)
 
-## 开发者接口
+## 开发者文档
 
-- NCP提供丰富的API，可以实现大量自定义功能。API可以在NoCheatPlusAPI中查看
+- NCP 提供了丰富的开发接口，你可以依赖它快速开发扩展插件
 
-根据NCP依赖开发 [NoCheatPlus](https://github.com/Physical-Science-Academy/NoCheatPlus)
+  开发者接口参考 [NoCheatPlus](https://github.com/Physical-Science-Academy/NoCheatPlus)
 
-历史依赖版本查询: https://jitpack.io/#Physical-Science-Academy/NoCheatPlus
+### GroupId
 
-Gradle:
+- `com.github.Physical-Science-Academy.NoCheatPlus`
+
+### Repository 版本
+
+|  ArtifactId  |          Version           |
+|:------------:|:--------------------------:|
+| NoCheatPlus  |   maven-repo-20220552-2a   |
+| NoCheatPlus  |   maven-repo-20220552-3a   |
+| NoCheatPlus  |   maven-repo-20220552-4a   |
+| NoCheatPlus  | maven-repo-20220552-common |
+|  CompatNCP   | maven-repo-20220552-common |
+|  ECCPCompat  | maven-repo-20220552-common |
+|  NCPLiteBan  | maven-repo-20220552-common |
+|  NCPPlugin   | maven-repo-20220552-common |
+| NCPStaticBar | maven-repo-20220552-common |
+
+### Gradle:
 
 ```gradle
-allprojects {
+	allprojects {
 		repositories {
 			...
 			maven { url 'https://jitpack.io' }
 		}
 	}
 
-dependencies {
-	        implementation 'com.github.Physical-Science-Academy:NoCheatPlus:-SNAPSHOT'
+	dependencies {
+	        implementation 'com.github.Physical-Science-Academy.NoCheatPlus:CompatNCP:maven-repo-20220552-common'
 	}
 ```
 
-Maven:
+### Maven:
+
+##### Repository:
 
 ```xml
 
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
-  
-<dependency>
-<groupId>com.github.Physical-Science-Academy</groupId>
-<artifactId>NoCheatPlus</artifactId>
-<version>-SNAPSHOT</version>
-</dependency>
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
 ```
 
-实例化API:
+##### Dependencies:
+
+```xml
+
+<dependencies>
+    <dependency>
+        <groupId>com.github.Physical-Science-Academy.NoCheatPlus</groupId>
+        <artifactId>NoCheatPlus</artifactId>
+        <version>maven-repo-20220552-common</version>
+    </dependency>
+</dependencies>
+```
+
+一个简单的例子去实例化API:
 
 ```java
+
 NoCheatPlusAPI api = NoCheatPlus.instance;
+
 ```
 
 ###  
 
-| 方法名 | 介绍 |
-|:------------|:----------------|
-| getNCPProvider() | 获取NCP主类 |
-| getComManager() | 获得NCP模块管理器 |
-| getAllComponents() | 获得所有的NCP模块 |
-| getAllPlayerData() | 获得所有的NCP玩家数据 |
-| addComponents(components: NCPComponent) | 注册NCP模块 |
-| hasPlayer(player: Player) | 判断玩家是否在NCP中生成了数据 |
-| getPlayerProvider(player: Player) | 获得玩家数据 |
-| getNCPLogger() | 获得NCP日志记录器 |
-| getNCPConfig() | 获得NCP主配置文件 |
-| getNCPBanRecord() | 获得NCP封禁记录文件 |
-| isPlayerBan(player: Player) | 判断玩家是否被NCP封禁 |
-| kickPlayer(player: Player, type: CheckType) | 让NCP踢出一个玩家 |
-| banPlayer(player: Player, days: Int) | 让NCP封禁一个玩家 |
-| hasPermission(player: Player, command: String) | 玩家是否拥有使用NCP某命令的权限 |
-| hasPermissionBypass(player: Player, type: CheckType) | 玩家是否有权限绕过某检查 |
-| createBypassPermission(permission: String, type: CheckType) | 创建一个绕过某检测的权限 |
-| removeBypassPermission(permission: String, type: CheckType) | 删除一个绕过某检测的权限 |
-| clearAllViolations(player: Player) | 清除玩家所有Violation Level |
+| 方法名                                                         | 介绍                    |
+|:------------------------------------------------------------|:----------------------|
+| getNCPProvider()                                            | 获取NCP主类               |
+| getComManager()                                             | 获得NCP模块管理器            |
+| getAllComponents()                                          | 获得所有的NCP模块            |
+| getAllPlayerData()                                          | 获得所有的NCP玩家数据          |
+| addComponents(components: NCPComponent)                     | 注册NCP模块               |
+| hasPlayer(player: Player)                                   | 判断玩家是否在NCP中生成了数据      |
+| getPlayerProvider(player: Player)                           | 获得玩家数据                |
+| getNCPLogger()                                              | 获得NCP日志记录器            |
+| getNCPConfig()                                              | 获得NCP主配置文件            |
+| getNCPBanRecord()                                           | 获得NCP封禁记录文件           |
+| isPlayerBan(player: Player)                                 | 判断玩家是否被NCP封禁          |
+| kickPlayer(player: Player, type: CheckType)                 | 让NCP踢出一个玩家            |
+| banPlayer(player: Player, days: Int)                        | 让NCP封禁一个玩家            |
+| hasPermission(player: Player, command: String)              | 玩家是否拥有使用NCP某命令的权限     |
+| hasPermissionBypass(player: Player, type: CheckType)        | 玩家是否有权限绕过某检查          |
+| createBypassPermission(permission: String, type: CheckType) | 创建一个绕过某检测的权限          |
+| removeBypassPermission(permission: String, type: CheckType) | 删除一个绕过某检测的权限          |
+| clearAllViolations(player: Player)                          | 清除玩家所有Violation Level |
 
 ## 官方测试服(不定时开启)
 
