@@ -11,7 +11,6 @@
     </parent>
 
     <artifactId>NoCheatPlus</artifactId>
-    <groupId>net.catrainbow</groupId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
@@ -37,7 +36,7 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>1.8.21</version>
+                <version>1.6.21</version>
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -136,30 +135,7 @@
     </build>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/pl.project13.maven/git-commit-id-plugin -->
-        <dependency>
-            <groupId>pl.project13.maven</groupId>
-            <artifactId>git-commit-id-plugin</artifactId>
-            <version>4.9.10</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test-junit5</artifactId>
-            <version>1.8.21</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.6.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>1.8.21</version>
-        </dependency>
+
     </dependencies>
 
 </project>
