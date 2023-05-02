@@ -4,6 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>net.catrainbow</groupId>
+        <artifactId>NoCheatPlus-Parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
     <artifactId>NoCheatPlus</artifactId>
     <groupId>net.catrainbow</groupId>
     <version>1.0.0</version>
@@ -140,12 +146,6 @@
             <groupId>pl.project13.maven</groupId>
             <artifactId>git-commit-id-plugin</artifactId>
             <version>4.9.10</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>cn.nukkit</groupId>
-            <artifactId>nukkit</artifactId>
-            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
