@@ -108,8 +108,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.Physical-Science-Academy.NoCheatPlus</groupId>
-            <artifactId>NoCheatPlus</artifactId>
-            <version>maven-repo-20220552-2a</version>
+            <artifactId>CompatNCP</artifactId>
+            <version>maven-repo-20220552-3a</version>
         </dependency>
     </dependencies>
 
