@@ -9,13 +9,7 @@
     <version>1.0.0</version>
 
     <dependencies>
-        <dependency>
-            <groupId>dev.waterdog</groupId>
-            <artifactId>WaterDog</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/waterdog.jar</systemPath>
-        </dependency>
+
     </dependencies>
     <build>
         <defaultGoal>install</defaultGoal>
