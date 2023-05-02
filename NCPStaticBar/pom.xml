@@ -38,17 +38,6 @@
             </resource>
         </resources>
     </build>
-    <repositories>
-        <repository>
-            <id>opencollab-repository-maven-releases</id>
-            <name>Opencollab Repository</name>
-            <url>https://repo.opencollab.dev/maven-releases</url>
-        </repository>
-    </repositories>
-    <dependencies>
-
-
-    </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

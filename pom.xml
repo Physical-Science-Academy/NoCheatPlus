@@ -18,11 +18,6 @@
     <!-- Default modules -->
     <modules>
         <module>NCPCore</module>
-        <module>CompatNCP</module>
-        <module>NCPCompatEC</module>
-        <module>NCPLiteBan</module>
-        <module>NCPStaticBar</module>
-        <module>NCPPlugin</module>
     </modules>
 
     <repositories>
@@ -34,6 +29,10 @@
             <id>opencollab-repository-maven-releases</id>
             <name>Opencollab Repository</name>
             <url>https://repo.opencollab.dev/maven-releases</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -68,6 +67,7 @@
             <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
 
