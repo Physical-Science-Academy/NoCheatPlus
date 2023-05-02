@@ -22,6 +22,7 @@
         <module>NCPCompatEC</module>
         <module>NCPPlugin</module>
         <module>NCPStaticBar</module>
+        <module>NCPLiteBan</module>
     </modules>
 
     <repositories>
@@ -106,11 +107,25 @@
             <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>1.6.21</version>
         </dependency>
+
         <dependency>
             <groupId>com.github.Physical-Science-Academy.NoCheatPlus</groupId>
-            <artifactId>CompatNCP</artifactId>
-            <version>maven-repo-20220552-3a</version>
+            <artifactId>NoCheatPlus</artifactId>
+            <version>maven-repo-20220552-4a</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.Physical-Science-Academy.NoCheatPlus</groupId>
+            <artifactId>NCPStaticBar</artifactId>
+            <version>maven-repo-20220552-4a</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.Physical-Science-Academy</groupId>
+            <artifactId>NCPPanel</artifactId>
+            <version>maven-repo-panel-v1</version>
+        </dependency>
+
     </dependencies>
 
 

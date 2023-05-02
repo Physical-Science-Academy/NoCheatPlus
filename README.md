@@ -387,9 +387,8 @@ Available CheckType:
 
 - NCP provides much API，to achieve many functions。see the api in NoCheatPlusAPI
 
-A work in progress API for [NoCheatPlus](https://github.com/Physical-Science-Academy/NoCheatPlus)
+  A work in progress API for [NoCheatPlus](https://github.com/Physical-Science-Academy/NoCheatPlus)
 
-You can find the latest version here: https://jitpack.io/#Physical-Science-Academy/NoCheatPlus
 
 Gradle:
 
