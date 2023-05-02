@@ -389,66 +389,96 @@ Available CheckType:
 
   A work in progress API for [NoCheatPlus](https://github.com/Physical-Science-Academy/NoCheatPlus)
 
+### GroupId
 
-Gradle:
+- `com.github.Physical-Science-Academy.NoCheatPlus`
+
+### Repository Version
+
+|  ArtifactId  |          Version           |
+|:------------:|:--------------------------:|
+| NoCheatPlus  |   maven-repo-20220552-2a   |
+| NoCheatPlus  |   maven-repo-20220552-3a   |
+| NoCheatPlus  |   maven-repo-20220552-4a   |
+| NoCheatPlus  | maven-repo-20220552-common |
+|  CompatNCP   | maven-repo-20220552-common |
+|  ECCPCompat  | maven-repo-20220552-common |
+|  NCPLiteBan  | maven-repo-20220552-common |
+|  NCPPlugin   | maven-repo-20220552-common |
+| NCPStaticBar | maven-repo-20220552-common |
+
+### Gradle:
 
 ```gradle
-allprojects {
+	allprojects {
 		repositories {
 			...
 			maven { url 'https://jitpack.io' }
 		}
 	}
 
-dependencies {
-	        implementation 'com.github.Physical-Science-Academy:NoCheatPlus:-SNAPSHOT'
+	dependencies {
+	        implementation 'com.github.Physical-Science-Academy.NoCheatPlus:CompatNCP:maven-repo-20220552-common'
 	}
 ```
 
-Maven:
+### Maven:
+
+##### Repository:
 
 ```xml
 
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
 
-<dependency>
-<groupId>com.github.Physical-Science-Academy</groupId>
-<artifactId>NoCheatPlus</artifactId>
-<version>-SNAPSHOT</version>
-</dependency>
+##### Dependencies:
+
+```xml
+
+<dependencies>
+    <dependency>
+        <groupId>com.github.Physical-Science-Academy.NoCheatPlus</groupId>
+        <artifactId>NoCheatPlus</artifactId>
+        <version>maven-repo-20220552-common</version>
+    </dependency>
+</dependencies>
 ```
 
 Obtaining an instance of the API:
 
 ```java
-NoCheatPlusAPI api=NoCheatPlus.instance;
+
+NoCheatPlusAPI api = NoCheatPlus.instance;
+
 ```
 
-###                     
+###                       
 
-| Method | Description |
-|:------------|:----------------|
-| getNCPProvider() | get main class of NCP |
-| getComManager() | get component manager of NCP |
-| getAllComponents() | get all modules of NCP |
-| getAllPlayerData() | get all player data in NCP |
-| addComponents(components: NCPComponent) | register a NCP Module |
-| hasPlayer(player: Player) | judge a player's data is existed |
-| getPlayerProvider(player: Player) | get a player's data in NCP |
-| getNCPLogger() | get NCP Logger |
-| getNCPConfig() | get config file of NCP |
-| getNCPBanRecord() | get ban config of NCP |
-| isPlayerBan(player: Player) | judge a player if he is banned by NCP |
-| kickPlayer(player: Player, type: CheckType) | kick a player by NCP |
-| banPlayer(player: Player, days: Int) | ban a player by NCP |
-| hasPermission(player: Player, command: String) | judge a player if he is allowed to use this NCP's command |
-| hasPermissionBypass(player: Player, type: CheckType) | judge a playet if he is allowed to bypass this check |
-| createBypassPermission(permission: String, type: CheckType) | created a permission to bypass the check |
-| removeBypassPermission(permission: String, type: CheckType) | delete a permission which can bypass some checks |
-| clearAllViolations(player: Player) | clear all Violation Levels of a player |
+| Method                                                      | Description                                               |
+|:------------------------------------------------------------|:----------------------------------------------------------|
+| getNCPProvider()                                            | get main class of NCP                                     |
+| getComManager()                                             | get component manager of NCP                              |
+| getAllComponents()                                          | get all modules of NCP                                    |
+| getAllPlayerData()                                          | get all player data in NCP                                |
+| addComponents(components: NCPComponent)                     | register a NCP Module                                     |
+| hasPlayer(player: Player)                                   | judge a player's data is existed                          |
+| getPlayerProvider(player: Player)                           | get a player's data in NCP                                |
+| getNCPLogger()                                              | get NCP Logger                                            |
+| getNCPConfig()                                              | get config file of NCP                                    |
+| getNCPBanRecord()                                           | get ban config of NCP                                     |
+| isPlayerBan(player: Player)                                 | judge a player if he is banned by NCP                     |
+| kickPlayer(player: Player, type: CheckType)                 | kick a player by NCP                                      |
+| banPlayer(player: Player, days: Int)                        | ban a player by NCP                                       |
+| hasPermission(player: Player, command: String)              | judge a player if he is allowed to use this NCP's command |
+| hasPermissionBypass(player: Player, type: CheckType)        | judge a playet if he is allowed to bypass this check      |
+| createBypassPermission(permission: String, type: CheckType) | created a permission to bypass the check                  |
+| removeBypassPermission(permission: String, type: CheckType) | delete a permission which can bypass some checks          |
+| clearAllViolations(player: Player)                          | clear all Violation Levels of a player                    |
 
 ## Test Server(Not always opens)
 

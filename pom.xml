@@ -111,13 +111,13 @@
         <dependency>
             <groupId>com.github.Physical-Science-Academy.NoCheatPlus</groupId>
             <artifactId>NoCheatPlus</artifactId>
-            <version>maven-repo-20220552-4a</version>
+            <version>maven-repo-20220552-common</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.Physical-Science-Academy.NoCheatPlus</groupId>
             <artifactId>NCPStaticBar</artifactId>
-            <version>maven-repo-20220552-4a</version>
+            <version>maven-repo-20220552-common</version>
         </dependency>
 
         <dependency>
