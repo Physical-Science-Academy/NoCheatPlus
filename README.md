@@ -1,6 +1,7 @@
 <div align="center">
 
-[![Java CI](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven-publish.yml/badge.svg?branch=main)](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven-publish.yml)
+[![Java CI](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/Physical-Science-Academy/NoCheatPlus/actions/workflows/maven.yml)
+[![Maven](https://jitpack.io/v/Physical-Science-Academy/NoCheatPlus.svg)](https://jitpack.io/#Physical-Science-Academy/NoCheatPlus)
 [![English](https://img.shields.io/badge/English-100%25-green?style=flat-square)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/README.md)
 [![简体中文](https://img.shields.io/badge/简体中文-100%25-green?style=flat-square)](https://github.com/Physical-Science-Academy/NoCheatPlus/blob/main/README_CH.md)
 [![Discord](https://img.shields.io/discord/795119986716704768?style=plastic)](https://discord.gg/bCQ8pEgk4t)
