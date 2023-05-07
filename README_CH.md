@@ -37,6 +37,10 @@
 ## 相关链接
 ---------
 
+###### 官方文档/维基
+
+* [NoCheatPlus Docs](https://docs.catrainbow.me)
+
 ###### 插件下载
 
 * [Jenkins (实时构建)](https://ci.lanink.cn/job/NoCheatPlus/)
@@ -105,6 +109,12 @@
   这是 NCP 的扩展，它将把你的 NCP 变成一个被动的静态反作弊。反作弊不起作用
   通常情况下，只有在其他玩家举报后，它才会检测到玩家。它没有报告系统
   本身，并且需要安装 NCPPanel。
+
+  ------------------------------
+
+* [NCPWebserver](https://github.com/Physical-Science-Academy/NCPWebserver)
+  ------------------------------
+  这是NCP的扩展插件，可以为你的NCP提供一个网页面板来管理服务器。这意味着你不用手动修改配置文件，直接通过网页也能便捷的检测服务器内玩家的行为。
 
   ------------------------------
 

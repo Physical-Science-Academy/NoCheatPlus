@@ -40,6 +40,10 @@
 
 ## Links
 
+###### Docs/Wiki
+
+* [NoCheatPlus Docs](https://docs.catrainbow.me)
+
 ###### Download
 
 * [Jenkins (current)](https://ci.lanink.cn/job/NoCheatPlus/)
@@ -108,6 +112,12 @@
   This is an extension for NCP that will turn your NCP into a passive static anti-cheat. Anti-cheat doesn't work
   normally, it only detects a player after it has been reported by other players. It does not have a reporting system
   itself, and NCPPanel needs to be installed.
+
+  ------------------------------
+
+* [NCPWebserver](https://github.com/Physical-Science-Academy/NCPWebserver)
+  ------------------------------
+  This simple and effective NCP Extension provides a web interface to manage the No-Cheat-Plus Anticheat on your Minecraft NukkitX server. With this plugin, server administrators can easily monitor and adjust settings for fair gameplay in a Webview without having to deal with manual configuration files.
 
   ------------------------------
 
