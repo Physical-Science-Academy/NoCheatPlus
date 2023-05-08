@@ -19,7 +19,7 @@ package net.catrainbow.nocheatplus.actions
  * @author Catrainbow
  */
 enum class ActionType(private val type: String) {
-    WARING("WARING"),
+    WARNING("WARNING"),
     SETBACK("SETBACK"),
     KICK("KICK"),
     BAN("BAN"),

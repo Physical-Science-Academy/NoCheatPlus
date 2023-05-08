@@ -25,7 +25,7 @@ import net.catrainbow.nocheatplus.components.data.ConfigData
  */
 class ActionHistory {
 
-    private var lastWaring: Long = System.currentTimeMillis()
+    private var lastWarning: Long = System.currentTimeMillis()
     private var lastCancel: Long = System.currentTimeMillis()
     private var lastLog: Long = System.currentTimeMillis();
     private var historySetback: SetBackEntry = SetBackEntry(
@@ -33,11 +33,11 @@ class ActionHistory {
     )
 
     fun canLog(): Boolean {
-        return System.currentTimeMillis() - lastLog > ConfigData.action_waring_delay * 1000
+        return System.currentTimeMillis() - lastLog > ConfigData.action_warning_delay * 1000
     }
 
     fun canWarn(): Boolean {
-        return System.currentTimeMillis() - lastWaring > ConfigData.action_waring_delay * 1000
+        return System.currentTimeMillis() - lastWarning > ConfigData.action_warning_delay * 1000
     }
 
     fun setLastSetBack(entry: SetBackEntry) {
@@ -53,12 +53,12 @@ class ActionHistory {
         this.lastLog = access
     }
 
-    fun getLastWaring(): Long {
-        return this.lastWaring
+    fun getLastWarning(): Long {
+        return this.lastWarning
     }
 
-    fun setLastWaring(access: Long) {
-        this.lastWaring = access
+    fun setLastWarning(access: Long) {
+        this.lastWarning = access
     }
 
 }

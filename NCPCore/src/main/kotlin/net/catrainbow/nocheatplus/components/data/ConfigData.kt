@@ -28,7 +28,7 @@ class ConfigData : IConfigData {
         var logging_prefix = "§c§lNCP §7>> §r"
         var logging_command = false
         var logging_violation = false
-        var action_waring_delay = 10
+        var action_warning_delay = 10
         var action_kick_broadcast = "§c§lNCP §7>>@player has been kicked for @hack"
         var protection_command_hide_active = true
         var protection_command_hide_message = "§c§lNCP §7>> §rYou do not have permission to run this command."
