@@ -145,7 +145,7 @@ class ActionProcess(
 
             ActionType.WARNING -> {
                 if (this.violationData.getVL() < data.warn || !data.enableWarn) return
-                if (System.currentTimeMillis() - history.getLastWarning() > ConfigData.action_waring_delay * 1000) {
+                if (System.currentTimeMillis() - history.getLastWarning() > ConfigData.action_warning_delay * 1000) {
                     NoCheatPlus.instance.getPlayerProvider(player).getViolationData(checkType).getHistory()
                         .setLastWarning(System.currentTimeMillis())
                     player.sendMessage(this.formatMessage(data.warnAction.message))
