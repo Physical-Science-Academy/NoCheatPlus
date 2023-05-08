@@ -23,6 +23,7 @@ import cn.nukkit.event.entity.EntityDamageEvent
 import cn.nukkit.event.inventory.InventoryClickEvent
 import cn.nukkit.event.inventory.InventoryCloseEvent
 import cn.nukkit.event.inventory.InventoryOpenEvent
+import cn.nukkit.event.player.PlayerChunkRequestEvent
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent
 import cn.nukkit.event.player.PlayerDeathEvent
 import cn.nukkit.event.player.PlayerEatFoodEvent
@@ -40,6 +41,7 @@ import cn.nukkit.plugin.Plugin
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckListener
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.checks.net.ChunkVerify
 import net.catrainbow.nocheatplus.checks.net.PacketVerify
 import net.catrainbow.nocheatplus.compat.BridgeWaterDog
 import net.catrainbow.nocheatplus.components.config.NCPBanConfig
@@ -198,6 +200,14 @@ class NCPListener : Listener {
         registerEvent(
             this, NoCheatPlus.instance, BlockBreakEvent::class.java, { playerBreaks(it) }, true, EventPriority.HIGHEST
         )
+        registerEvent(
+            this,
+            NoCheatPlus.instance,
+            PlayerChunkRequestEvent::class.java,
+            { playerChunksRequest(it) },
+            true,
+            EventPriority.HIGHEST
+        )
         registerTickListener()
     }
 
@@ -318,12 +328,17 @@ class NCPListener : Listener {
 
     @EventHandler
     private fun playerTeleports(event: PlayerTeleportEvent) {
-        for (listener in listeners) checkEvent(listener, event)
+        if (event.player != null) for (listener in listeners) checkEvent(listener, event)
     }
 
     @EventHandler
     private fun playerInteracts(event: PlayerInteractEvent) {
         for (listener in listeners) checkEvent(listener, event)
+    }
+
+    @EventHandler
+    private fun playerChunksRequest(event: PlayerChunkRequestEvent) {
+        ChunkVerify.verifyEvent(event)
     }
 
 }

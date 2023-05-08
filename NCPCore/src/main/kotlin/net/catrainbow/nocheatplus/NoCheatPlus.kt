@@ -39,7 +39,7 @@ import net.catrainbow.nocheatplus.utilities.NCPTimeTool
 import net.catrainbow.nocheatplus.utilities.PluginUpdater
 import net.catrainbow.nocheatplus.utilities.i18n.I18N
 import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
-import java.io.File
+import java.util.*
 
 /**
  * NoCheatPlus 主类
@@ -49,7 +49,7 @@ import java.io.File
 class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
     companion object {
         lateinit var instance: NoCheatPlus
-        const val PLUGIN_VERSION: String = "1.0.0"
+        var PLUGIN_VERSION: String = "1.0.0"
         val supportedLanguages = arrayOf("en", "zh")
     }
 
@@ -73,6 +73,8 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
         I18N.updateLanguage(Config("$dataFolder/ncpconfig.yml", Config.YAML).getString("lang", "zh"))
 
         // Load components manager
+        val updater = PluginUpdater()
+        PLUGIN_VERSION = updater.getNCPVersion()
         this.logger.info(getString("ncp.loading", PLUGIN_VERSION))
         this.ncpComManager = NCPComManager()
         this.ncpComManager.onEnabled()
@@ -84,7 +86,6 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
         this.logger.info(getString("ncp.autoDelete", this.getNCPLogger().getDeleteCount()))
         this.logger.info("${TextFormat.YELLOW}${getString("ncp.loaded")}")
         this.logger.info("${TextFormat.BLUE}${getString("ncp.link")}")
-        val updater = PluginUpdater()
         if (updater.onUpdate()) this.logger.info(
             "${TextFormat.GOLD}${
                 getString(

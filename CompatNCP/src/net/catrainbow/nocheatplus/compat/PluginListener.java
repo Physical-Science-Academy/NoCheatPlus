@@ -16,16 +16,17 @@ package net.catrainbow.nocheatplus.compat;
 
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.BlockSlime;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
+import cn.nukkit.scheduler.Task;
 import net.catrainbow.nocheatplus.checks.CheckType;
 import net.catrainbow.nocheatplus.checks.moving.MovingData;
-import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacket;
-import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent;
-import net.catrainbow.nocheatplus.feature.wrapper.WrapperSetBackPacket;
+import net.catrainbow.nocheatplus.feature.wrapper.*;
 import net.catrainbow.nocheatplus.players.PlayerData;
 
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import java.util.HashMap;
 public class PluginListener implements Listener {
 
     public static HashMap<String, String> playerMoveRecord = new HashMap<>();
+    public static HashMap<String, Long> playerStepInRecord = new HashMap<>();
 
     @EventHandler
     public void playerMoves(PlayerMoveEvent event) {
@@ -50,6 +52,22 @@ public class PluginListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerJoins(PlayerJoinEvent event) {
+        if (CompatNCP.settings.get("waterDogStepIn")) {
+            Player player = event.getPlayer();
+            if (CompatNCP.provider.hasPlayer(player)) {
+                playerStepInRecord.put(player.getName(), System.currentTimeMillis());
+                Server.getInstance().getScheduler().scheduleDelayedTask(new Task() {
+                    @Override
+                    public void onRun(int i) {
+                        playerStepInRecord.remove(player.getName());
+                    }
+                }, 20 * 5);
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerDamaged(EntityDamageEvent event) {
         if (!CompatNCP.settings.get("booster")) return;
         if (event.getEntity() instanceof Player) {
@@ -63,11 +81,23 @@ public class PluginListener implements Listener {
         WrapperPacket packet = event.getPacket();
         Player player = event.getPlayer();
         PlayerData playerData = CompatNCP.provider.getPlayerProvider(player);
+        if (CompatNCP.settings.get("waterDogStepIn")) {
+            if (playerStepInRecord.containsKey(player.getName())) {
+                if (packet instanceof WrapperActionPacket || packet instanceof WrapperDisconnectPacket || packet instanceof WrapperSetBackPacket) {
+                    event.setInvalid();
+                    event.setCancelled();
+                    return;
+                }
+                if (packet instanceof WrapperInputPacket)
+                    CompatNCP.provider.getPlayerProvider(player).getViolationData(CheckType.MOVING_MORE_PACKETS).clear();
+            }
+        }
         if (CompatNCP.settings.get("slimeJump")) {
             if (playerMoveRecord.containsKey(player.getName())) {
                 if (packet instanceof WrapperSetBackPacket) {
                     playerData.getViolationData(CheckType.MOVING_SURVIVAL_FLY).setCancel();
                     event.setInvalid();
+                    return;
                 }
             }
         }
@@ -76,6 +106,15 @@ public class PluginListener implements Listener {
                 playerData.getViolationData(CheckType.MOVING_SURVIVAL_FLY).setCancel();
                 playerData.getViolationData(CheckType.MOVING_SURVIVAL_FLY).clear();
                 if (packet instanceof WrapperSetBackPacket) {
+                    event.setInvalid();
+                    return;
+                }
+            }
+        }
+        if (CompatNCP.settings.get("ignorePacket")) {
+            if (event.packet instanceof WrapperDisconnectPacket) {
+                if (((WrapperDisconnectPacket) event.packet).getReason() == CheckType.UNKNOWN_PACKET) {
+                    ((WrapperDisconnectPacket) event.packet).setCancelled();
                     event.setInvalid();
                 }
             }

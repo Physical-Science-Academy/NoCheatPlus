@@ -13,6 +13,7 @@
  */
 package net.catrainbow.nocheatplus.checks.net
 
+import cn.nukkit.AdventureSettings
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.item.Item
 import cn.nukkit.network.protocol.AnimatePacket
@@ -27,6 +28,7 @@ import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
+import net.catrainbow.nocheatplus.components.data.ConfigData
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -50,8 +52,8 @@ class PacketVerify {
         )
         private val playerLastUpdateSound: HashMap<String, Long> = HashMap()
         private val playerLastUpdateAnimate: HashMap<String, Long> = HashMap()
-
         fun verifyPacket(event: DataPacketReceiveEvent) {
+            if (!ConfigData.protection_net_packet) return
             val player = event.player
             val packet = event.packet
 
@@ -74,6 +76,11 @@ class PacketVerify {
                 }
             } else if (packet is PlayerAuthInputPacket || packet is MovePlayerPacket) {
                 if (!NoCheatPlus.instance.hasPlayer(player)) return
+                if (!NoCheatPlus.instance.server.allowFlight) {
+                    if (player.adventureSettings.get(AdventureSettings.Type.ALLOW_FLIGHT)) {
+                        player.adventureSettings.set(AdventureSettings.Type.ALLOW_FLIGHT, false)
+                    }
+                }
                 val data = NoCheatPlus.instance.getPlayerProvider(player).fightData
                 if (!playerLastUpdatePacket.containsKey(player.name)) playerLastUpdatePacket[player.name] =
                     System.currentTimeMillis()
@@ -169,7 +176,10 @@ class PacketVerify {
             }
             //fix a disabler of NCP
             val height = LocUtil.getPlayerHeight(player)
-            if (player != null) if (height >= 1) player.teleport(player.add(0.0, min(0.0, 0.3 - height), 0.0))
+            try {
+                if (player != null) if (height >= 1) player.teleport(player.add(0.0, min(0.0, 0.3 - height), 0.0))
+            } catch (_: Exception) {
+            }
         }
 
     }
