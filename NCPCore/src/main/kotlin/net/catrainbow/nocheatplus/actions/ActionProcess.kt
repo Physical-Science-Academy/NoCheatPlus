@@ -136,18 +136,18 @@ class ActionProcess(
             }
             ActionType.LOG -> {
                 if (this.violationData.getVL() < data.log || !data.enableLog) return
-                if (System.currentTimeMillis() - history.getLastLog() > ConfigData.action_waring_delay * 1000) {
+                if (System.currentTimeMillis() - history.getLastLog() > ConfigData.action_warning_delay * 1000) {
                     NoCheatPlus.instance.getPlayerProvider(player).getViolationData(checkType).getHistory()
                         .setLastLog(System.currentTimeMillis())
                     NoCheatPlus.instance.getNCPLogger().info("${player.name} failed $checkType Check")
                 }
             }
 
-            ActionType.WARING -> {
+            ActionType.WARNING -> {
                 if (this.violationData.getVL() < data.warn || !data.enableWarn) return
-                if (System.currentTimeMillis() - history.getLastWaring() > ConfigData.action_waring_delay * 1000) {
+                if (System.currentTimeMillis() - history.getLastWarning() > ConfigData.action_warning_delay * 1000) {
                     NoCheatPlus.instance.getPlayerProvider(player).getViolationData(checkType).getHistory()
-                        .setLastWaring(System.currentTimeMillis())
+                        .setLastWarning(System.currentTimeMillis())
                     player.sendMessage(this.formatMessage(data.warnAction.message))
                 }
             }

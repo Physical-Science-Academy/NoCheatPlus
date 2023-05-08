@@ -125,7 +125,7 @@ class ViolationData(type: CheckType, private val player: Player) {
             if (data.enableWarn) if (this.history.canWarn() && !revert) if (this.vl > data.warn) {
                 this.actions.addElement(
                     ActionFactory(
-                        player, this, ActionType.WARING
+                        player, this, ActionType.WARNING
                     ).build()
                 )
                 revert = true
