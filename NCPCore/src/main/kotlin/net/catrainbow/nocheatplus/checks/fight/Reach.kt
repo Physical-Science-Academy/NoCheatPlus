@@ -59,10 +59,8 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                     val yDistance = target.y - player.y
                     if (yDistance > player.eyeHeight && player.distanceSquared(target) < 1.0) {
                         data.lastDealDamage = true
-                        revert = true
                     }
                     if (player.inventory.itemInHand.isSword) {
-                        revert = true
                         vData.addVL(1.2 * packet.knockBack)
                         vData.addAction(ActionFactory(player, vData, ActionType.SETBACK).build())
                     }
@@ -129,6 +127,9 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                     vData.addVL(violations)
                     return
                 }
+
+                if (ConfigData.logging_debug)
+                    player.sendMessage("NCP Reach $finalDistance $distanceLimit")
             }
 
             data.lastDealDamage = revert
