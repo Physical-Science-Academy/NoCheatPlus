@@ -39,6 +39,9 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
     override fun onCheck(event: WrapperPacketEvent) {
         val packet = event.packet
         val player = event.player
+
+        if (player.gamemode == 1) return
+
         val pData = NoCheatPlus.instance.getPlayerProvider(player)
         val data = pData.fightData
         val vData = pData.getViolationData(this.typeName)
@@ -50,6 +53,7 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
             //unexpected attack
             if (player.id != packet.attacker.id) return
             if (pData.movingData.isEatFood()) revert = true
+            if (!pData.movingData.isLive()) revert = true
             if (packet.cause != EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                 if (packet.cause == EntityDamageEvent.DamageCause.PROJECTILE) {
                     val yDistance = target.y - player.y
@@ -111,8 +115,24 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                     return
                 }
             } else {
-                
+                if (baseDistance < 0.3) {
+                    data.lastDealDamage = false
+                    return
+                }
+                val finalDistance = selfSub.distance(target)
+                var posWeight = player.distance(selfSub) / target.distance(selfSub)
+                if (posWeight > 1.0) posWeight = 1.0
+                val distanceLimit = ConfigData.check_fight_reach_range.getAverage(posWeight, 1.0 / posWeight)
+                if (finalDistance > distanceLimit) {
+                    data.lastDealDamage = true
+                    val violations = (finalDistance - distanceLimit) * 5.0
+                    vData.addVL(violations)
+                    return
+                }
             }
+
+            data.lastDealDamage = revert
+            vData.preVL(0.998)
         }
 
     }

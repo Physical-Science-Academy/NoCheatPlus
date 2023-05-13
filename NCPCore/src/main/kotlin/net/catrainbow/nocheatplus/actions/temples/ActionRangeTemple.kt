@@ -27,6 +27,10 @@ class ActionRangeTemple(private var min: Double, private var max: Double) {
         return (min * valueA + max * valueB) / 2.0
     }
 
+    fun getAverage(valueA: Double, valueB: Double): Double {
+        return (min * valueA + max * valueB) / 2.0
+    }
+
     fun getDefaultTemple(min: Double, max: Double): ActionRangeTemple {
         this.min = min(min, max)
         this.max = max(min, max)
