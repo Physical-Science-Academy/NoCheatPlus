@@ -119,7 +119,9 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                 val finalDistance = selfSub.distance(target)
                 var posWeight = player.distance(selfSub) / target.distance(selfSub)
                 if (posWeight > 1.0) posWeight = 1.0
-                val distanceLimit = ConfigData.check_fight_reach_range.getAverage(posWeight, 1.0 / posWeight)
+                val distanceLimit = ConfigData.check_fight_reach_range.getAverage(
+                    posWeight, 1.0 / posWeight
+                ) - ConfigData.check_fight_reach_offset
                 if (finalDistance > distanceLimit) {
                     data.lastDealDamage = true
                     val violations = (finalDistance - distanceLimit) * 5.0
@@ -127,8 +129,7 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                     return
                 }
 
-                if (ConfigData.logging_debug)
-                    player.sendMessage("NCP Reach $finalDistance $distanceLimit")
+                if (ConfigData.logging_debug) player.sendMessage("NCP Reach $finalDistance $distanceLimit")
             }
 
             data.lastDealDamage = revert

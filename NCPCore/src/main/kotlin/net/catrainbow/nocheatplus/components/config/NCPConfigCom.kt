@@ -170,6 +170,7 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.check_fight_cancel_damage = config.getBoolean("checks.fight.speed.cancelDamage")
         ConfigData.check_fight_reach_range =
             ActionTempleFactory().buildRangeTemple(config.getString("checks.fight.reach.range"))
+        ConfigData.check_fight_reach_offset = config.getDouble("checks.fight.reach.offset")
         ConfigData.check_fast_break_max = config.getInt("checks.blockbreak.fastbreak.max")
         ConfigData.check_fast_break_min = config.getInt("checks.blockbreak.fastbreak.min")
     }
