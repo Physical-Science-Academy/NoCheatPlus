@@ -35,7 +35,6 @@ import kotlin.math.hypot
  * @author Catrainbow
  */
 class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
-
     override fun onCheck(event: WrapperPacketEvent) {
         val packet = event.packet
         val player = event.player

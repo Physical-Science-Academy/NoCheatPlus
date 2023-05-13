@@ -100,6 +100,7 @@ checks:
     reach:
       active: true
       range: "3.5-4.15"
+      offsetrange: 5.50
       actions: "cancel vl>5&&kick vl>20"
   inventory:
     instanteat:

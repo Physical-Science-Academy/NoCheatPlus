@@ -107,8 +107,8 @@ class FightListener : CheckListener(CheckType.FIGHT) {
     }
 
     init {
-        addCheck(Speed())
         addCheck(Reach())
+        addCheck(Speed())
     }
 
 }
