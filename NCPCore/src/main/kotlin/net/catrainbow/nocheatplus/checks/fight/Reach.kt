@@ -16,6 +16,7 @@ package net.catrainbow.nocheatplus.checks.fight
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.feature.wrapper.WrapperDamagePacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 
 /**
@@ -30,7 +31,12 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
         val player = event.player
         val data = NoCheatPlus.instance.getPlayerProvider(player).fightData
 
-
+        if (packet is WrapperDamagePacket) {
+            val target = packet.target
+            //unexpected attack
+            if (player.id != packet.attacker.id) return
+            val baseDistance = player.distance(target)
+        }
 
     }
 
