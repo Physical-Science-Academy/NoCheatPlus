@@ -21,9 +21,13 @@ import net.catrainbow.nocheatplus.actions.ActionFactory
 import net.catrainbow.nocheatplus.actions.ActionType
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.checks.moving.magic.Magic
 import net.catrainbow.nocheatplus.checks.moving.magic.MagicVehicle
+import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperDamagePacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
+import kotlin.math.abs
+import kotlin.math.hypot
 
 /**
  * 攻击距离检测
@@ -35,8 +39,9 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
     override fun onCheck(event: WrapperPacketEvent) {
         val packet = event.packet
         val player = event.player
-        val data = NoCheatPlus.instance.getPlayerProvider(player).fightData
-        val vData = NoCheatPlus.instance.getPlayerProvider(player).getViolationData(this.typeName)
+        val pData = NoCheatPlus.instance.getPlayerProvider(player)
+        val data = pData.fightData
+        val vData = pData.getViolationData(this.typeName)
 
         var revert = false
 
@@ -44,6 +49,7 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
             val target = packet.target
             //unexpected attack
             if (player.id != packet.attacker.id) return
+            if (pData.movingData.isEatFood()) revert = true
             if (packet.cause != EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                 if (packet.cause == EntityDamageEvent.DamageCause.PROJECTILE) {
                     val yDistance = target.y - player.y
@@ -72,6 +78,40 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                     else -> MagicVehicle.VEHICLE_DOWN_BOX
                 }
                 selfSub = player.add(0.0, -rewriteBox, 0.0)
+            }
+            //special situation
+            val directionX = target.x - player.x / abs(target.x - player.x)
+            val directionZ = target.z - player.z / abs(target.z - player.z)
+            if (pData.movingData.getLiquidTick() > 20) {
+                when (pData.movingData.getLiquidTick() % 2) {
+                    1 -> selfSub.add(0.0, -0.025, 0.0)
+                    0 -> selfSub.add(0.0, -0.012, 0.0)
+                }
+                val motion = pData.movingData.getKnockBackTick() * 0.01 + packet.knockBack * 0.1
+                selfSub.add(-directionX * motion, 0.0, -directionZ * motion)
+            }
+            if (pData.movingData.getFullAirTick() > 13) {
+                val horizon = if (directionX > 0) target.y - player.y else 0.0
+                val vertical = if (directionZ > 0) hypot(target.z - player.z, target.x - player.x) else 0.0
+                val finalHorizon = horizon + (player.inAirTicks / 20) * Magic.TINY_GRAVITY * 0.05
+                val finalVertical = vertical + if (player.isSprinting) 0.3 else 0.0
+                val finalDistance = hypot(finalHorizon, finalVertical)
+                //超出攻击范围
+                if (finalVertical / finalDistance < 0) {
+                    data.lastDealDamage = true
+                    return
+                }
+                if (baseDistance > ConfigData.check_fight_reach_range.getAverage(
+                        1, 0
+                    ) * 2.0 && finalDistance > ConfigData.check_fight_reach_range.getAverage(0, 1) * 2.0
+                ) {
+                    data.lastDealDamage = true
+                    val violations = (finalDistance - ConfigData.check_fight_reach_range.getAverage(1, 0) * 2.0) * 5.0
+                    vData.addVL(violations)
+                    return
+                }
+            } else {
+                
             }
         }
 

@@ -87,8 +87,7 @@ class FightListener : CheckListener(CheckType.FIGHT) {
                 //排除远程攻击机制
                 if (!event.isCancelled && event.cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK) NoCheatPlus.instance.getPlayerProvider(
                     player
-                ).fightData.lastDamageBoost =
-                    System.currentTimeMillis()
+                ).fightData.lastDamageBoost = System.currentTimeMillis()
             }
         } else if (event is PlayerInteractEvent) {
             if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
@@ -109,6 +108,7 @@ class FightListener : CheckListener(CheckType.FIGHT) {
 
     init {
         addCheck(Speed())
+        addCheck(Reach())
     }
 
 }
