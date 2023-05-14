@@ -97,6 +97,11 @@ checks:
       dealvariance: 0.1
       cancelDamage: true
       actions: "cancel vl>5&&kick vl>20"
+    reach:
+      active: true
+      range: 3.0-3.01
+      offset: 0.2976
+      actions: "cancel vl>5&&kick vl>20"
   inventory:
     instanteat:
       active: true

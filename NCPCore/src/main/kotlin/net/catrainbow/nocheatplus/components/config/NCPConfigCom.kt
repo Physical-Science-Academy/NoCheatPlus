@@ -15,6 +15,8 @@ package net.catrainbow.nocheatplus.components.config
 
 import cn.nukkit.utils.Config
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.actions.temples.ActionRangeTemple
+import net.catrainbow.nocheatplus.actions.temples.ActionTempleFactory
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.components.registry.INCPComponent
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
@@ -166,6 +168,9 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.check_fight_max_speed = config.getInt("checks.fight.speed.maxspeed")
         ConfigData.check_fight_deal_variance = config.getDouble("checks.fight.speed.dealvariance")
         ConfigData.check_fight_cancel_damage = config.getBoolean("checks.fight.speed.cancelDamage")
+        ConfigData.check_fight_reach_range =
+            ActionTempleFactory().buildRangeTemple(config.getString("checks.fight.reach.range"))
+        ConfigData.check_fight_reach_offset = config.getDouble("checks.fight.reach.offset")
         ConfigData.check_fast_break_max = config.getInt("checks.blockbreak.fastbreak.max")
         ConfigData.check_fast_break_min = config.getInt("checks.blockbreak.fastbreak.min")
     }

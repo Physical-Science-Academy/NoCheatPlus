@@ -13,6 +13,8 @@
  */
 package net.catrainbow.nocheatplus.components.data
 
+import net.catrainbow.nocheatplus.actions.temples.ActionTempleFactory
+
 /**
  * 配置文件储存
  */
@@ -58,6 +60,8 @@ class ConfigData : IConfigData {
         var check_fight_max_speed = 25
         var check_fight_deal_variance = 0.1
         var check_fight_cancel_damage = true
+        var check_fight_reach_range = ActionTempleFactory().buildRangeTemple(0.0, 0.0).getDefaultTemple(3.0, 3.01)
+        var check_fight_reach_offset = 0.2976
         var check_fast_break_max = 35
         var check_fast_break_min = 0
     }
