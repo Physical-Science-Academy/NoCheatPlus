@@ -80,10 +80,8 @@
                 <executions>
                     <execution>
                         <id>get-the-git-infos</id>
-                        <!-- 默认绑定阶段initialize -->
                         <phase>initialize</phase>
                         <goals>
-                            <!-- 目标：revision -->
                             <goal>revision</goal>
                         </goals>
                     </execution>
