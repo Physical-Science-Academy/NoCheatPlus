@@ -142,7 +142,7 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                     data.lastDealDamage = true
                     val violations = (finalDistance - ConfigData.check_fight_reach_range.getAverage(1, 0) * 2.0) * 5.0
                     vData.addVL(violations)
-                    player.sendMessage("Reach #NCP 2")
+                    //player.sendMessage("Reach #NCP 2")
                     if (ConfigData.logging_debug) player.sendMessage("NCP Reach $finalDistance")
                     return
                 }
@@ -172,7 +172,7 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                     data.lastDealDamage = true
                     val violations = (finalDistance - distanceLimit) * 5.0
                     vData.addVL(violations)
-                    player.sendMessage("Reach #NCP 1")
+                    //player.sendMessage("Reach #NCP 1")
                     return
                 }
 
