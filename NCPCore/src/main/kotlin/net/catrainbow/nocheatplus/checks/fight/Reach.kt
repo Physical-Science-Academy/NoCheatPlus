@@ -13,9 +13,12 @@
  */
 package net.catrainbow.nocheatplus.checks.fight
 
+import cn.nukkit.Player
 import cn.nukkit.entity.item.EntityBoat
+import cn.nukkit.entity.item.EntityEndCrystal
 import cn.nukkit.entity.mob.EntityEnderDragon
 import cn.nukkit.event.entity.EntityDamageEvent
+import cn.nukkit.math.Vector3
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.ActionFactory
 import net.catrainbow.nocheatplus.actions.ActionType
@@ -80,6 +83,36 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                 }
                 selfSub = player.add(0.0, -rewriteBox, 0.0)
             }
+            if (target.riding != null) {
+                val rewriteBox = when (player.riding.networkId) {
+                    EntityBoat.NETWORK_ID -> MagicVehicle.VEHICLE_DOWN_BOX + 0.12
+                    EntityEnderDragon.NETWORK_ID -> MagicVehicle.VEHICLE_DOWN_BOX - 0.5
+                    else -> MagicVehicle.VEHICLE_DOWN_BOX
+                }
+                selfSub = player.add(0.0, rewriteBox, 0.0)
+            }
+            if (target is Player) {
+                if (NoCheatPlus.instance.hasPlayer(target)) {
+                    val motionY = NoCheatPlus.instance.getPlayerProvider(target).movingData.getMotionY()
+                    if (motionY * pData.movingData.getMotionY() < 0) {
+                        val directionX = (target.x - player.x) / abs(target.x - player.x)
+                        val directionZ = (target.z - player.z) / abs(target.z - player.z)
+                        val vectorRay = Vector3(
+                            pData.movingData.getMotionX() / 2.0,
+                            (motionY - pData.movingData.getMotionY()) / 2.0,
+                            pData.movingData.getMotionZ()
+                        )
+                        val diffPitch = abs(target.pitch - player.pitch)
+                        val diffYaw = abs(target.yaw - player.yaw)
+                        if (diffPitch < 10 && diffYaw < 22.5) {
+                            vectorRay.setX(vectorRay.x * directionX)
+                            vectorRay.setZ(vectorRay.z * directionZ)
+                            selfSub.add(vectorRay)
+                        }
+                    }
+                }
+            }
+            if (target is EntityEndCrystal) selfSub.add(1.0, 2.0, 1.0)
             //special situation
             val directionX = target.x - player.x / abs(target.x - player.x)
             val directionZ = target.z - player.z / abs(target.z - player.z)
@@ -116,6 +149,17 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                     data.lastDealDamage = false
                     return
                 }
+
+                val hitBoxMin = Vector3(player.x - 0.3, player.y, player.z - 0.3)
+                val hitBoxMax = Vector3(player.x + 0.3, player.y + player.eyeHeight, player.z + 0.3)
+                if (target.x > hitBoxMin.x && target.x < hitBoxMax.x && target.z > hitBoxMin.z && target.z < hitBoxMax.z) {
+                    //missed HitBox
+                    if (player.horizontalFacing == target.horizontalFacing) {
+                        data.lastDealDamage = baseDistance > 0.15
+                        return
+                    }
+                }
+
                 val finalDistance = selfSub.distance(target)
                 var posWeight = player.distance(selfSub) / target.distance(selfSub)
                 if (posWeight > 1.0) posWeight = 1.0
