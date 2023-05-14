@@ -142,6 +142,8 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                     data.lastDealDamage = true
                     val violations = (finalDistance - ConfigData.check_fight_reach_range.getAverage(1, 0) * 2.0) * 5.0
                     vData.addVL(violations)
+                    player.sendMessage("Reach #NCP 2")
+                    if (ConfigData.logging_debug) player.sendMessage("NCP Reach $finalDistance")
                     return
                 }
             } else {
@@ -156,7 +158,7 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                     //missed HitBox
                     if (player.horizontalFacing == target.horizontalFacing) {
                         data.lastDealDamage = baseDistance > 0.15
-                        return
+                        revert = false
                     }
                 }
 
@@ -170,10 +172,11 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                     data.lastDealDamage = true
                     val violations = (finalDistance - distanceLimit) * 5.0
                     vData.addVL(violations)
+                    player.sendMessage("Reach #NCP 1")
                     return
                 }
 
-                if (ConfigData.logging_debug) player.sendMessage("NCP Reach $finalDistance $distanceLimit")
+                if (ConfigData.logging_debug) player.sendMessage("NCP Reach Missing HitBox $finalDistance $distanceLimit")
             }
 
             data.lastDealDamage = revert
