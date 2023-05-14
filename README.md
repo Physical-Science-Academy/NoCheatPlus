@@ -140,7 +140,7 @@
 - [x] FastBreak
 - [ ] Scaffold
 - [ ] KillAura
-- [ ] Reach
+- [x] Reach
 - [x] X-Ray
 - [x] AutoClicker
 - [ ] HitBox
@@ -389,6 +389,7 @@ Available CheckType:
 - `INVENTORY_FAST_CLICK`
 - `INVENTORY_MOVE`
 - `FIGHT_SPEED`
+- `FIGHT_REACH`
 
 ## Video Showing
 

@@ -137,7 +137,7 @@
 - [x] FastBreak
 - [ ] Scaffold
 - [ ] KillAura
-- [ ] Reach
+- [x] Reach
 - [x] X-Ray
 - [x] AutoClicker
 - [ ] HitBox
@@ -386,6 +386,7 @@ permission:
 - `INVENTORY_FAST_CLICK`
 - `INVENTORY_MOVE`
 - `FIGHT_SPEED`
+- `FIGHT_REACH`
 
 ## 视频教程
 
