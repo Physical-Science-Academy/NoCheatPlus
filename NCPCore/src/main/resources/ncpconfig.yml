@@ -89,7 +89,7 @@ checks:
       active: true
       max: 35
       min: 0
-      actions: "cancel vl>5"
+      actions: "cancel vl>5&&cmd vl>10 group=default"
   fight:
     speed:
       active: true
@@ -152,6 +152,10 @@ string:
   kick: "§c§lNCP §7>> §rYou are kicked by NCP because of using @hack on server@next"
   ban: "§c§lNCP §7>> §rYou are banned by NCP for §c@days,@hours,@minutes,@seconds§r because of using @hack @nextEndTime: @end"
   fly_short: "@player could be flying hack @vl"
+
+command:
+  default:
+    - "ncp kick @player"
 
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."

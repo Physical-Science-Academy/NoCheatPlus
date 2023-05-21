@@ -14,6 +14,8 @@
 package net.catrainbow.nocheatplus.actions
 
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.actions.command.ActionCommandTree
+import net.catrainbow.nocheatplus.actions.command.ActionCommandTreeNode
 import net.catrainbow.nocheatplus.actions.types.BanAction
 import net.catrainbow.nocheatplus.actions.types.LogAction
 import net.catrainbow.nocheatplus.actions.types.WarnAction
@@ -84,6 +86,38 @@ class ActionCom : NCPComponent(), INCPComponent {
                     actionData.banRepeat = subCommand[1].split("=")[1].toInt()
                     val timeArray = subCommand[2].split("=")[1].split(",")
                     actionData.banAction = BanAction(timeArray[0].toInt(), timeArray[1].toInt(), timeArray[2].toInt())
+                }
+                "cmd" -> {
+                    actionData.enableCommand = true
+                    val violation = subCommand[1].split(">")[1].toDouble()
+                    val commandTree = ActionCommandTree()
+                    if (subCommand[2].contains("group")) {
+                        val groupName = subCommand[2].split("=")[1]
+                        commandTree.commandName = groupName
+                        commandTree.violation = violation
+                        for (patchCommand in NoCheatPlus.instance.getNCPConfig().getStringList("command.$groupName")) {
+                            val node = ActionCommandTreeNode()
+                            node.command = patchCommand
+                            node.violation = commandTree.violation
+                            commandTree.addNode(node)
+                        }
+                    } else {
+                        commandTree.commandName = subCommand[2]
+                        commandTree.violation = violation
+                        val node = ActionCommandTreeNode()
+                        node.command = commandTree.commandName
+                        node.violation = commandTree.violation
+                        commandTree.addNode(node)
+                    }
+                    if (!actionData.commandAction.commandTree.containsKey(type)) {
+                        val pair: Pair<Double, ActionCommandTree> = Pair(commandTree.violation, commandTree)
+                        actionData.commandAction.commandTree[type] = pair
+                    } else {
+                        val originalTree = actionData.commandAction.commandTree[type]!!.second
+                        val pair: Pair<Double, ActionCommandTree> =
+                            Pair(commandTree.violation, originalTree.graftTree(originalTree, commandTree))
+                        actionData.commandAction.commandTree[type] = pair
+                    }
                 }
             }
         }
