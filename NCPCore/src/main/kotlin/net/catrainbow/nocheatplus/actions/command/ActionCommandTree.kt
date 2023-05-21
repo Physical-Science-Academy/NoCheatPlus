@@ -13,8 +13,8 @@
  */
 package net.catrainbow.nocheatplus.actions.command
 
+import cn.nukkit.Player
 import net.catrainbow.nocheatplus.components.data.ConfigData
-import javax.swing.Action
 
 class ActionCommandTree {
 
@@ -22,6 +22,14 @@ class ActionCommandTree {
     var violation = 0.0
     private lateinit var nextNode: ActionCommandTreeNode
     var lastDoAction = System.currentTimeMillis() - ConfigData.action_warning_delay * 1000L
+
+    fun dispatchAllCommand(player: Player, type: String) {
+        this.dispatchAllCommand(player.name, type)
+    }
+
+    private fun dispatchAllCommand(player: String, type: String) {
+        this.nextNode.dispatchNode(player, 0, this.getLength(), type)
+    }
 
     private fun getLength(): Int {
         return nextNode.getLength(0)

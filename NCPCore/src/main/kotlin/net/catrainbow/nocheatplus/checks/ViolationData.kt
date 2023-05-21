@@ -136,6 +136,13 @@ class ViolationData(type: CheckType, private val player: Player) {
                         player, this, ActionType.LOG
                     ).build()
                 )
+                revert = true
+            }
+            if (data.enableCommand) if (!revert) {
+                val tree = data.commandAction.commandTree[checkType.name]!!.second
+                if (System.currentTimeMillis() - tree.lastDoAction > ConfigData.action_warning_delay * 1000L) if (this.vl > tree.violation) this.actions.addElement(
+                    ActionFactory(player, this, ActionType.COMMAND).build()
+                )
             }
         }
         if (actions.isEmpty()) return

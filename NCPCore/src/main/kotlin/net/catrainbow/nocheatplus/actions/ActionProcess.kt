@@ -197,6 +197,16 @@ class ActionProcess(
                 }
             }
 
+            ActionType.COMMAND -> {
+                if (!data.enableCommand) return
+                val tree = data.commandAction.commandTree[this.checkType.name]!!.second
+                if (this.violationData.getVL() < tree.violation) return
+                if (System.currentTimeMillis() - tree.lastDoAction > ConfigData.action_warning_delay * 1000L) {
+                    tree.dispatchAllCommand(player, this.checkType.name)
+                    tree.lastDoAction = System.currentTimeMillis()
+                }
+            }
+
             else -> {}
         }
     }

@@ -19,19 +19,13 @@ package net.catrainbow.nocheatplus.actions
  * @author Catrainbow
  */
 enum class ActionType(private val type: String) {
-    WARNING("WARNING"),
-    SETBACK("SETBACK"),
-    KICK("KICK"),
-    BAN("BAN"),
-    LOG("LOG"),
-    DEFAULT("DEFAULT");
+    WARNING("WARNING"), SETBACK("SETBACK"), KICK("KICK"), BAN("BAN"), LOG("LOG"), COMMAND("COMMAND"), DEFAULT("DEFAULT");
 
     companion object {
         @JvmStatic
         fun fromTypeName(string: String): ActionType {
             for (type in ActionType.values()) {
-                if (type.type == string)
-                    return type
+                if (type.type == string) return type
             }
             return DEFAULT
         }

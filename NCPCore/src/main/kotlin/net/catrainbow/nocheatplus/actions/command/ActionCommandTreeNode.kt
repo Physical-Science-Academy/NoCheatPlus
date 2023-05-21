@@ -1,5 +1,8 @@
 package net.catrainbow.nocheatplus.actions.command
 
+import cn.nukkit.Player
+import net.catrainbow.nocheatplus.NoCheatPlus
+
 class ActionCommandTreeNode {
 
     lateinit var command: String
@@ -10,6 +13,13 @@ class ActionCommandTreeNode {
     fun getLength(index: Int): Int {
         return if (enableBranchCommand) this.nextNode.getLength(index + 1)
         else index + 1
+    }
+
+    fun dispatchNode(player: String, index: Int, target: Int, type: String) {
+        if (index > target) return
+        val dispatchCommand = this.command.replace("@player", player).replace("@type", type)
+        NoCheatPlus.instance.server.dispatchCommand(NoCheatPlus.instance.server.consoleSender, dispatchCommand)
+        return this.nextNode.dispatchNode(player, index + 1, target, type)
     }
 
     fun cutNode() {
