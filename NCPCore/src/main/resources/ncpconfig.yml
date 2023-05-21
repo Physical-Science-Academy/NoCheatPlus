@@ -160,8 +160,8 @@ command:
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
   policy:
-    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle,permission"
-    - "nocheatplus.admin.helper:kick,ban,unban"
+    - "nocheatplus.admin.all:reload,kick,ban,warn,unban,debug,toggle,permission"
+    - "nocheatplus.admin.helper:kick,ban,unban,warn"
   bypass:
     # Custom bypass permission
     MOVING_CREATIVE_FLY:

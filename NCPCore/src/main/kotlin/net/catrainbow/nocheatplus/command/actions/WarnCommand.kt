@@ -15,24 +15,21 @@ package net.catrainbow.nocheatplus.command.actions
 
 import cn.nukkit.command.CommandSender
 import net.catrainbow.nocheatplus.NoCheatPlus
-import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.command.NCPSubCommand
-import net.catrainbow.nocheatplus.components.data.ConfigData
-import net.catrainbow.nocheatplus.utilities.i18n.I18N
 import net.catrainbow.nocheatplus.utilities.i18n.I18N.Companion.getString
 
-class KickCommand : NCPSubCommand("kick") {
+class WarnCommand : NCPSubCommand("warn") {
     override fun getDescription(): String {
-        return getString("command.kick.description")
+        return getString("command.warn.description")
     }
 
     override fun getAliases(): Array<String> {
-        return arrayOf("kick")
+        return arrayOf("warn")
     }
 
     override fun execute(sender: CommandSender, label: String, args: Array<out String>): Boolean {
         if (args.size < 2) {
-            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.general.playerOffline")}")
+            sender.sendMessage(getString(""))
             return true
         }
         val target = args[1]
@@ -41,12 +38,21 @@ class KickCommand : NCPSubCommand("kick") {
             if (player.name == target) online = true
         }
         if (online) {
-            NoCheatPlus.instance.kickPlayer(NoCheatPlus.instance.server.getPlayer(target), CheckType.STAFF)
-            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.kick.success")}")
-            NoCheatPlus.instance.getNCPLogger().info(getString("command.kick.message", target, sender.name))
-        } else {
-            sender.sendMessage("${ConfigData.logging_prefix}${getString("command.general.playerOffline")}")
+            val messageBuilder = StringBuilder()
+            var index = 0
+            for (warning in args) {
+                index++
+                if (index >= 2) messageBuilder.append(warning).append(" ")
+            }
+            val message = if (messageBuilder.toString().last() == ' ') messageBuilder.substring(
+                0, messageBuilder.length - 1
+            ) else messageBuilder.toString()
+
+            NoCheatPlus.instance.server.getPlayer(target).sendMessage(
+                message.replace("@player", target)
+            )
         }
+        sender.sendMessage(getString("command.warn.success"))
         return true
     }
 }

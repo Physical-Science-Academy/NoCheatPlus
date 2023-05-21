@@ -17,6 +17,7 @@ import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.command.actions.BanCommand
 import net.catrainbow.nocheatplus.command.actions.KickCommand
 import net.catrainbow.nocheatplus.command.actions.UnBanCommand
+import net.catrainbow.nocheatplus.command.actions.WarnCommand
 import net.catrainbow.nocheatplus.command.admin.*
 import net.catrainbow.nocheatplus.components.registry.INCPComponent
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
@@ -36,6 +37,7 @@ class NCPCommandCom : NCPComponent(), INCPComponent {
         NCPCommand.subCommands.add(UnBanCommand())
         NCPCommand.subCommands.add(ToggleCommand())
         NCPCommand.subCommands.add(PermissionCommand())
+        NCPCommand.subCommands.add(WarnCommand())
     }
 
 }
