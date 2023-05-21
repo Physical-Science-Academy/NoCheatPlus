@@ -20,7 +20,7 @@ class ActionCommandTree {
 
     lateinit var commandName: String
     var violation = 0.0
-    private lateinit var nextNode: ActionCommandTreeNode
+    private var nextNode: ActionCommandTreeNode = ActionCommandTreeNode()
     var lastDoAction = System.currentTimeMillis() - ConfigData.action_warning_delay * 1000L
 
     fun dispatchAllCommand(player: Player, type: String) {

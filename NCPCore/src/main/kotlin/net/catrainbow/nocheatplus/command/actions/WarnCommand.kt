@@ -49,7 +49,7 @@ class WarnCommand : NCPSubCommand("warn") {
             ) else messageBuilder.toString()
 
             NoCheatPlus.instance.server.getPlayer(target).sendMessage(
-                message.replace("@player", target)
+                message.replace("@player", target).replace("@next", "\n").replace("&n", "\n")
             )
         }
         sender.sendMessage(getString("command.warn.success"))

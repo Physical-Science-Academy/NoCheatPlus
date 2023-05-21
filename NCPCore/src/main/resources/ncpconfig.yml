@@ -89,7 +89,7 @@ checks:
       active: true
       max: 35
       min: 0
-      actions: "cancel vl>5&&cmd vl>10 group=default"
+      actions: "cancel vl>5"
   fight:
     speed:
       active: true
@@ -155,7 +155,7 @@ string:
 
 command:
   default:
-    - "ncp kick @player"
+    - "ncp warn @player NCP WARING>>Don't use hack on the server!"
 
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
