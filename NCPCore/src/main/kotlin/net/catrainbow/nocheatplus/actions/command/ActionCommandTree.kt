@@ -69,6 +69,7 @@ class ActionCommandTree {
             } else if (preNode.leftNode!!.getLength() >= preNode.rightNode!!.getLength()) preNode =
                 preNode.rightNode!! else preNode = preNode.leftNode!!
         }
+        this.nextNode = preNode
     }
 
     fun graftTree(targetTree: ActionCommandTree): ActionCommandTree {

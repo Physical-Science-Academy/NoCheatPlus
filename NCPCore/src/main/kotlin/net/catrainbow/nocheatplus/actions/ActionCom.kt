@@ -101,7 +101,7 @@ class ActionCom : NCPComponent(), INCPComponent {
                             val node = ActionCommandTreeNode()
                             node.command = patchCommand
                             node.violation = commandTree.violation
-                            node.enableBranchCommand = false
+                            node.enableBranchCommand = true
                             commandTree.addNode(node)
                         }
                     } else {
@@ -110,6 +110,7 @@ class ActionCom : NCPComponent(), INCPComponent {
                         val node = ActionCommandTreeNode()
                         node.command = commandTree.commandName
                         node.violation = commandTree.violation
+                        node.enableBranchCommand = true
                         commandTree.addNode(node)
                     }
                     NoCheatPlus.instance.getNCPLogger().info("Print Tree:\n$commandTree")

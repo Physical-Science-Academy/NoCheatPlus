@@ -44,9 +44,12 @@ class ActionCommandTreeNode {
     }
 
     fun searchActionNode(index: Int, right: Boolean): ActionCommandTreeNode? {
-        if (index == 1) return this
-        return if (right) if (this.rightNode != null) this.searchActionNode(index - 1, right) else null
-        else if (this.leftNode != null) this.searchActionNode(index - 1, right) else null
+        if (index <= 1) return this
+        return if (right) {
+            if (this.rightNode != null) {
+                this.searchActionNode(index - 1, true)
+            } else null
+        } else if (this.leftNode != null) this.searchActionNode(index - 1, false) else null
     }
 
 
