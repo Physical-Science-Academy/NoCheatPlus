@@ -13,10 +13,8 @@
  */
 package net.catrainbow.nocheatplus.actions.types
 
-import net.catrainbow.nocheatplus.actions.command.ActionCommandTree
-
 class CommandAction {
 
-    val commandTree: HashMap<String, Pair<Double, ActionCommandTree>> = HashMap()
+    val commandTree: HashMap<String, Pair<Double, ArrayList<String>>> = HashMap()
 
 }

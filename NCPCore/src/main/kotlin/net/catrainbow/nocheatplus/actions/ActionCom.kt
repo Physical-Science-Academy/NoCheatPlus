@@ -14,8 +14,6 @@
 package net.catrainbow.nocheatplus.actions
 
 import net.catrainbow.nocheatplus.NoCheatPlus
-import net.catrainbow.nocheatplus.actions.command.ActionCommandTree
-import net.catrainbow.nocheatplus.actions.command.ActionCommandTreeNode
 import net.catrainbow.nocheatplus.actions.types.BanAction
 import net.catrainbow.nocheatplus.actions.types.CommandAction
 import net.catrainbow.nocheatplus.actions.types.LogAction
@@ -92,35 +90,25 @@ class ActionCom : NCPComponent(), INCPComponent {
                     actionData.enableCommand = true
                     actionData.commandAction = CommandAction()
                     val violation = subCommand[1].split(">")[1].toDouble()
-                    val commandTree = ActionCommandTree()
+                    var list: ArrayList<String> = ArrayList()
                     if (subCommand[2].contains("group")) {
                         val groupName = subCommand[2].split("=")[1]
-                        commandTree.commandName = groupName
-                        commandTree.violation = violation
-                        for (patchCommand in NoCheatPlus.instance.getNCPConfig().getStringList("command.$groupName")) {
-                            val node = ActionCommandTreeNode()
-                            node.command = patchCommand
-                            node.violation = commandTree.violation
-                            node.enableBranchCommand = true
-                            commandTree.addNode(node)
-                        }
+                        list =
+                            NoCheatPlus.instance.getNCPConfig().getStringList("command.$groupName") as ArrayList<String>
                     } else {
-                        commandTree.commandName = subCommand[2]
-                        commandTree.violation = violation
-                        val node = ActionCommandTreeNode()
-                        node.command = commandTree.commandName
-                        node.violation = commandTree.violation
-                        node.enableBranchCommand = true
-                        commandTree.addNode(node)
+                        val commandBuilder = java.lang.StringBuilder()
+                        for ((index, patchCommand) in subCommand.withIndex()) if (index >= 2) commandBuilder.append(
+                            patchCommand
+                        ).append(" ")
+                        list.add(commandBuilder.toString().removeSuffix(" "))
                     }
-                    NoCheatPlus.instance.getNCPLogger().info("Print Tree:\n$commandTree")
                     if (!actionData.commandAction.commandTree.containsKey(type)) {
-                        val pair: Pair<Double, ActionCommandTree> = Pair(commandTree.violation, commandTree)
+                        val pair: Pair<Double, ArrayList<String>> = Pair(violation, list)
                         actionData.commandAction.commandTree[type] = pair
                     } else {
                         val originalTree = actionData.commandAction.commandTree[type]!!.second
-                        val pair: Pair<Double, ActionCommandTree> =
-                            Pair(commandTree.violation, originalTree.graftTree(commandTree))
+                        for (value in list) if (!originalTree.contains(value)) originalTree.add(value)
+                        val pair: Pair<Double, ArrayList<String>> = Pair(violation, originalTree)
                         actionData.commandAction.commandTree[type] = pair
                     }
                 }
