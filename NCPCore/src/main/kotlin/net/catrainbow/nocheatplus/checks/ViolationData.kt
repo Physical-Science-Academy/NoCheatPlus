@@ -140,7 +140,7 @@ class ViolationData(type: CheckType, private val player: Player) {
             }
             if (data.enableCommand) if (!revert) {
                 val tree = data.commandAction.commandTree[checkType.name]!!.second
-                if (System.currentTimeMillis() - tree.lastDoAction > ConfigData.action_warning_delay * 1000L) if (this.vl > tree.violation) this.actions.addElement(
+                if (System.currentTimeMillis() - history.getLastDoAction() > ConfigData.action_warning_delay * 1000L) if (this.vl > data.commandAction.commandTree[checkType.name]!!.first) this.actions.addElement(
                     ActionFactory(player, this, ActionType.COMMAND).build()
                 )
             }
