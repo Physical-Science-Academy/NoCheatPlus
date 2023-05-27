@@ -238,6 +238,7 @@ class NCPListener : Listener {
         }
         //关闭核心自带反作弊
         event.player.setCheckMovement(false)
+        event.player.teleport(event.player.add(0.0, -0.25, 0.0))
         //水狗模式,从WaterDog返回真实的延迟
         if (event.player.address == "127.0.0.1" && !BridgeWaterDog.waterDog_ping) BridgeWaterDog.waterDog_ping = true
     }
