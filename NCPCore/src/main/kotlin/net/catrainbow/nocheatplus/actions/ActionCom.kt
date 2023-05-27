@@ -17,6 +17,7 @@ import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.command.ActionCommandTree
 import net.catrainbow.nocheatplus.actions.command.ActionCommandTreeNode
 import net.catrainbow.nocheatplus.actions.types.BanAction
+import net.catrainbow.nocheatplus.actions.types.CommandAction
 import net.catrainbow.nocheatplus.actions.types.LogAction
 import net.catrainbow.nocheatplus.actions.types.WarnAction
 import net.catrainbow.nocheatplus.checks.CheckType
@@ -89,6 +90,7 @@ class ActionCom : NCPComponent(), INCPComponent {
                 }
                 "cmd" -> {
                     actionData.enableCommand = true
+                    actionData.commandAction = CommandAction()
                     val violation = subCommand[1].split(">")[1].toDouble()
                     val commandTree = ActionCommandTree()
                     if (subCommand[2].contains("group")) {
@@ -99,6 +101,7 @@ class ActionCom : NCPComponent(), INCPComponent {
                             val node = ActionCommandTreeNode()
                             node.command = patchCommand
                             node.violation = commandTree.violation
+                            node.enableBranchCommand = false
                             commandTree.addNode(node)
                         }
                     } else {
@@ -109,13 +112,14 @@ class ActionCom : NCPComponent(), INCPComponent {
                         node.violation = commandTree.violation
                         commandTree.addNode(node)
                     }
+                    NoCheatPlus.instance.getNCPLogger().info("Print Tree:\n$commandTree")
                     if (!actionData.commandAction.commandTree.containsKey(type)) {
                         val pair: Pair<Double, ActionCommandTree> = Pair(commandTree.violation, commandTree)
                         actionData.commandAction.commandTree[type] = pair
                     } else {
                         val originalTree = actionData.commandAction.commandTree[type]!!.second
                         val pair: Pair<Double, ActionCommandTree> =
-                            Pair(commandTree.violation, originalTree.graftTree(originalTree, commandTree))
+                            Pair(commandTree.violation, originalTree.graftTree(commandTree))
                         actionData.commandAction.commandTree[type] = pair
                     }
                 }

@@ -16,6 +16,7 @@ package net.catrainbow.nocheatplus.actions.command
 import cn.nukkit.Player
 import net.catrainbow.nocheatplus.components.data.ConfigData
 
+
 class ActionCommandTree {
 
     lateinit var commandName: String
@@ -28,47 +29,70 @@ class ActionCommandTree {
     }
 
     private fun dispatchAllCommand(player: String, type: String) {
-        this.nextNode.dispatchNode(player, 0, this.getLength(), type)
+        this.nextNode.dispatchNode(player, type)
     }
 
     private fun getLength(): Int {
-        return nextNode.getLength(0)
+        return nextNode.getLength()
     }
 
-    private fun getActionTreeNode(target: Int): ActionCommandTreeNode {
-        return this.nextNode.getIndexNode(0, target)
+    fun getTotalCommands(): Int {
+        return this.nextNode.getNumberTreeNodes(this.nextNode)
+    }
+
+    private fun getActionTreeNode(target: Int, right: Boolean): ActionCommandTreeNode? {
+        return this.nextNode.searchActionNode(target, right)
     }
 
     private fun getAllNodes(): ArrayList<ActionCommandTreeNode> {
         val list: ArrayList<ActionCommandTreeNode> = ArrayList()
         var index = 0
         while (index < this.getLength()) {
-            list.add(this.getActionTreeNode(index))
+            val left = this.getActionTreeNode(index, false)
+            val right = this.getActionTreeNode(index, true)
+            if (left != null) list.add(left)
+            if (right != null) list.add(right)
             index++
         }
         return list
     }
 
-    fun addNode(node: ActionCommandTreeNode) {
-        val lastNode = this.getActionTreeNode(this.getLength()).nextNode
-        lastNode.nextNode = node
-        lastNode.setEnabledBranch()
+    fun addNode(target: ActionCommandTreeNode) {
+        var preNode = this.nextNode
+        while (preNode.command != target.command) {
+            if (preNode.leftNode == null) {
+                preNode.leftNode = target
+                break
+            } else if (preNode.rightNode == null) {
+                preNode.rightNode = target
+                break
+            } else if (preNode.leftNode!!.getLength() >= preNode.rightNode!!.getLength()) preNode =
+                preNode.rightNode!! else preNode = preNode.leftNode!!
+        }
     }
 
-    fun graftTree(old: ActionCommandTree, new: ActionCommandTree): ActionCommandTree {
-        val lengthOld = old.getLength()
-        val lengthNew = new.getLength()
-        if (lengthOld == 0) return old
-        if (lengthNew == 0) return new
-        val baseTree = if (lengthOld >= lengthNew) old else new
-        val appendTree = if (baseTree.commandName == old.commandName) old else new
-        var usedNode = baseTree.nextNode
-        while (usedNode.enableBranchCommand) {
-            for (node in appendTree.getAllNodes()) if (usedNode.command == node.command) node.cutNode()
-            usedNode = usedNode.nextNode
-        }
-        baseTree.addNode(appendTree.nextNode)
-        return baseTree
+    fun graftTree(targetTree: ActionCommandTree): ActionCommandTree {
+        val tree = this
+        tree.nextNode = this.mergeTrees(this.nextNode, targetTree.nextNode)!!
+        return tree
+    }
+
+    private fun mergeTrees(root1: ActionCommandTreeNode?, root2: ActionCommandTreeNode?): ActionCommandTreeNode? {
+        if (root1 == null && root2 == null) return null
+        if (root1 == null) return root2
+        if (root2 == null) return root1
+        val root = this.nextNode
+        root.leftNode = mergeTrees(root1.leftNode, root2.leftNode)
+        root.rightNode = mergeTrees(root1.rightNode, root2.rightNode)
+        return root
+    }
+
+    override fun toString(): String {
+        val builder = StringBuilder(
+            "ActionCommandTree ${this.commandName}" + "\nTotal Nodes: ${this.getTotalCommands()}\n"
+        )
+        for (node in this.getAllNodes()) builder.append("- ${node.command}\n")
+        return builder.toString()
     }
 
 }
