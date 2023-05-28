@@ -179,7 +179,7 @@ class Reach : Check("checks.fight.reach", CheckType.FIGHT_REACH) {
                 if (ConfigData.logging_debug) player.sendMessage("NCP Reach Missing HitBox $finalDistance $distanceLimit")
             }
 
-            data.lastDealDamage = revert
+            data.lastDealDamage = false
             vData.preVL(0.998)
         }
 
