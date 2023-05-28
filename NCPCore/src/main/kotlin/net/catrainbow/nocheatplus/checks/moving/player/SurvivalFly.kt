@@ -35,6 +35,7 @@ import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.magic.LostGround
 import net.catrainbow.nocheatplus.checks.moving.magic.Magic
 import net.catrainbow.nocheatplus.checks.moving.magic.MagicLiquid
+import net.catrainbow.nocheatplus.compat.Bridge116
 import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.getRealPing
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInLiquid
@@ -396,6 +397,9 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             pData.addViolationToBuffer(typeName, (data.getFullAirTick() * 1.3))
             pData.getViolationData(typeName).setLagBack(data.getLastNormalGround())
         }
+
+        //兼容新版本方块问题
+        if (player.levelBlock.id == Bridge116.BLOCK_ID_SCAFFOLD) this.tags.add("scaffold")
 
         //未知的运动方式,判定为错误的数据包
         if (this.tags.size == 0) {
