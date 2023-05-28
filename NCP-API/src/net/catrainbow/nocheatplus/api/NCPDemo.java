@@ -27,7 +27,7 @@ public class NCPDemo extends PluginBase {
     public void onEnable() {
 
         //get the NCP API provider
-        NoCheatPlus api = NoCheatPlus.instance.getNCPProvider();
+        NoCheatPlusAPI api = NoCheatPlus.instance.getNCPProvider();
 
     }
 }
