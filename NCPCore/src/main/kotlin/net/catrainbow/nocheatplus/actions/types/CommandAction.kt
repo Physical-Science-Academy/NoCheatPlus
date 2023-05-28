@@ -11,24 +11,10 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.catrainbow.nocheatplus.actions
+package net.catrainbow.nocheatplus.actions.types
 
-/**
- * 处罚操作
- *
- * @author Catrainbow
- */
-enum class ActionType(private val type: String) {
-    WARNING("WARNING"), SETBACK("SETBACK"), KICK("KICK"), BAN("BAN"), LOG("LOG"), COMMAND("COMMAND"), DEFAULT("DEFAULT");
+class CommandAction {
 
-    companion object {
-        @JvmStatic
-        fun fromTypeName(string: String): ActionType {
-            for (type in ActionType.values()) {
-                if (type.type == string) return type
-            }
-            return DEFAULT
-        }
-    }
+    val commandTree: HashMap<String, Pair<Double, ArrayList<String>>> = HashMap()
 
 }

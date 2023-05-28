@@ -153,11 +153,15 @@ string:
   ban: "§c§lNCP §7>> §rYou are banned by NCP for §c@days,@hours,@minutes,@seconds§r because of using @hack @nextEndTime: @end"
   fly_short: "@player could be flying hack @vl"
 
+command:
+  default:
+    - "ncp warn @player NCP WARING>>Don't use hack on the server!"
+
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
   policy:
-    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle,permission"
-    - "nocheatplus.admin.helper:kick,ban,unban"
+    - "nocheatplus.admin.all:reload,kick,ban,warn,unban,debug,toggle,permission"
+    - "nocheatplus.admin.helper:kick,ban,unban,warn"
   bypass:
     # Custom bypass permission
     MOVING_CREATIVE_FLY:
