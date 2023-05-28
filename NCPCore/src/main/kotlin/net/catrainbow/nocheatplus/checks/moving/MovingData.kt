@@ -64,6 +64,7 @@ class MovingData : ICheckData {
     private var foodTracker: EatPacketTracker? = null
     private var safeSpawn = false
     private var voidHurt = false
+    private var fallHurt = false
     private var lastChangeSwimAction = System.currentTimeMillis()
     private var lastChangeGlideAction = System.currentTimeMillis()
     private var lastGlideBooster = System.currentTimeMillis()
@@ -579,6 +580,14 @@ class MovingData : ICheckData {
 
     fun initLostGround(lostGround: LostGround) {
         this.lostGround = lostGround
+    }
+
+    fun isFallHurt(): Boolean {
+        return this.fallHurt
+    }
+
+    fun setFallHurt(boolean: Boolean) {
+        this.fallHurt = boolean
     }
 
 }

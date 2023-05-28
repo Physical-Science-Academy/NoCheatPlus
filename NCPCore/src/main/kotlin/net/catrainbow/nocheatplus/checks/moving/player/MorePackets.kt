@@ -46,6 +46,9 @@ class MorePackets : Check("checks.moving.morepackets", CheckType.MOVING_MORE_PAC
             }
         }
 
+        //修复一个因为摔落瞬间无运动标签而带来的误判
+        if (pData.movingData.isFallHurt()) pData.getViolationData(this.typeName).setCancel()
+
         pData.getViolationData(typeName).preVL(0.998)
     }
 
