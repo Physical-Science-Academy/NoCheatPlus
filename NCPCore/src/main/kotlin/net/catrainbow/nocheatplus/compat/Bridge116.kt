@@ -14,5 +14,5 @@
 package net.catrainbow.nocheatplus.compat
 
 object Bridge116 {
-    const val BLOCK_ID_SCAFFOLD = -165
+    const val BLOCK_ID_SCAFFOLD = 420
 }
