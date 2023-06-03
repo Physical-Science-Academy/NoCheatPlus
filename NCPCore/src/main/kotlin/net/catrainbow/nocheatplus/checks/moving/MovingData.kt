@@ -256,6 +256,15 @@ class MovingData : ICheckData {
         if (this.onSlimeBump) this.slimeTick++ else this.slimeTick = 0
     }
 
+    //进入服务器初始化数据
+    fun initData(player: Player) {
+        this.setLastNormalGround(player.location)
+        this.from = player.location
+        this.to = player.location
+        this.location = player.location
+        this.lastLocation = player.location
+    }
+
     fun getLiquidTick(): Int {
         return this.liquidTick
     }

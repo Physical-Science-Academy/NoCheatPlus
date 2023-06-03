@@ -56,6 +56,7 @@ open class PlayerData(player: Player) : IPlayerData {
             if (type.isUsedCheck())
                 violations[type.name] = ViolationData(type, this.getPlayer())
         }
+        this.movingData.initData(this.getPlayer())
     }
 
     fun update(packet: WrapperInputPacket) {
