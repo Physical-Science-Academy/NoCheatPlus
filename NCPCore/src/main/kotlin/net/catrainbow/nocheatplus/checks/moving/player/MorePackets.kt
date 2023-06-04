@@ -39,7 +39,7 @@ class MorePackets : Check("checks.moving.morepackets", CheckType.MOVING_MORE_PAC
             val violation =
                 max(0.0, (1000 - player.getRealPing() - (20 - NoCheatPlus.instance.server.ticksPerSecond) * 10) / 500.0)
             if (violation > 0.0) {
-                pData.addViolationToBuffer(this.typeName, violation)
+                pData.addViolationToBuffer(this.typeName, violation,"INVALID PACKET")
                 player.setback(
                     NoCheatPlus.instance.getPlayerProvider(player).movingData.getLastNormalGround(), this.typeName
                 )

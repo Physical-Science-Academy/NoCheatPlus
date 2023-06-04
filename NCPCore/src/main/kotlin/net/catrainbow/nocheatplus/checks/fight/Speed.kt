@@ -50,7 +50,7 @@ class Speed : Check("checks.fight.speed", CheckType.FIGHT_SPEED) {
                         )) * data.speedShortTermTick
                     )
                     if (data.getClickPerSecondVariance() <= ConfigData.check_fight_deal_variance) pData.addViolationToBuffer(
-                        this.typeName, speedVL
+                        this.typeName, speedVL, "FIGHT_SPEED LIMITED"
                     )
                     if (ConfigData.check_no_fall_deal_damage) data.lastDealDamage = true
                 }

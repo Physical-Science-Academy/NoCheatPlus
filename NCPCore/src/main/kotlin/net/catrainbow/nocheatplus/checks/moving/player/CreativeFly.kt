@@ -88,13 +88,13 @@ class CreativeFly : Check("checks.moving.creativefly", CheckType.MOVING_CREATIVE
                     val vDistAir = this.vDistAir(now, player, from, to, toOnGround, yDistance, data, pData)
                     if (vDistAir[0] > vDistAir[1]) {
                         val violation = min((vDistAir[0] - vDistAir[1]) * 10.0, 5.0)
-                        pData.addViolationToBuffer(this.typeName, violation)
+                        pData.addViolationToBuffer(this.typeName, violation,"LIQUID DIST")
                     }
                 } else {
                     //It's not necessary to check these players who are in creative mode
                     val vDistWeb = this.vDistWeb()
                     if (vDistWeb[0] > vDistWeb[1])
-                        pData.addViolationToBuffer(this.typeName, (vDistWeb[0] - vDistWeb[1]) * 10.0)
+                        pData.addViolationToBuffer(this.typeName, (vDistWeb[0] - vDistWeb[1]) * 10.0,"AIR DIST")
                 }
             } else {
                 /* TODO: Check player in liquid */

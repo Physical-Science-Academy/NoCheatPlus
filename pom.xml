@@ -109,27 +109,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.github.Physical-Science-Academy.NoCheatPlus</groupId>
-            <artifactId>NoCheatPlus</artifactId>
-            <version>maven-repo-20220552-common</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.Physical-Science-Academy.NoCheatPlus</groupId>
-            <artifactId>NCPStaticBar</artifactId>
-            <version>maven-repo-20220552-common</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.Physical-Science-Academy</groupId>
-            <artifactId>NCPPanel</artifactId>
-            <version>maven-repo-panel-v1</version>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
 
 

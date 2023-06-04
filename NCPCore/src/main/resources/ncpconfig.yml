@@ -124,6 +124,7 @@ checks:
       active: true
       strict_mode: false
       setback_policy:
+        packet_balance: true
         fall_damage: true
         void_to_void: true
         latency_protection: 120

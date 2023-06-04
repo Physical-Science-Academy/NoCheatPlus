@@ -25,6 +25,7 @@ import net.catrainbow.nocheatplus.checks.fight.FightData
 import net.catrainbow.nocheatplus.checks.inventory.InventoryData
 import net.catrainbow.nocheatplus.checks.moving.MovingData
 import net.catrainbow.nocheatplus.checks.moving.location.setback.SetbackStorage
+import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 
 /**
@@ -53,8 +54,7 @@ open class PlayerData(player: Player) : IPlayerData {
 
     init {
         for (type in CheckType.values()) {
-            if (type.isUsedCheck())
-                violations[type.name] = ViolationData(type, this.getPlayer())
+            if (type.isUsedCheck()) violations[type.name] = ViolationData(type, this.getPlayer())
         }
         this.movingData.initData(this.getPlayer())
     }
@@ -91,8 +91,9 @@ open class PlayerData(player: Player) : IPlayerData {
         return NoCheatPlus.instance.server.getPlayer(this.getPlayerName())
     }
 
-    override fun addViolationToBuffer(type: CheckType, violation: Double) {
+    override fun addViolationToBuffer(type: CheckType, violation: Double, reason: String) {
         NoCheatPlus.instance.getPlayerProvider(this.getPlayerName()).getViolationData(type.name).addVL(violation)
+        if (ConfigData.logging_debug) NoCheatPlus.instance.server.broadcastMessage("${ConfigData.logging_prefix} $reason")
     }
 
     override fun addActionToBuffer(type: CheckType, action: ActionProcess) {

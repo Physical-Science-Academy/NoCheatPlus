@@ -43,7 +43,7 @@ interface IPlayerData {
      * 向Buffer中添加VL值
      *
      */
-    fun addViolationToBuffer(type: CheckType, violation: Double)
+    fun addViolationToBuffer(type: CheckType, violation: Double, reason: String)
 
     /**
      * 向Buffer中添加Action

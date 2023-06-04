@@ -50,6 +50,7 @@ class ConfigData : IConfigData {
         var check_survival_fly_set_back_void_to_void = false
         var check_survival_fly_latency_protection = 120
         var check_survival_fly_strict_mode = false
+        var check_survival_fly_packet_balance = true
         var check_no_fall_deal_damage = true
         var check_no_fall_skip_allow_flight = true
         var check_no_fall_reset_violation = false
