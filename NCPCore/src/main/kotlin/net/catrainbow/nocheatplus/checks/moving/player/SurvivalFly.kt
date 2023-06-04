@@ -400,7 +400,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         }
 
         // Lag time
-        if (data.getFullAirTick() > 7) {
+        if (data.getFullAirTick() > 20) {
             data.setFullAirTick(0)
             pData.addViolationToBuffer(typeName, (data.getFullAirTick() * 1.3), "TOO LONG AIRTICK")
             pData.getViolationData(typeName).setLagBack(data.getLastNormalGround())
