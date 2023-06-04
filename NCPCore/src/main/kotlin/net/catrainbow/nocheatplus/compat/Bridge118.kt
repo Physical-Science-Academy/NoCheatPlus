@@ -25,7 +25,6 @@ import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
-import net.catrainbow.nocheatplus.feature.wrapper.WrapperSetBackPacket
 
 /**
  * 多核心适配和架桥
@@ -56,6 +55,12 @@ class Bridge118 {
             } catch (exception: Exception) {
                 VersionBridge.VANILLA
             }
+
+            if (version_bridge == VersionBridge.VANILLA) version_bridge =
+                if (NoCheatPlus.instance.server.properties.exists("server-authoritative-movement")) {
+                    if (NoCheatPlus.instance.server.properties["server-authoritative-movement"] == "server-auth") VersionBridge.PM1E else VersionBridge.VANILLA
+                } else VersionBridge.VANILLA
+
             if (version_bridge == VersionBridge.PM1E) server_auth_mode = true
         }
 

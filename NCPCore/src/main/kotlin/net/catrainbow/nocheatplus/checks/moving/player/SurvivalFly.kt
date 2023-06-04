@@ -347,9 +347,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                             if (vLimitedH[0] > vLimitedH[1]) {
                                 player.setback(data.getLastNormalGround(), this.typeName)
                                 pData.addViolationToBuffer(
-                                    typeName,
-                                    vLimitedH[0] - vLimitedH[1],
-                                    "GROUND WALK DIST LIMITED"
+                                    typeName, vLimitedH[0] - vLimitedH[1], "GROUND WALK DIST LIMITED"
                                 )
                             }
                         } else if (this.tags.contains("ground_walk")) {
@@ -1158,9 +1156,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             allowDistance = speed
             limitDistance = if (speed > Magic.DEFAULT_FLY_SPEED) Magic.DEFAULT_FLY_SPEED else 0.0
             resetTo = true
-        }
-
-        if (!fromOnGround && !toOnGround) {
+        } else if (!fromOnGround && !toOnGround) {
             val friction = data.getNextVerticalFriction()
             val hAllowDistance =
                 if (abs(data.getLastMotionY() - 0.08) * friction < 0.005) -0.08 * friction else (data.getLastMotionY() - 0.08) * friction
