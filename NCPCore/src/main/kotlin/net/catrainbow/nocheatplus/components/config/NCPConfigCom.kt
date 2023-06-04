@@ -158,7 +158,7 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.check_survival_fly_latency_protection =
             config.getInt("checks.moving.survivalfly.setback_policy.latency_protection")
         ConfigData.check_survival_fly_strict_mode = config.getBoolean("checks.moving.survivalfly.strict_mode")
-        ConfigData.check_survival_fly_packet_balance = config.getBoolean("checks.moving.survivalfly.packet_balance")
+        ConfigData.check_survival_fly_packet_balance = config.getBoolean("checks.moving.survivalfly.setback_policy.packet_balance")
         ConfigData.check_no_fall_deal_damage = config.getBoolean("checks.moving.nofall.dealdamage")
         ConfigData.check_no_fall_skip_allow_flight = config.getBoolean("checks.moving.nofall.skipallowflight")
         ConfigData.check_no_fall_reset_violation = config.getBoolean("checks.moving.nofall.resetonviolation")
