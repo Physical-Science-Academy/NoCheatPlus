@@ -61,6 +61,7 @@ class Bridge118 {
 
         //重写核心拉回算法
         fun Player.setback(location: Location, type: CheckType) {
+            /*
             val packet = WrapperSetBackPacket(player)
             packet.checkType = type
             packet.player = player
@@ -69,14 +70,14 @@ class Bridge118 {
             sendEvent.player = packet.player
             sendEvent.packet = packet
             dataPacket(sendEvent)
-            if (!sendEvent.isInvalid()) {
-                if (ActionFactory.actionDataMap.containsKey(type.name)) if (ActionFactory.actionDataMap[type.name]!!.enableCancel) if (NoCheatPlus.instance.hasPlayer(
-                        player.name
-                    )
-                ) if (NoCheatPlus.instance.getPlayerProvider(player).getViolationData(type)
-                        .getVL() >= ActionFactory.actionDataMap[type.name]!!.cancel
-                ) player.teleport(location)
-            }
+             */
+            //if (!sendEvent.isInvalid()) {
+            if (ActionFactory.actionDataMap.containsKey(type.name)) if (ActionFactory.actionDataMap[type.name]!!.enableCancel) if (NoCheatPlus.instance.hasPlayer(
+                    player.name
+                )
+            ) if (NoCheatPlus.instance.getPlayerProvider(player).getViolationData(type)
+                    .getVL() >= ActionFactory.actionDataMap[type.name]!!.cancel
+            ) player.teleport(location)
         }
 
         //重写核心重生算法
