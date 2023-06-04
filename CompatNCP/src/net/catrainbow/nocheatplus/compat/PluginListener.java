@@ -111,6 +111,14 @@ public class PluginListener implements Listener {
                 }
             }
         }
+        if (CompatNCP.settings.get("kickCleanViolations")) {
+            if (event.packet instanceof WrapperDisconnectPacket) {
+                event.setCancelled();
+                for (CheckType type : CheckType.values())
+                    if (type.isUsedCheck())
+                        CompatNCP.provider.getPlayerProvider(player.getName()).getViolationData(type).clear();
+            }
+        }
         if (CompatNCP.settings.get("ignorePacket")) {
             if (event.packet instanceof WrapperDisconnectPacket) {
                 if (((WrapperDisconnectPacket) event.packet).getReason() == CheckType.UNKNOWN_PACKET) {

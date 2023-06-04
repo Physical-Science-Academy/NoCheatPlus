@@ -54,6 +54,7 @@ public class CompatNCP extends PluginBase {
             updateKeys(config, "plugin.allowFlight", false);
             updateKeys(config, "plugin.ignorePacket", false);
             updateKeys(config, "plugin.waterDogStepIn", false);
+            updateKeys(config,"plugin.kickCleanViolations",false);
         }
         for (String key : config.getSection("plugin").getAllMap().keySet()) {
             settings.put(key, config.getBoolean(key));
