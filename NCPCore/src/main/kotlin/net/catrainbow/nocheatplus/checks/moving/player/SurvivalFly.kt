@@ -45,6 +45,7 @@ import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onSlab
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onStair
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.setback
 import net.catrainbow.nocheatplus.compat.nukkit.FoodData118
+import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperEatFoodPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
@@ -314,6 +315,9 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                             )
                             revertBuffer = true
                         }
+                        //Fixed Issue #55 and #58
+                        if (Bridge118.version_bridge == VersionBridge.PM1E) pData.getViolationData(this.typeName)
+                            .setCancel()
                     } else if (this.tags.contains("bunny_hop") && !revertBuffer) {
                         //不规则的运动情况
                         this.tags.add("air_jump")
