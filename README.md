@@ -161,7 +161,7 @@
 #### Require: Kotlin | Java (8|17)
 
 - `git clone https://github.com/Physical-Science-Academy/NoCheatPlus.git`
-- `cd NoCheatPlis`
+- `cd NoCheatPlus`
 - `git submodule update --init`
 - `./mvnw clean package`
 
