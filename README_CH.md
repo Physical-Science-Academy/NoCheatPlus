@@ -157,7 +157,7 @@
 #### 需要: Kotlin | Java (8|17)
 
 - `git clone https://github.com/Physical-Science-Academy/NoCheatPlus.git`
-- `cd NoCheatPlis`
+- `cd NoCheatPlus`
 - `git submodule update --init`
 - `./mvnw clean package`
 
@@ -353,7 +353,7 @@ permission:
 - `log` 向NCP日志中记录玩家作弊行为，参数`break 冷却秒数`
 - `warn` 向玩家发送一个警告消息，参数`message 消息内容`
 - `kick` 将玩家踢出服务器
-- `ban` 将玩家从服务器封禁，参数`repeat 容错次数`,`time 封禁时间`
+- `ban` 将玩家从服务器封禁，参数`repeat 容错次数`，`time 封禁时间`
 - 若不设置参数，插件将使用NCP默认值
   添加警告消息需要在string中加入
 
