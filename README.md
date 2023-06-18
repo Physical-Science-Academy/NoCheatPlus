@@ -45,7 +45,7 @@
 
 * [NoCheatPlus Docs](https://docs.catrainbow.me)
 
-###### Download
+###### 下载
 
 * [Jenkins (current)](https://ci.lanink.cn/job/NoCheatPlus/)
 * [NukkitX/CloudBurst (stable)](https://cloudburstmc.org/resources/nocheatplus.820/)
@@ -150,8 +150,8 @@
 
 - Java CI: https://ci.lanink.cn/job/NoCheatPlus
 - Download the latest `NoCheatPlus-1.0-SNAPSHOT-jar-with-dependencies.jar`
-  on [CI](https://ci.lanink.cn/job/NoCheatPlus/)
-- and put it in your folder `plugins/`.
+  于 [CI](https://ci.lanink.cn/job/NoCheatPlus/)
+- and put it in your folder `plugins/`。
 - And It needs Library plugin
 
 - `KotlinLib`
@@ -161,7 +161,7 @@
 #### Require: Kotlin | Java (8|17)
 
 - `git clone https://github.com/Physical-Science-Academy/NoCheatPlus.git`
-- `cd NoCheatPlis`
+- `cd NoCheatPlus`
 - `git submodule update --init`
 - `./mvnw clean package`
 
@@ -182,8 +182,8 @@
 ## Config
 
 - Then let's run the server.
-- You can ser a folder was created in`plugins/` named `NoCheatPlus`.
-- Here we pay attention to the main config `ncpconfig.yml`.
+- You can ser a folder was created in`plugins/` named `NoCheatPlus`。
+- Here we pay attention to the main config `ncpconfig.yml`。
 
 ~~~yaml
 # NoCheatPlus AntiCheat Config
