@@ -412,12 +412,12 @@ Available CheckType:
 | NoCheatPlus  |   maven-repo-20220552-2a   |
 | NoCheatPlus  |   maven-repo-20220552-3a   |
 | NoCheatPlus  |   maven-repo-20220552-4a   |
-| NoCheatPlus  | maven-repo-20220552-common |
-|  CompatNCP   | maven-repo-20220552-common |
-|  ECCPCompat  | maven-repo-20220552-common |
-|  NCPLiteBan  | maven-repo-20220552-common |
-|  NCPPlugin   | maven-repo-20220552-common |
-| NCPStaticBar | maven-repo-20220552-common |
+| NoCheatPlus  | maven-repo-20230618-common |
+|  CompatNCP   | maven-repo-20230618-common |
+|  ECCPCompat  | maven-repo-20230618-common |
+|  NCPLiteBan  | maven-repo-20230618-common |
+|  NCPPlugin   | maven-repo-20230618-common |
+| NCPStaticBar | maven-repo-20230618common |
 
 ### Gradle:
 
