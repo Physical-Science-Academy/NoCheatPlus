@@ -153,7 +153,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
 
         if (player.foodData.level <= 6) this.tags.add("hunger")
 
-        player.sendPopup("${player.add(0.0, -1.0, 0.0).levelBlock.id}")
+        //player.sendPopup("${player.add(0.0, -1.0, 0.0).levelBlock.id}")
 
         // Dealing with steps and slabs of special awards
         val downB1 = player.add(0.0, -0.25, 0.0).levelBlock
