@@ -22,6 +22,8 @@ import cn.nukkit.nbt.tag.CompoundTag
 import cn.nukkit.utils.BinaryStream
 import cn.nukkit.utils.ThreadCache
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.compat.Bridge118
+import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import java.io.IOException
 import java.nio.ByteOrder
@@ -43,13 +45,15 @@ class ChunkVerify {
             if (!ConfigData.protection_net_chunk_scan_world.contains(level.name)) return
             //解决进服崩的问题
             if (!NoCheatPlus.instance.hasPlayer(player)) return
+            //PNX自带该功能
+            if (Bridge118.version_bridge == VersionBridge.PNX) return
             if (NoCheatPlus.instance.getPlayerProvider(player).movingData.getGroundTick() < 20 ||
                 NoCheatPlus.instance.getPlayerProvider(player).movingData.getMotionY() == 0.0
             ) return
             //随机隐藏矿物,防止客户端崩溃
             if (!(Random()).nextBoolean()) return
             //修复部分核心上不兼容的问题
-            if (event is Cancellable) event.setCancelled()
+            event.setCancelled()
 
             //by FENGBerd https://github.com/fengberd/FHiddenMine-Nukkit
             val chunk = level.getChunk(event.chunkX, event.chunkZ, false) as Chunk
