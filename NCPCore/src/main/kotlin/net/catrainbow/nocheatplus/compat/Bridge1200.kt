@@ -18,4 +18,5 @@ object Bridge1200 {
     const val BLOCK_ID_FROG_EGG = 723
     const val BLOCK_ID_AZALEA = 592
     const val BLOCK_ID_AZALEA_FLOWERS = 593
+    const val BLOCK_ID_SCREAMING_BLOCK = 716
 }

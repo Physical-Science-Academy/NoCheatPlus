@@ -671,7 +671,11 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                 } else if (data.getSlabTick() > 0 || data.getStairTick() > 0 || sinceLastSS) limitDistance =
                     allowDistance
 
-                //TODO: 解决1.12.0新版本部分方块兼容的问题
+                //解决1.12.0新版本部分方块兼容的问题
+                if (downBlock.id == Bridge1200.BLOCK_ID_SCREAMING_BLOCK) if (yDistance > 0.0) {
+                    limitDistance = hypot(yDistance + 0.15, max(0.0, to.distanceSquared(from) - 0.1))
+                    allowDistance = to.distance(from)
+                }
 
                 limitDistance += player.ping * 0.00008 + 0.0001
                 if (allowDistance in Magic.BLOCK_BUNNY_MIN..Magic.BLOCK_BUNNY_MAX || this.tags.contains("face_block") || this.tags.contains(
