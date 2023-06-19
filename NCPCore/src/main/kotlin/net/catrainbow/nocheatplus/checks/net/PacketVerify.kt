@@ -27,7 +27,6 @@ import cn.nukkit.network.protocol.TextPacket
 import cn.nukkit.scheduler.Task
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckType
-import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
 import net.catrainbow.nocheatplus.components.data.ConfigData

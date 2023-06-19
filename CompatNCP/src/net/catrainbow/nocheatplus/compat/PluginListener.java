@@ -22,10 +22,12 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.player.PlayerJoinEvent;
+import cn.nukkit.event.player.PlayerKickEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.scheduler.Task;
 import net.catrainbow.nocheatplus.checks.CheckType;
 import net.catrainbow.nocheatplus.checks.moving.MovingData;
+import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge;
 import net.catrainbow.nocheatplus.feature.wrapper.*;
 import net.catrainbow.nocheatplus.players.PlayerData;
 
@@ -49,6 +51,12 @@ public class PluginListener implements Listener {
             if (data.getLastMotionY() <= 0.0 || (data.getGroundTick() > 25 && !data.isJump()))
                 playerMoveRecord.remove(player.getName());
         }
+    }
+
+    @EventHandler
+    public void onPlayerKicked(PlayerKickEvent event) {
+        if (CompatNCP.settings.get("pnxFlight")) if (Bridge118.Companion.getVersion_bridge() == VersionBridge.PNX)
+            if (event.getPlayer().gamemode == 1) event.setCancelled();
     }
 
     @EventHandler
