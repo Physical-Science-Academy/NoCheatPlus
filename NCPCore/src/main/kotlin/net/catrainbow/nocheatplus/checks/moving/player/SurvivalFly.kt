@@ -44,8 +44,8 @@ import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onIce
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onSlab
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onStair
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.setback
+import net.catrainbow.nocheatplus.compat.Bridge1200
 import net.catrainbow.nocheatplus.compat.nukkit.FoodData118
-import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperEatFoodPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
@@ -152,6 +152,8 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         if (player.hasEffect(Effect.SPEED)) this.tags.add("effect_speed")
 
         if (player.foodData.level <= 6) this.tags.add("hunger")
+
+        player.sendPopup("${player.add(0.0, -1.0, 0.0).levelBlock.id}")
 
         // Dealing with steps and slabs of special awards
         val downB1 = player.add(0.0, -0.25, 0.0).levelBlock
@@ -318,12 +320,22 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                         //Fixed Issue #55 and #58
                         //if (Bridge118.version_bridge == VersionBridge.PM1E) pData.getViolationData(this.typeName).setCancel()
                     } else if (this.tags.contains("bunny_hop") && !revertBuffer) {
+                        val block = LocUtil.getUnderBlock(player).id
+                        var ingore = false
+                        if (block == Bridge1200.BLOCK_ID_AZALEA || block == Bridge1200.BLOCK_ID_AZALEA_FLOWERS) {
+                            this.tags.add("azalea")
+                            player.resetInAirTicks()
+                            data.setLastNormalGround(player.floor())
+                            ingore = true
+                        }
                         //不规则的运动情况
-                        this.tags.add("air_jump")
-                        player.setback(data.getLastNormalGround(), this.typeName)
-                        pData.addViolationToBuffer(
-                            typeName, (player.inAirTicks / 20 * 5.0), "AIR JUMP"
-                        )
+                        if (!ingore) {
+                            this.tags.add("air_jump")
+                            player.setback(data.getLastNormalGround(), this.typeName)
+                            pData.addViolationToBuffer(
+                                typeName, (player.inAirTicks / 20 * 5.0), "AIR JUMP"
+                            )
+                        }
                         revertBuffer = true
                     }
 
@@ -658,6 +670,8 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
                     }
                 } else if (data.getSlabTick() > 0 || data.getStairTick() > 0 || sinceLastSS) limitDistance =
                     allowDistance
+
+                //TODO: 解决1.12.0新版本部分方块兼容的问题
 
                 limitDistance += player.ping * 0.00008 + 0.0001
                 if (allowDistance in Magic.BLOCK_BUNNY_MIN..Magic.BLOCK_BUNNY_MAX || this.tags.contains("face_block") || this.tags.contains(
