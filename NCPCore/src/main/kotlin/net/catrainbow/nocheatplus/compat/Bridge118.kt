@@ -25,6 +25,7 @@ import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
+import net.catrainbow.nocheatplus.utilities.Utils
 
 /**
  * 多核心适配和架桥
@@ -42,26 +43,29 @@ class Bridge118 {
 
         //验证核心
         fun verifyVersionBridge() {
-            if (Nukkit.CODENAME == "PowerNukkitX") {
+            val nukkit = Utils.dynamic(Nukkit.CODENAME)
+            if (nukkit == Utils.dynamic("PowerNukkitX")) {
                 version_bridge = VersionBridge.PNX
-                return
-            }
-            version_bridge = try {
-                val clazz = Class.forName("cn.nukkit.Nukkit")
-                clazz.getField("NUKKIT_PM1E")
-                if (NoCheatPlus.instance.server.properties.exists("server-authoritative-block-breaking")) {
-                    if (NoCheatPlus.instance.server.getPropertyBoolean("server-authoritative-block-breaking")) VersionBridge.PM1E else VersionBridge.VANILLA
-                } else VersionBridge.PM1E
-            } catch (exception: Exception) {
-                VersionBridge.VANILLA
-            }
+            } else if (nukkit == Utils.dynamic("MOT")) {
+                version_bridge = VersionBridge.PM1E
+            } else {
+                version_bridge = try {
+                    val clazz = Class.forName("cn.nukkit.Nukkit")
+                    clazz.getField("NUKKIT_PM1E")
+                    if (NoCheatPlus.instance.server.properties.exists("server-authoritative-block-breaking")) {
+                        if (NoCheatPlus.instance.server.getPropertyBoolean("server-authoritative-block-breaking")) VersionBridge.PM1E else VersionBridge.VANILLA
+                    } else VersionBridge.PM1E
+                } catch (exception: Exception) {
+                    VersionBridge.VANILLA
+                }
 
+            }
             if (version_bridge == VersionBridge.VANILLA) version_bridge =
                 if (NoCheatPlus.instance.server.properties.exists("server-authoritative-movement")) {
-                    if (NoCheatPlus.instance.server.properties["server-authoritative-movement"] == "server-auth") VersionBridge.PM1E else VersionBridge.VANILLA
+                    if (NoCheatPlus.instance.server.properties["server-authoritative-movement"] == "server-auth") VersionBridge.PNX else VersionBridge.VANILLA
                 } else VersionBridge.VANILLA
 
-            if (version_bridge == VersionBridge.PM1E) server_auth_mode = true
+            if (version_bridge == VersionBridge.PM1E || version_bridge == VersionBridge.PNX) server_auth_mode = true
         }
 
         //重写核心拉回算法

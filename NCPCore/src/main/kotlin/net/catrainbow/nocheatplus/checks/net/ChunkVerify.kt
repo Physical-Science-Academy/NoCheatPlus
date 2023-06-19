@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.checks.net
 
 import cn.nukkit.blockentity.BlockEntitySpawnable
+import cn.nukkit.event.Cancellable
 import cn.nukkit.event.player.PlayerChunkRequestEvent
 import cn.nukkit.level.format.anvil.Chunk
 import cn.nukkit.nbt.NBTIO
@@ -47,7 +48,8 @@ class ChunkVerify {
             ) return
             //随机隐藏矿物,防止客户端崩溃
             if (!(Random()).nextBoolean()) return
-            event.setCancelled()
+            //修复部分核心上不兼容的问题
+            if (event is Cancellable) event.setCancelled()
 
             //by FENGBerd https://github.com/fengberd/FHiddenMine-Nukkit
             val chunk = level.getChunk(event.chunkX, event.chunkZ, false) as Chunk
