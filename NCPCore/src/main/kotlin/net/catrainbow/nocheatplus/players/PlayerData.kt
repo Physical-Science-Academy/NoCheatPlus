@@ -93,7 +93,8 @@ open class PlayerData(player: Player) : IPlayerData {
 
     override fun addViolationToBuffer(type: CheckType, violation: Double, reason: String) {
         NoCheatPlus.instance.getPlayerProvider(this.getPlayerName()).getViolationData(type.name).addVL(violation)
-        if (ConfigData.logging_debug) NoCheatPlus.instance.server.broadcastMessage("${ConfigData.logging_prefix} $reason")
+        if (ConfigData.logging_debug && this.getPlayer().isOp) this.getPlayer()
+            .sendMessage("${ConfigData.logging_prefix} $reason")
     }
 
     override fun addActionToBuffer(type: CheckType, action: ActionProcess) {
