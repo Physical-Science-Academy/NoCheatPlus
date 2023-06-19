@@ -11,10 +11,19 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.catrainbow.nocheatplus.compat
+package net.catrainbow.nocheatplus.utilities
 
-object Bridge116 {
-    const val BLOCK_ID_SCAFFOLD = 420
-    const val BLOCK_ID_PISTON_PLUG = 472
-    const val BLOCK_ID_TURTLE_EGG = 414
+/**
+ * 工具类
+ *
+ * @author Catrainbow
+ */
+class Utils {
+
+    companion object {
+        fun dynamic(string: String): String {
+            return string
+        }
+    }
+
 }

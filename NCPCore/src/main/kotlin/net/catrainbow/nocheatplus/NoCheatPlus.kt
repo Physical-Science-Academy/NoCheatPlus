@@ -76,6 +76,7 @@ class NoCheatPlus : PluginBase(), NoCheatPlusAPI {
         val updater = PluginUpdater()
         PLUGIN_VERSION = updater.getNCPVersion()
         this.logger.info(getString("ncp.loading", PLUGIN_VERSION))
+        this.logger.info(getString("ncp.load.version", Bridge118.version_bridge.name))
         this.ncpComManager = NCPComManager()
         this.ncpComManager.onEnabled()
 

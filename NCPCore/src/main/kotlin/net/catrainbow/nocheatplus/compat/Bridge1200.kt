@@ -13,8 +13,10 @@
  */
 package net.catrainbow.nocheatplus.compat
 
-object Bridge116 {
-    const val BLOCK_ID_SCAFFOLD = 420
-    const val BLOCK_ID_PISTON_PLUG = 472
-    const val BLOCK_ID_TURTLE_EGG = 414
+object Bridge1200 {
+
+    const val BLOCK_ID_FROG_EGG = 723
+    const val BLOCK_ID_AZALEA = 592
+    const val BLOCK_ID_AZALEA_FLOWERS = 593
+    const val BLOCK_ID_SCREAMING_BLOCK = 716
 }
