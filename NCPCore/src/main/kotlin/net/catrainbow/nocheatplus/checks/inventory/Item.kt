@@ -52,7 +52,13 @@ class Item : Check("checks.inventory.item", CheckType.INVENTORY_ITEM) {
                     if (ConfigData.check_inventory_item_enchantment) {
                         val enchantments = item.enchantments
                         if (enchantments.isNotEmpty()) {
-                            if (item.id == ItemID.WRITTEN_BOOK) player.inventory.remove(item)
+                            if (item.id == ItemID.WRITTEN_BOOK) {
+                                player.inventory.removeItem(item)
+                            } else enchantments.forEach {
+                                if (it.level > it.maxLevel) {
+                                    player.inventory.removeItem(item)
+                                }
+                            }
                         }
                     }
                 }
