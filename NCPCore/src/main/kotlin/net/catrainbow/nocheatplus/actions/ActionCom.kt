@@ -48,6 +48,7 @@ class ActionCom : NCPComponent(), INCPComponent {
         this.loadAction("fight.speed", CheckType.FIGHT_SPEED.name)
         this.loadAction("fight.reach", CheckType.FIGHT_REACH.name)
         this.loadAction("blockbreak.fastbreak", CheckType.BLOCK_BREAK_FAST_BREAK.name)
+        this.loadAction("blockbreak.direction", CheckType.BLOCK_BREAK_DIRECTION.name)
     }
 
     private fun loadAction(path: String, type: String) {
