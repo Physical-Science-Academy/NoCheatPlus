@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.github.Physical-Science-Academy.NoCheatPlus</groupId>
             <artifactId>NoCheatPlus</artifactId>
-            <version>maven-repo-20230618-common</version>
+            <version>maven-repo-20220552-common</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
