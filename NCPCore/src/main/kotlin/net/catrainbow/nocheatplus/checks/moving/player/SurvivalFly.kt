@@ -430,7 +430,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
             if (!data.isJump() && !player.isAboveLiquid()) {
                 if (yDistance == 0.0) {
                     pData.getViolationData(this.typeName).addPreVL("unknown_movement")
-                    if (pData.getViolationData(this.typeName).getPreVL("unknown_movement") > 10) {
+                    if (pData.getViolationData(this.typeName).getPreVL("unknown_movement") > 10 + (player.ping / 5)) {
                         this.tags.add(
                             "resend_pk"
                         )
@@ -1384,8 +1384,7 @@ class SurvivalFly : Check("checks.moving.survivalfly", CheckType.MOVING_SURVIVAL
         val speed = to.distance(from)
         if (data.getMovementTracker() == null) return doubleArrayOf(allowDistance, limitDistance)
         val verticalSpeed = data.getMovementTracker()!!.getDistanceXZ()
-        val iceDown =
-            player.isAboveIce() || LocUtil.isIce(player.add(0.0, 1.25, 0.0).levelBlock)
+        val iceDown = player.isAboveIce() || LocUtil.isIce(player.add(0.0, 1.25, 0.0).levelBlock)
         if (now - data.getLastJump() < 100) {
             //冰面特殊问题
             if (this.tags.contains("ice_ground") || iceDown || data.getIceTick() != 0) return doubleArrayOf(
