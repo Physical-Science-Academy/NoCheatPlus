@@ -158,7 +158,8 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.check_survival_fly_latency_protection =
             config.getInt("checks.moving.survivalfly.setback_policy.latency_protection")
         ConfigData.check_survival_fly_strict_mode = config.getBoolean("checks.moving.survivalfly.strict_mode")
-        ConfigData.check_survival_fly_packet_balance = config.getBoolean("checks.moving.survivalfly.setback_policy.packet_balance")
+        ConfigData.check_survival_fly_packet_balance =
+            config.getBoolean("checks.moving.survivalfly.setback_policy.packet_balance")
         ConfigData.check_no_fall_deal_damage = config.getBoolean("checks.moving.nofall.dealdamage")
         ConfigData.check_no_fall_skip_allow_flight = config.getBoolean("checks.moving.nofall.skipallowflight")
         ConfigData.check_no_fall_reset_violation = config.getBoolean("checks.moving.nofall.resetonviolation")
@@ -174,5 +175,6 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.check_fight_reach_offset = config.getDouble("checks.fight.reach.offset")
         ConfigData.check_fast_break_max = config.getInt("checks.blockbreak.fastbreak.max")
         ConfigData.check_fast_break_min = config.getInt("checks.blockbreak.fastbreak.min")
+        ConfigData.check_inventory_item_enchantment = config.getBoolean("checks.inventory.item.enchantment")
     }
 }

@@ -118,6 +118,7 @@ checks:
       actions: "cancel vl>5&&kick vl>20"
     item:
       active: true
+      enchantment: true
       actions: "kick vl>10"
   moving:
     survivalfly:

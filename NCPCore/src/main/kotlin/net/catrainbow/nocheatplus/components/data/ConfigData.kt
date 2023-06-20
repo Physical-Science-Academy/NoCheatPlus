@@ -65,6 +65,7 @@ class ConfigData : IConfigData {
         var check_fight_reach_offset = 0.2976
         var check_fast_break_max = 35
         var check_fast_break_min = 0
+        var check_inventory_item_enchantment = true
     }
 
 }
