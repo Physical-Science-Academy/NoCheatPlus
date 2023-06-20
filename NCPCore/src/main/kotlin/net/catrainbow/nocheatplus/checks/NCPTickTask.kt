@@ -33,8 +33,10 @@ import kotlin.math.abs
 class NCPTickTask : Task() {
     override fun onRun(p0: Int) {
         for (player in NoCheatPlus.instance.server.onlinePlayers.values) {
-            this.handleWrapperInputPacket(player)
-            this.tickActions(player)
+            if (NoCheatPlus.instance.hasPlayer(player)) {
+                this.handleWrapperInputPacket(player)
+                this.tickActions(player)
+            }
         }
     }
 
