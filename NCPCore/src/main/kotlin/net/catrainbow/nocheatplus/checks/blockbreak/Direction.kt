@@ -47,15 +47,12 @@ class Direction : Check("checks.blockbreak.direction", CheckType.BLOCK_BREAK_DIR
             val breakAngle = MathAngle.asDoubleDegree(block.location.mathAngleBetween(breakVector))
 
             if (player.connectWithPC()) {
-<<<<<<< Updated upstream
                 //TODO: Angle Detection
-=======
                 //Angle Detection
                 if (breakAngle > 90.0 || breakAngle < 0.0) {
                     data.setCancelled()
                     pData.addViolationToBuffer(this.typeName, 1.0, "Angle Detection")
                 }
->>>>>>> Stashed changes
             }
 
             pData.getViolationData(this.typeName).preVL(0.998)
