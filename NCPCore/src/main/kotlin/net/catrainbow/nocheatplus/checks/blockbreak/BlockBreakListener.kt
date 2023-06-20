@@ -63,6 +63,7 @@ class BlockBreakListener : CheckListener(CheckType.BLOCK_BREAK) {
 
     init {
         this.addCheck(FastBreak())
+        this.addCheck(Direction())
     }
 
 }

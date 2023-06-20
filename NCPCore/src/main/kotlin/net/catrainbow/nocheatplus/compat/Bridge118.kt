@@ -19,13 +19,17 @@ import cn.nukkit.block.Block
 import cn.nukkit.block.BlockSlab
 import cn.nukkit.block.BlockStairs
 import cn.nukkit.level.Location
+import cn.nukkit.math.Vector3
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.ActionFactory
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
+import net.catrainbow.nocheatplus.utilities.MathAngle
 import net.catrainbow.nocheatplus.utilities.Utils
+import kotlin.math.abs
+import kotlin.math.acos
 
 /**
  * 多核心适配和架桥
@@ -43,22 +47,25 @@ class Bridge118 {
 
         //验证核心
         fun verifyVersionBridge() {
-            val nukkit = Utils.dynamic(Nukkit.CODENAME)
-            if (nukkit == Utils.dynamic("PowerNukkitX")) {
-                version_bridge = VersionBridge.PNX
-            } else if (nukkit == Utils.dynamic("MOT")) {
-                version_bridge = VersionBridge.PM1E
-            } else {
-                version_bridge = try {
-                    val clazz = Class.forName("cn.nukkit.Nukkit")
-                    clazz.getField("NUKKIT_PM1E")
-                    if (NoCheatPlus.instance.server.properties.exists("server-authoritative-block-breaking")) {
-                        if (NoCheatPlus.instance.server.getPropertyBoolean("server-authoritative-block-breaking")) VersionBridge.PM1E else VersionBridge.VANILLA
-                    } else VersionBridge.PM1E
-                } catch (exception: Exception) {
-                    VersionBridge.VANILLA
+            when (Utils.dynamic(Nukkit.CODENAME)) {
+                Utils.dynamic("PowerNukkitX") -> {
+                    version_bridge = VersionBridge.PNX
                 }
+                Utils.dynamic("MOT") -> {
+                    version_bridge = VersionBridge.PM1E
+                }
+                else -> {
+                    version_bridge = try {
+                        val clazz = Class.forName("cn.nukkit.Nukkit")
+                        clazz.getField("NUKKIT_PM1E")
+                        if (NoCheatPlus.instance.server.properties.exists("server-authoritative-block-breaking")) {
+                            if (NoCheatPlus.instance.server.getPropertyBoolean("server-authoritative-block-breaking")) VersionBridge.PM1E else VersionBridge.VANILLA
+                        } else VersionBridge.PM1E
+                    } catch (exception: Exception) {
+                        VersionBridge.VANILLA
+                    }
 
+                }
             }
             if (version_bridge == VersionBridge.VANILLA) version_bridge =
                 if (NoCheatPlus.instance.server.properties.exists("server-authoritative-movement")) {
@@ -149,6 +156,50 @@ class Bridge118 {
 
         fun dataPacket(packet: WrapperPacketEvent) {
             NoCheatPlus.instance.server.pluginManager.callEvent(packet)
+        }
+
+        fun Vector3.getModX(): Double {
+            return abs(this.getX())
+        }
+
+        fun Vector3.getModY(): Double {
+            return abs(this.getY())
+        }
+
+        fun Vector3.getModZ(): Double {
+            return abs(this.getZ())
+        }
+
+        fun Vector3.mathAngleBetween(vector3: Vector3): MathAngle {
+            return MathAngle.fromRadian(
+                acos(
+                    this.normalize().dot(vector3.normalize()).coerceAtLeast(-1.0).coerceAtMost(1.0)
+                )
+            )
+        }
+
+        private fun Player.getDeviceName(): String {
+            return when (this.loginChainData.deviceOS) {
+                1 -> "Android"
+                2 -> "IOS"
+                3 -> "Mac"
+                4 -> "Fire"
+                5 -> "Gear"
+                6 -> "Hololens"
+                7, 8 -> "Windows"
+                9 -> "Dedicated"
+                10 -> "Tvos"
+                11 -> "PlayStation"
+                12 -> "Nintendo"
+                13 -> "XBox"
+                14 -> "WinPhone"
+                15 -> "Linux"
+                else -> "Unknown"
+            }
+        }
+
+        fun Player.connectWithPC(): Boolean {
+            return this.getDeviceName() == "Windows" || this.getDeviceName() == "Linux"
         }
 
     }

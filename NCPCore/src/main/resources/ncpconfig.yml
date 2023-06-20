@@ -90,6 +90,9 @@ checks:
       max: 35
       min: 0
       actions: "cancel vl>5"
+    direction:
+      active: true
+      actions: "cancel vl>5&&kick vl>20"
   fight:
     speed:
       active: true
