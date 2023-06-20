@@ -23,6 +23,9 @@ import cn.nukkit.level.Position
 import cn.nukkit.math.Vector3
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil.Companion.isAboveIce
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil.Companion.isAboveSlab
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil.Companion.isAboveStairs
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.magic.LostGround
 import net.catrainbow.nocheatplus.checks.moving.model.*
@@ -215,11 +218,11 @@ class MovingData : ICheckData {
             this.liquidTick--
             this.loseLiquidTick++
         } else this.liquidTick = 0
-        if (LocUtil.isIce(LocUtil.getUnderBlock(player))) this.iceTick++
+        if (player.isAboveIce()) this.iceTick++
         else if (this.iceTick in 1..200) this.iceTick-- else this.iceTick = 0
-        if (LocUtil.getUnderBlock(player) is BlockSlab) this.slabTick++ else if (this.slabTick in 1..200) this.slabTick-- else this.slabTick =
+        if (player.isAboveSlab()) this.slabTick++ else if (this.slabTick in 1..200) this.slabTick-- else this.slabTick =
             0
-        if (LocUtil.getUnderBlock(player) is BlockStairs) this.stairTick++ else if (this.stairTick in 1..200) this.stairTick-- else this.stairTick =
+        if (player.isAboveStairs()) this.stairTick++ else if (this.stairTick in 1..200) this.stairTick-- else this.stairTick =
             0
         if (player.isInWeb()) this.webTick++
         else if (this.webTick in 1..200) this.webTick-- else this.webTick = 0

@@ -14,13 +14,12 @@
 package net.catrainbow.nocheatplus.checks.moving.player
 
 import cn.nukkit.Player
-import cn.nukkit.block.Block
 import cn.nukkit.level.Location
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
 import net.catrainbow.nocheatplus.checks.moving.MovingData
-import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil.Companion.getGroundState
 import net.catrainbow.nocheatplus.checks.moving.magic.Magic
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onGround
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.setback
@@ -88,13 +87,13 @@ class CreativeFly : Check("checks.moving.creativefly", CheckType.MOVING_CREATIVE
                     val vDistAir = this.vDistAir(now, player, from, to, toOnGround, yDistance, data, pData)
                     if (vDistAir[0] > vDistAir[1]) {
                         val violation = min((vDistAir[0] - vDistAir[1]) * 10.0, 5.0)
-                        pData.addViolationToBuffer(this.typeName, violation,"LIQUID DIST")
+                        pData.addViolationToBuffer(this.typeName, violation, "LIQUID DIST")
                     }
                 } else {
                     //It's not necessary to check these players who are in creative mode
                     val vDistWeb = this.vDistWeb()
                     if (vDistWeb[0] > vDistWeb[1])
-                        pData.addViolationToBuffer(this.typeName, (vDistWeb[0] - vDistWeb[1]) * 10.0,"AIR DIST")
+                        pData.addViolationToBuffer(this.typeName, (vDistWeb[0] - vDistWeb[1]) * 10.0, "AIR DIST")
                 }
             } else {
                 /* TODO: Check player in liquid */
@@ -137,7 +136,7 @@ class CreativeFly : Check("checks.moving.creativefly", CheckType.MOVING_CREATIVE
 
         //重发操作
         var reset = false
-        val lostGround = LocUtil.getUnderBlock(player).id == Block.AIR
+        val lostGround = !player.getGroundState()
 
         if (!player.isGliding && !player.isSwimming) {
             val aboveLimitDistance = this.vDistHLimited(now, player, from, to, toOnGround, yDistance, data, pData)
