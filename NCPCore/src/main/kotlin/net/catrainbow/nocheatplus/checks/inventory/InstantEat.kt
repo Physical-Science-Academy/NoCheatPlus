@@ -41,12 +41,14 @@ class InstantEat : Check("checks.inventory.instanteat", CheckType.INVENTORY_INST
             if (!(event.packet as WrapperEatFoodPacket).eat) data.setEating(true)
             else {
                 data.setEating(false)
-                val totalTick = NoCheatPlus.instance.getPlayerProvider(player).movingData.getFoodTracker()!!.getCount()
-                if (totalTick < FoodData118.DEFAULT_EAT_TICK) {
-                    cancel = true
-                    cancelSaturation = (event.packet as WrapperEatFoodPacket).food.restoreSaturation
-                    cancelFoodLevel = (event.packet as WrapperEatFoodPacket).food.restoreFood
-                    if ((event.packet as WrapperEatFoodPacket).food is EmptyFood) cancel = false
+                if (NoCheatPlus.instance.getPlayerProvider(player).movingData.getFoodTracker() != null) {
+                    val totalTick = NoCheatPlus.instance.getPlayerProvider(player).movingData.getFoodTracker()!!.getCount()
+                    if (totalTick < FoodData118.DEFAULT_EAT_TICK) {
+                        cancel = true
+                        cancelSaturation = (event.packet as WrapperEatFoodPacket).food.restoreSaturation
+                        cancelFoodLevel = (event.packet as WrapperEatFoodPacket).food.restoreFood
+                        if ((event.packet as WrapperEatFoodPacket).food is EmptyFood) cancel = false
+                    }
                 }
             }
         }
