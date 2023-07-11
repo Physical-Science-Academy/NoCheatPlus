@@ -28,6 +28,7 @@ class ActionHistory {
     private var lastWarning: Long = System.currentTimeMillis()
     private var lastCancel: Long = System.currentTimeMillis()
     private var lastLog: Long = System.currentTimeMillis();
+    private var lastDoAction: Long = System.currentTimeMillis()
     private var historySetback: SetBackEntry = SetBackEntry(
         Location.fromObject(NoCheatPlus.instance.server.defaultLevel.spawnLocation), 0
     )
@@ -59,6 +60,14 @@ class ActionHistory {
 
     fun setLastWarning(access: Long) {
         this.lastWarning = access
+    }
+
+    fun getLastDoAction(): Long {
+        return this.lastDoAction
+    }
+
+    fun setLastDoAction(access: Long) {
+        this.lastDoAction = access
     }
 
 }

@@ -17,8 +17,7 @@ import cn.nukkit.Player
 import cn.nukkit.block.Block
 import cn.nukkit.block.BlockSlab
 import cn.nukkit.block.BlockStairs
-import cn.nukkit.level.Location
-import cn.nukkit.math.BlockFace
+import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInLiquid
 
 /**
  * Location Util
@@ -35,37 +34,74 @@ class LocUtil {
          * @return Block
          */
         @JvmStatic
-        fun getUnderBlock(player: Player): Block {
-            val b1 = player.level.getBlock(Location(player.x, player.y - 1, player.z, player.level))
-            val list: ArrayList<Block> = ArrayList()
-            list.add(b1)
-            list.add(player.level.getBlock(Location(player.x + 1, player.y - 1, player.z, player.level)))
-            list.add(player.level.getBlock(Location(player.x - 1, player.y - 1, player.z, player.level)))
-            list.add(player.level.getBlock(Location(player.x, player.y - 1, player.z + 1, player.level)))
-            list.add(player.level.getBlock(Location(player.x, player.y - 1, player.z - 1, player.level)))
-            list.add(player.level.getBlock(Location(player.x + 1, player.y - 1, player.z + 1, player.level)))
-            list.add(player.level.getBlock(Location(player.x + 1, player.y - 1, player.z - 1, player.level)))
-            list.add(player.level.getBlock(Location(player.x - 1, player.y - 1, player.z + 1, player.level)))
-            list.add(player.level.getBlock(Location(player.x - 1, player.y - 1, player.z - 1, player.level)))
-            var minBlock: Block = b1
-            //性能问题
-            for (block in list) {
-                val minX = block.floorX - 0.35
-                val maxX = block.floorX + 0.35
-                val minZ = block.floorZ - 0.35
-                val maxZ = block.floorZ + 0.35
-                val bb = Cuboid(minX, maxX, block.y, block.y, minZ, maxZ)
-                if (bb.isVectorInside(player)) {
-                    minBlock = block
-                    break
+        fun getUnderBlocks(player: Player): List<Block> {
+
+            val realBB = player.getBoundingBox().clone()
+            realBB.maxY = realBB.minY + 0.1
+            realBB.minY -= 0.4
+            realBB.expand(0.2, 0.0, 0.2)
+            val blocksList: ArrayList<Block> = ArrayList()
+            val bb = realBB.clone()
+            bb.minY -= 0.6
+            if (blocksList.isEmpty()) {
+                bb.forEach { x, y, z ->
+                    blocksList.add(player.level.getBlock(x, y, z))
                 }
             }
-            return minBlock
+
+            return blocksList.toList()
+        }
+
+        fun Player.getGroundState(): Boolean {
+            val realBB = player.getBoundingBox().clone()
+            realBB.maxY = realBB.minY + 0.1
+            realBB.minY -= 0.4
+            realBB.expand(0.2, 0.0, 0.2)
+            getUnderBlocks(player).forEach {
+                if (!it.canPassThrough() && it.collidesWithBB(realBB)) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        fun Player.isAboveBlock(block: Int): Boolean {
+            getUnderBlocks(player).forEach {
+                if (it.id == block) return true
+            }
+            return false
+        }
+
+        fun Player.isAboveIce(): Boolean {
+            getUnderBlocks(player).forEach {
+                if (isIce(it)) return true
+            }
+            return false
+        }
+
+        fun Player.isAboveSlab(): Boolean {
+            getUnderBlocks(player).forEach {
+                if (it is BlockSlab) return true
+            }
+            return false
+        }
+
+        fun Player.isAboveStairs(): Boolean {
+            getUnderBlocks(player).forEach {
+                if (it is BlockStairs) return true
+            }
+            return false
+        }
+
+        fun Player.isAboveLiquid(): Boolean {
+            getUnderBlocks(player).forEach {
+                if (it.location.isInLiquid()) return true
+            }
+            return false
         }
 
         fun isLiquid(block: Block): Boolean {
-            return block.id == 9 || block.id == 11
-                    || block.id == 8 || block.id == 10
+            return block.id == 9 || block.id == 11 || block.id == 8 || block.id == 10
         }
 
         fun isWater(block: Block): Boolean {

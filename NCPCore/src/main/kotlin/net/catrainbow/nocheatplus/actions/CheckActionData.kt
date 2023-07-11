@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.actions
 
 import net.catrainbow.nocheatplus.actions.types.BanAction
+import net.catrainbow.nocheatplus.actions.types.CommandAction
 import net.catrainbow.nocheatplus.actions.types.LogAction
 import net.catrainbow.nocheatplus.actions.types.WarnAction
 import net.catrainbow.nocheatplus.components.data.ICheckData
@@ -33,5 +34,7 @@ class CheckActionData : ICheckData {
     var banRepeat = 1
     lateinit var banAction: BanAction
     var enableBan = false
+    lateinit var commandAction: CommandAction
+    var enableCommand = false
 
 }

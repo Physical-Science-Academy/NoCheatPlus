@@ -11,23 +11,12 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.catrainbow.nocheatplus.api;
+package net.catrainbow.nocheatplus.actions.temples
 
-import cn.nukkit.plugin.PluginBase;
-import net.catrainbow.nocheatplus.NoCheatPlus;
+interface INCPActionTemples {
 
-/**
- * NoCheatPlus API Demo
- *
- * @author Catrainbow
- */
-public class NCPDemo extends PluginBase {
+    fun buildRangeTemple(settings: String): ActionRangeTemple
 
-    @Override
-    public void onEnable() {
+    fun buildRangeTemple(min: Double, max: Double): ActionRangeTemple
 
-        //get the NCP API provider
-        NoCheatPlusAPI api = NoCheatPlus.instance.getNCPProvider();
-
-    }
 }

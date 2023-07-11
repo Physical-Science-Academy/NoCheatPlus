@@ -137,7 +137,7 @@
 - [x] FastBreak
 - [ ] Scaffold
 - [ ] KillAura
-- [ ] Reach
+- [x] Reach
 - [x] X-Ray
 - [x] AutoClicker
 - [ ] HitBox
@@ -157,7 +157,7 @@
 #### 需要: Kotlin | Java (8|17)
 
 - `git clone https://github.com/Physical-Science-Academy/NoCheatPlus.git`
-- `cd NoCheatPlis`
+- `cd NoCheatPlus`
 - `git submodule update --init`
 - `./mvnw clean package`
 
@@ -386,6 +386,7 @@ permission:
 - `INVENTORY_FAST_CLICK`
 - `INVENTORY_MOVE`
 - `FIGHT_SPEED`
+- `FIGHT_REACH`
 
 ## 视频教程
 

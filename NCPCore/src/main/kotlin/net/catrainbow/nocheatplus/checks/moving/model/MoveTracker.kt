@@ -14,10 +14,13 @@
 package net.catrainbow.nocheatplus.checks.moving.model
 
 import cn.nukkit.Player
+import cn.nukkit.block.Block
 import cn.nukkit.block.BlockSlab
 import cn.nukkit.block.BlockStairs
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil.Companion.isAboveBlock
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil.Companion.isAboveLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInLiquid
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.isInWeb
 import net.catrainbow.nocheatplus.compat.Bridge118.Companion.onClimbedBlock
@@ -50,7 +53,7 @@ class MoveTracker(player: Player) {
         val data = NoCheatPlus.instance.getPlayerProvider(player).movingData
         if (this.isLive) {
             //解决特殊方块的问题
-            val block = LocUtil.getUnderBlock(player)
+            val block = player.add(0.0, -0.5, 0.0).levelBlock
             val subBlock = player.add(0.0, -0.4, 0.0).levelBlock
             if (block is BlockSlab || block is BlockStairs) {
                 this.maxHeight = player.y - block.maxY
@@ -85,9 +88,9 @@ class MoveTracker(player: Player) {
             this.lastY = player.y
         }
         if (now - data.getLastJump() >= 500) {
-            if (LocUtil.getUnderBlock(player).id != 0 && (LocUtil.isLiquid(LocUtil.getUnderBlock(player)) || LocUtil.getUnderBlock(
-                    player
-                ).isSolid)
+            if (!player.isAboveBlock(Block.AIR) && (player.isAboveLiquid() || player.add(
+                    0.0, -0.5, 0.0
+                ).levelBlock.isSolid)
             ) {
                 this.onGround = true
                 this.reset()

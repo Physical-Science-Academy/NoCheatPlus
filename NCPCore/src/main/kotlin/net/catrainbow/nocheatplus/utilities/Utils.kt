@@ -11,23 +11,19 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.catrainbow.nocheatplus.api;
-
-import cn.nukkit.plugin.PluginBase;
-import net.catrainbow.nocheatplus.NoCheatPlus;
+package net.catrainbow.nocheatplus.utilities
 
 /**
- * NoCheatPlus API Demo
+ * 工具类
  *
  * @author Catrainbow
  */
-public class NCPDemo extends PluginBase {
+class Utils {
 
-    @Override
-    public void onEnable() {
-
-        //get the NCP API provider
-        NoCheatPlusAPI api = NoCheatPlus.instance.getNCPProvider();
-
+    companion object {
+        fun dynamic(string: String): String {
+            return string
+        }
     }
+
 }

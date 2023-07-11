@@ -197,6 +197,23 @@ class ActionProcess(
                 }
             }
 
+            ActionType.COMMAND -> {
+                if (!data.enableCommand) return
+                val tree = data.commandAction.commandTree[this.checkType.name]!!.second
+                val violation = data.commandAction.commandTree[this.checkType.name]!!.first
+                if (this.violationData.getVL() < violation) return
+                if (System.currentTimeMillis() - history.getLastDoAction() > ConfigData.action_warning_delay * 1000L) {
+                    for (command in tree) {
+                        val finalCommand = command.replace("@player", player.name).replace("@type", this.checkType.name)
+                            .replace("@violation", violation.toString())
+                        NoCheatPlus.instance.server.dispatchCommand(
+                            NoCheatPlus.instance.server.consoleSender, finalCommand
+                        )
+                    }
+                    history.setLastDoAction(System.currentTimeMillis())
+                }
+            }
+
             else -> {}
         }
     }

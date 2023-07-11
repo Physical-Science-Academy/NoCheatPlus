@@ -140,7 +140,7 @@
 - [x] FastBreak
 - [ ] Scaffold
 - [ ] KillAura
-- [ ] Reach
+- [x] Reach
 - [x] X-Ray
 - [x] AutoClicker
 - [ ] HitBox
@@ -161,7 +161,7 @@
 #### Require: Kotlin | Java (8|17)
 
 - `git clone https://github.com/Physical-Science-Academy/NoCheatPlus.git`
-- `cd NoCheatPlis`
+- `cd NoCheatPlus`
 - `git submodule update --init`
 - `./mvnw clean package`
 
@@ -389,6 +389,7 @@ Available CheckType:
 - `INVENTORY_FAST_CLICK`
 - `INVENTORY_MOVE`
 - `FIGHT_SPEED`
+- `FIGHT_REACH`
 
 ## Video Showing
 
@@ -411,12 +412,12 @@ Available CheckType:
 | NoCheatPlus  |   maven-repo-20220552-2a   |
 | NoCheatPlus  |   maven-repo-20220552-3a   |
 | NoCheatPlus  |   maven-repo-20220552-4a   |
-| NoCheatPlus  | maven-repo-20220552-common |
-|  CompatNCP   | maven-repo-20220552-common |
-|  ECCPCompat  | maven-repo-20220552-common |
-|  NCPLiteBan  | maven-repo-20220552-common |
-|  NCPPlugin   | maven-repo-20220552-common |
-| NCPStaticBar | maven-repo-20220552-common |
+| NoCheatPlus  | maven-repo-20230618-common |
+|  CompatNCP   | maven-repo-20230618-common |
+|  ECCPCompat  | maven-repo-20230618-common |
+|  NCPLiteBan  | maven-repo-20230618-common |
+|  NCPPlugin   | maven-repo-20230618-common |
+| NCPStaticBar | maven-repo-20230618common |
 
 ### Gradle:
 

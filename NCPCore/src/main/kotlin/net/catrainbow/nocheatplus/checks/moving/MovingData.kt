@@ -23,6 +23,9 @@ import cn.nukkit.level.Position
 import cn.nukkit.math.Vector3
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil.Companion.isAboveIce
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil.Companion.isAboveSlab
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil.Companion.isAboveStairs
 import net.catrainbow.nocheatplus.checks.moving.magic.GhostBlockChecker
 import net.catrainbow.nocheatplus.checks.moving.magic.LostGround
 import net.catrainbow.nocheatplus.checks.moving.model.*
@@ -64,6 +67,7 @@ class MovingData : ICheckData {
     private var foodTracker: EatPacketTracker? = null
     private var safeSpawn = false
     private var voidHurt = false
+    private var fallHurt = false
     private var lastChangeSwimAction = System.currentTimeMillis()
     private var lastChangeGlideAction = System.currentTimeMillis()
     private var lastGlideBooster = System.currentTimeMillis()
@@ -214,11 +218,11 @@ class MovingData : ICheckData {
             this.liquidTick--
             this.loseLiquidTick++
         } else this.liquidTick = 0
-        if (LocUtil.isIce(LocUtil.getUnderBlock(player))) this.iceTick++
+        if (player.isAboveIce()) this.iceTick++
         else if (this.iceTick in 1..200) this.iceTick-- else this.iceTick = 0
-        if (LocUtil.getUnderBlock(player) is BlockSlab) this.slabTick++ else if (this.slabTick in 1..200) this.slabTick-- else this.slabTick =
+        if (player.isAboveSlab()) this.slabTick++ else if (this.slabTick in 1..200) this.slabTick-- else this.slabTick =
             0
-        if (LocUtil.getUnderBlock(player) is BlockStairs) this.stairTick++ else if (this.stairTick in 1..200) this.stairTick-- else this.stairTick =
+        if (player.isAboveStairs()) this.stairTick++ else if (this.stairTick in 1..200) this.stairTick-- else this.stairTick =
             0
         if (player.isInWeb()) this.webTick++
         else if (this.webTick in 1..200) this.webTick-- else this.webTick = 0
@@ -253,6 +257,15 @@ class MovingData : ICheckData {
         if (System.currentTimeMillis() - this.lastConsumeFood > 100 && this.firstGagApple) this.firstGagApple = false
         this.lastHealth = player.health.toDouble()
         if (this.onSlimeBump) this.slimeTick++ else this.slimeTick = 0
+    }
+
+    //进入服务器初始化数据
+    fun initData(player: Player) {
+        this.setLastNormalGround(player.location)
+        this.from = player.location
+        this.to = player.location
+        this.location = player.location
+        this.lastLocation = player.location
     }
 
     fun getLiquidTick(): Int {
@@ -579,6 +592,14 @@ class MovingData : ICheckData {
 
     fun initLostGround(lostGround: LostGround) {
         this.lostGround = lostGround
+    }
+
+    fun isFallHurt(): Boolean {
+        return this.fallHurt
+    }
+
+    fun setFallHurt(boolean: Boolean) {
+        this.fallHurt = boolean
     }
 
 }

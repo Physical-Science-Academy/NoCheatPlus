@@ -52,7 +52,7 @@ class InstantEat : Check("checks.inventory.instanteat", CheckType.INVENTORY_INST
         }
 
         if (cancel) {
-            pData.addViolationToBuffer(this.typeName, 1.2)
+            pData.addViolationToBuffer(this.typeName, 1.2,"InstantEat SPEED LIMITED")
             if (player.foodData.level - cancelFoodLevel > 0) {
                 val level = player.foodData.level
                 player.foodData.setLevel(level - cancelFoodLevel, cancelSaturation)

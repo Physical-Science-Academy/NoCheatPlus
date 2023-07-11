@@ -11,23 +11,10 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.catrainbow.nocheatplus.api;
+package net.catrainbow.nocheatplus.compat
 
-import cn.nukkit.plugin.PluginBase;
-import net.catrainbow.nocheatplus.NoCheatPlus;
-
-/**
- * NoCheatPlus API Demo
- *
- * @author Catrainbow
- */
-public class NCPDemo extends PluginBase {
-
-    @Override
-    public void onEnable() {
-
-        //get the NCP API provider
-        NoCheatPlusAPI api = NoCheatPlus.instance.getNCPProvider();
-
-    }
+object Bridge116 {
+    const val BLOCK_ID_SCAFFOLD = 420
+    const val BLOCK_ID_PISTON_PLUG = 472
+    const val BLOCK_ID_TURTLE_EGG = 414
 }

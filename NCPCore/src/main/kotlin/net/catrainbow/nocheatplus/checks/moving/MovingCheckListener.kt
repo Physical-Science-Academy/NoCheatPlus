@@ -142,6 +142,9 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
                         true
                     )
 
+                    if (event.cause == EntityDamageEvent.DamageCause.FALL) NoCheatPlus.instance.getPlayerProvider(player).movingData.setFallHurt(
+                        true
+                    )
                     //重新计算冷却
                     NoCheatPlus.instance.getPlayerProvider(player).movingData.resetKnockBackTick()
                 }
@@ -167,9 +170,9 @@ class MovingCheckListener : CheckListener(CheckType.MOVING) {
             dataPacket(foodEvent)
         } else if (event is PlayerInteractEvent) {
             val player = event.player
-            if (FoodData118.isFood(player.inventory.itemInHand.id))
-                if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR || event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
-                    NoCheatPlus.instance.getPlayerProvider(player).movingData.consumeFoodInteract()
+            if (FoodData118.isFood(player.inventory.itemInHand.id)) if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR || event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) NoCheatPlus.instance.getPlayerProvider(
+                player
+            ).movingData.consumeFoodInteract()
         } else if (event is PlayerTeleportEvent) {
             val data = NoCheatPlus.instance.getPlayerProvider(event.player)
             data.movingData.setTeleport()

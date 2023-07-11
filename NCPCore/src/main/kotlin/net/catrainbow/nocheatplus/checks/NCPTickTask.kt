@@ -20,6 +20,7 @@ import cn.nukkit.network.protocol.NetworkStackLatencyPacket
 import cn.nukkit.scheduler.Task
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
+import net.catrainbow.nocheatplus.checks.moving.location.LocUtil.Companion.getGroundState
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperInputPacket
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import kotlin.math.abs
@@ -32,8 +33,10 @@ import kotlin.math.abs
 class NCPTickTask : Task() {
     override fun onRun(p0: Int) {
         for (player in NoCheatPlus.instance.server.onlinePlayers.values) {
-            this.handleWrapperInputPacket(player)
-            this.tickActions(player)
+            if (NoCheatPlus.instance.hasPlayer(player)) {
+                this.handleWrapperInputPacket(player)
+                this.tickActions(player)
+            }
         }
     }
 
@@ -43,7 +46,7 @@ class NCPTickTask : Task() {
     private fun handleWrapperInputPacket(player: Player) {
         val wrapperInputPacket = WrapperInputPacket(player)
         wrapperInputPacket.clientOnGround = player.onGround
-        wrapperInputPacket.serverOnGround = LocUtil.getUnderBlock(player).id != 0
+        wrapperInputPacket.serverOnGround = player.getGroundState()
 
         if (!NoCheatPlus.instance.hasPlayer(player)) return
 

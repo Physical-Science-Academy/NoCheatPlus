@@ -37,7 +37,8 @@ enum class CheckType(private val parent: CheckType?) {
     ),
     BLOCK_BREAK_FAST_BREAK(
         BLOCK_BREAK
-    );
+    ),
+    BLOCK_BREAK_DIRECTION(BLOCK_BREAK);
 
     fun isUsedCheck(): Boolean {
         return (parent != null && parent != ALL) || this == STAFF || this == UNKNOWN_PACKET

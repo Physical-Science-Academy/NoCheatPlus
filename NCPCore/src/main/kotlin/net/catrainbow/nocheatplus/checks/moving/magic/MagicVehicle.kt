@@ -4,30 +4,23 @@
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
  *
- *   This program is distributed in thCut even the implied warranty of
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.catrainbow.nocheatplus.api;
-
-import cn.nukkit.plugin.PluginBase;
-import net.catrainbow.nocheatplus.NoCheatPlus;
+package net.catrainbow.nocheatplus.checks.moving.magic
 
 /**
- * NoCheatPlus API Demo
+ * 载具数据
  *
  * @author Catrainbow
  */
-public class NCPDemo extends PluginBase {
+object MagicVehicle {
 
-    @Override
-    public void onEnable() {
+    const val VEHICLE_DOWN_BOX = 0.25
 
-        //get the NCP API provider
-        NoCheatPlusAPI api = NoCheatPlus.instance.getNCPProvider();
-
-    }
 }

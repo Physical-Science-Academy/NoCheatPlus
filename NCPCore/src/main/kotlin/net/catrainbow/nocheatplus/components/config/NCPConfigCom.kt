@@ -15,6 +15,8 @@ package net.catrainbow.nocheatplus.components.config
 
 import cn.nukkit.utils.Config
 import net.catrainbow.nocheatplus.NoCheatPlus
+import net.catrainbow.nocheatplus.actions.temples.ActionRangeTemple
+import net.catrainbow.nocheatplus.actions.temples.ActionTempleFactory
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.components.registry.INCPComponent
 import net.catrainbow.nocheatplus.components.registry.NCPComponent
@@ -156,6 +158,8 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.check_survival_fly_latency_protection =
             config.getInt("checks.moving.survivalfly.setback_policy.latency_protection")
         ConfigData.check_survival_fly_strict_mode = config.getBoolean("checks.moving.survivalfly.strict_mode")
+        ConfigData.check_survival_fly_packet_balance =
+            config.getBoolean("checks.moving.survivalfly.setback_policy.packet_balance")
         ConfigData.check_no_fall_deal_damage = config.getBoolean("checks.moving.nofall.dealdamage")
         ConfigData.check_no_fall_skip_allow_flight = config.getBoolean("checks.moving.nofall.skipallowflight")
         ConfigData.check_no_fall_reset_violation = config.getBoolean("checks.moving.nofall.resetonviolation")
@@ -166,7 +170,11 @@ class NCPConfigCom : NCPComponent(), INCPComponent {
         ConfigData.check_fight_max_speed = config.getInt("checks.fight.speed.maxspeed")
         ConfigData.check_fight_deal_variance = config.getDouble("checks.fight.speed.dealvariance")
         ConfigData.check_fight_cancel_damage = config.getBoolean("checks.fight.speed.cancelDamage")
+        ConfigData.check_fight_reach_range =
+            ActionTempleFactory().buildRangeTemple(config.getString("checks.fight.reach.range"))
+        ConfigData.check_fight_reach_offset = config.getDouble("checks.fight.reach.offset")
         ConfigData.check_fast_break_max = config.getInt("checks.blockbreak.fastbreak.max")
         ConfigData.check_fast_break_min = config.getInt("checks.blockbreak.fastbreak.min")
+        ConfigData.check_inventory_item_enchantment = config.getBoolean("checks.inventory.item.enchantment")
     }
 }

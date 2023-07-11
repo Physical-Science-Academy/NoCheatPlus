@@ -13,9 +13,11 @@
  */
 package net.catrainbow.nocheatplus.checks.inventory
 
+import cn.nukkit.item.ItemID
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.Check
 import net.catrainbow.nocheatplus.checks.CheckType
+import net.catrainbow.nocheatplus.components.data.ConfigData
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperPacketEvent
 import net.catrainbow.nocheatplus.feature.wrapper.WrapperUpdateInventoryPacket
 
@@ -46,8 +48,23 @@ class Item : Check("checks.inventory.item", CheckType.INVENTORY_ITEM) {
                         item.setCount(item.maxStackSize)
                         vData.addVL(diff * 0.5)
                     }
+                    //检测异常地附魔
+                    if (ConfigData.check_inventory_item_enchantment) {
+                        val enchantments = item.enchantments
+                        if (enchantments.isNotEmpty()) {
+                            if (item.id == ItemID.WRITTEN_BOOK) {
+                                player.inventory.removeItem(item)
+                            } else enchantments.forEach {
+                                if (it.level > it.maxLevel) {
+                                    player.inventory.removeItem(item)
+                                }
+                            }
+                        }
+                    }
                 }
             }
+
+
             vData.preVL(0.998)
         }
     }

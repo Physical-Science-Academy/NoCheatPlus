@@ -15,6 +15,7 @@ package net.catrainbow.nocheatplus.actions
 
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.actions.types.BanAction
+import net.catrainbow.nocheatplus.actions.types.CommandAction
 import net.catrainbow.nocheatplus.actions.types.LogAction
 import net.catrainbow.nocheatplus.actions.types.WarnAction
 import net.catrainbow.nocheatplus.checks.CheckType
@@ -45,7 +46,9 @@ class ActionCom : NCPComponent(), INCPComponent {
         this.loadAction("inventory.fastclick", CheckType.INVENTORY_FAST_CLICK.name)
         this.loadAction("inventory.item", CheckType.INVENTORY_ITEM.name)
         this.loadAction("fight.speed", CheckType.FIGHT_SPEED.name)
+        this.loadAction("fight.reach", CheckType.FIGHT_REACH.name)
         this.loadAction("blockbreak.fastbreak", CheckType.BLOCK_BREAK_FAST_BREAK.name)
+        this.loadAction("blockbreak.direction", CheckType.BLOCK_BREAK_DIRECTION.name)
     }
 
     private fun loadAction(path: String, type: String) {
@@ -83,6 +86,32 @@ class ActionCom : NCPComponent(), INCPComponent {
                     actionData.banRepeat = subCommand[1].split("=")[1].toInt()
                     val timeArray = subCommand[2].split("=")[1].split(",")
                     actionData.banAction = BanAction(timeArray[0].toInt(), timeArray[1].toInt(), timeArray[2].toInt())
+                }
+                "cmd" -> {
+                    actionData.enableCommand = true
+                    actionData.commandAction = CommandAction()
+                    val violation = subCommand[1].split(">")[1].toDouble()
+                    var list: ArrayList<String> = ArrayList()
+                    if (subCommand[2].contains("group")) {
+                        val groupName = subCommand[2].split("=")[1]
+                        list =
+                            NoCheatPlus.instance.getNCPConfig().getStringList("command.$groupName") as ArrayList<String>
+                    } else {
+                        val commandBuilder = java.lang.StringBuilder()
+                        for ((index, patchCommand) in subCommand.withIndex()) if (index >= 2) commandBuilder.append(
+                            patchCommand
+                        ).append(" ")
+                        list.add(commandBuilder.toString().removeSuffix(" "))
+                    }
+                    if (!actionData.commandAction.commandTree.containsKey(type)) {
+                        val pair: Pair<Double, ArrayList<String>> = Pair(violation, list)
+                        actionData.commandAction.commandTree[type] = pair
+                    } else {
+                        val originalTree = actionData.commandAction.commandTree[type]!!.second
+                        for (value in list) if (!originalTree.contains(value)) originalTree.add(value)
+                        val pair: Pair<Double, ArrayList<String>> = Pair(violation, originalTree)
+                        actionData.commandAction.commandTree[type] = pair
+                    }
                 }
             }
         }

@@ -11,23 +11,30 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.catrainbow.nocheatplus.api;
+package net.catrainbow.nocheatplus.actions.temples
 
-import cn.nukkit.plugin.PluginBase;
-import net.catrainbow.nocheatplus.NoCheatPlus;
+import kotlin.math.max
+import kotlin.math.min
 
 /**
- * NoCheatPlus API Demo
+ * Range Temple
  *
  * @author Catrainbow
  */
-public class NCPDemo extends PluginBase {
+class ActionRangeTemple(private var min: Double, private var max: Double) {
 
-    @Override
-    public void onEnable() {
-
-        //get the NCP API provider
-        NoCheatPlusAPI api = NoCheatPlus.instance.getNCPProvider();
-
+    fun getAverage(valueA: Int, valueB: Int): Double {
+        return (min * valueA + max * valueB) / 2.0
     }
+
+    fun getAverage(valueA: Double, valueB: Double): Double {
+        return (min * valueA + max * valueB) / 2.0
+    }
+
+    fun getDefaultTemple(min: Double, max: Double): ActionRangeTemple {
+        this.min = min(min, max)
+        this.max = max(min, max)
+        return this
+    }
+
 }

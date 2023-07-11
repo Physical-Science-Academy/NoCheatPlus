@@ -11,23 +11,10 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.catrainbow.nocheatplus.api;
+package net.catrainbow.nocheatplus.actions.types
 
-import cn.nukkit.plugin.PluginBase;
-import net.catrainbow.nocheatplus.NoCheatPlus;
+class CommandAction {
 
-/**
- * NoCheatPlus API Demo
- *
- * @author Catrainbow
- */
-public class NCPDemo extends PluginBase {
+    val commandTree: HashMap<String, Pair<Double, ArrayList<String>>> = HashMap()
 
-    @Override
-    public void onEnable() {
-
-        //get the NCP API provider
-        NoCheatPlusAPI api = NoCheatPlus.instance.getNCPProvider();
-
-    }
 }

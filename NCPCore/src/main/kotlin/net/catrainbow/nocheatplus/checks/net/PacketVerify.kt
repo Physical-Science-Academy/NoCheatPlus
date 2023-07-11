@@ -14,6 +14,7 @@
 package net.catrainbow.nocheatplus.checks.net
 
 import cn.nukkit.AdventureSettings
+import cn.nukkit.Player
 import cn.nukkit.event.server.DataPacketReceiveEvent
 import cn.nukkit.item.Item
 import cn.nukkit.network.protocol.AnimatePacket
@@ -23,16 +24,15 @@ import cn.nukkit.network.protocol.LoginPacket
 import cn.nukkit.network.protocol.MovePlayerPacket
 import cn.nukkit.network.protocol.PlayerAuthInputPacket
 import cn.nukkit.network.protocol.TextPacket
+import cn.nukkit.scheduler.Task
 import net.catrainbow.nocheatplus.NoCheatPlus
 import net.catrainbow.nocheatplus.checks.CheckType
-import net.catrainbow.nocheatplus.checks.moving.location.LocUtil
 import net.catrainbow.nocheatplus.compat.Bridge118
 import net.catrainbow.nocheatplus.compat.nukkit.VersionBridge
 import net.catrainbow.nocheatplus.components.data.ConfigData
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.math.min
 import kotlin.math.round
 
 /**
@@ -153,7 +153,8 @@ class PacketVerify {
             if (player.loginChainData.deviceOS == 1) {
                 val model = player.loginChainData.deviceModel.split(" ")
                 if (model.isNotEmpty()) if (model[0] != model[0].uppercase(Locale.getDefault())) {
-                    NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
+                    //延迟踢除,防止出现空指针
+                    delayKickPlayer(player)
                     return
                 }
             }
@@ -162,7 +163,7 @@ class PacketVerify {
                     player.loginChainData.deviceModel
                 )
             ) {
-                NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
+                delayKickPlayer(player)
                 return
             }
             if (Bridge118.version_bridge == VersionBridge.PM1E) {
@@ -175,11 +176,21 @@ class PacketVerify {
                 }
             }
             //fix a disabler of NCP
-            val height = LocUtil.getPlayerHeight(player)
+            /*
+               val height = LocUtil.getPlayerHeight(player)
             try {
                 if (player != null) if (height >= 1) player.teleport(player.add(0.0, min(0.0, 0.3 - height), 0.0))
             } catch (_: Exception) {
             }
+             */
+        }
+
+        private fun delayKickPlayer(player: Player) {
+            NoCheatPlus.instance.server.scheduler.scheduleDelayedTask(object : Task() {
+                override fun onRun(p0: Int) {
+                    NoCheatPlus.instance.kickPlayer(player, CheckType.UNKNOWN_PACKET)
+                }
+            }, 20 * 5)
         }
 
     }

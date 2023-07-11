@@ -90,12 +90,20 @@ checks:
       max: 35
       min: 0
       actions: "cancel vl>5"
+    direction:
+      active: true
+      actions: "cancel vl>5&&kick vl>20"
   fight:
     speed:
       active: true
       maxspeed: 25
       dealvariance: 0.1
       cancelDamage: true
+      actions: "cancel vl>5&&kick vl>20"
+    reach:
+      active: true
+      range: 3.0-3.01
+      offset: 0.2976
       actions: "cancel vl>5&&kick vl>20"
   inventory:
     instanteat:
@@ -113,12 +121,14 @@ checks:
       actions: "cancel vl>5&&kick vl>20"
     item:
       active: true
+      enchantment: true
       actions: "kick vl>10"
   moving:
     survivalfly:
       active: true
       strict_mode: false
       setback_policy:
+        packet_balance: true
         fall_damage: true
         void_to_void: true
         latency_protection: 120
@@ -148,11 +158,15 @@ string:
   ban: "§c§lNCP §7>> §rYou are banned by NCP for §c@days,@hours,@minutes,@seconds§r because of using @hack @nextEndTime: @end"
   fly_short: "@player could be flying hack @vl"
 
+command:
+  default:
+    - "ncp warn @player NCP WARING>>Don't use hack on the server!"
+
 permission:
   no_permission: "§c§lNCP §7>> §rYou do not have permission to run this command."
   policy:
-    - "nocheatplus.admin.all:reload,kick,ban,unban,debug,toggle,permission"
-    - "nocheatplus.admin.helper:kick,ban,unban"
+    - "nocheatplus.admin.all:reload,kick,ban,warn,unban,debug,toggle,permission"
+    - "nocheatplus.admin.helper:kick,ban,unban,warn"
   bypass:
     # Custom bypass permission
     MOVING_CREATIVE_FLY:
