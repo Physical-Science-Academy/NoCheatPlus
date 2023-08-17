@@ -494,11 +494,15 @@ NoCheatPlusAPI api = NoCheatPlus.instance;
 
 ## Test Server(Not always opens)
 
+### Official Asia (Closed)
 - Address: axe.0mc.me
 - Port: 10878
 
-**Another Test Server**
+### Official CN
+- Address: mc.catrainbow.me
+- Port: 20000
 
+### Personal Test Server 1
 - Address: 95.217.40.209
 - Port: 25009
 
