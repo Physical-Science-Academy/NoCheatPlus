@@ -499,7 +499,7 @@ NoCheatPlusAPI api = NoCheatPlus.instance;
 
 **Another Test Server**
 
-- Address 95.217.40.209
+- Address: 95.217.40.209
 - Port: 25009
 
 ## Notice
