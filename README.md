@@ -497,6 +497,11 @@ NoCheatPlusAPI api = NoCheatPlus.instance;
 - Address: axe.0mc.me
 - Port: 10878
 
+**Another Test Server**
+
+- Address: 95.217.40.209
+- Port: 25009
+
 ## Notice
 
 - Plugin are still in development. Report through Issue if you need!
